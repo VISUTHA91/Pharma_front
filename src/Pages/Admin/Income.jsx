@@ -30,10 +30,10 @@ const IncomePage = () => {
           getIncomeReport("yearly"),
         ]);
         // Update state with fetched values
-        console.log("Daily Income Report:", daily.data.total_income);
-        console.log("Weekly Income Report:", weekly.data.total_income);
-        console.log("Monthly Income Report:", monthly.data.total_income);
-        console.log("Yearly Income Report:", yearly.data.total_income);
+        // console.log("Daily Income Report:", daily.data.total_income);
+        // console.log("Weekly Income Report:", weekly.data.total_income);
+        // console.log("Monthly Income Report:", monthly.data.total_income);
+        // console.log("Yearly Income Report:", yearly.data.total_income);
         getIncomeReport("daily").then(console.log).catch(console.error);
         setIncomeData({
           today: daily.data.total_income || 0,
@@ -41,12 +41,12 @@ const IncomePage = () => {
           month: monthly.data.total_income || 0,
           year: yearly.data.total_income || 0,
         });
-        console.log("Updated Income Data:", {
-          today: daily?.total_income || 0,
-          week: weekly?.total_income || 0,
-          month: monthly?.total_income || 0,
-          year: yearly?.total_income || 0,
-        });
+        // console.log("Updated Income Data:", {
+        //   today: daily?.total_income || 0,
+        //   week: weekly?.total_income || 0,
+        //   month: monthly?.total_income || 0,
+        //   year: yearly?.total_income || 0,
+        // });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -80,6 +80,10 @@ const IncomePage = () => {
     { title: "This Year", value:incomeData.year, icon: <AiOutlineRise />, bgColor: "from-purple-500 to-purple-300" },
   ];
 
+
+
+
+  
   return (
     <div className="p-2">
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Income Overview</h1>
