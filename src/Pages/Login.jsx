@@ -25,6 +25,7 @@ function Login() {
   };
   const login = async (e) => {
     e.preventDefault();
+    
     try {
       const { email, password } = logindata;
       let data;
@@ -64,7 +65,6 @@ function Login() {
         <h2 className="text-2xl font-bold text-center text-[#055D80]">Welcome</h2>
         <p className="mt-2 text-center text-[#055D80]">Login to your account</p>
         <form className="space-y-4 mt-2" onSubmit={login}>
-          {/* Role Selection */}
           <div className="relative">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3">
               <FaUserAlt className="text-gray-400" />
@@ -74,7 +74,7 @@ function Login() {
               value={role}
               onChange={handleRoleChange}
               className="w-full pl-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-700"
-              required>
+              >
               <option value="">Select Role</option>
               <option value="admin">Admin</option>
               <option value="staff">Staff</option>

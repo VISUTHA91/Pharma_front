@@ -16,6 +16,10 @@ import { fetchProductbyID } from '../../Api/apiservices';
 import { FaSearch } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { productService } from '../../Api/apiservices';
+import { searchProducts} from '../../Api/apiservices';
+
+
 function ProductCreation() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -95,6 +99,8 @@ function ProductCreation() {
     if (showModal) {
     }
   }, [showModal, formData]);
+
+
   useEffect(() => {
   }, [formData]);
 
@@ -202,12 +208,28 @@ function ProductCreation() {
       toast.error("Failed to delete Product:");
     }
   };
+
+  const [searchResults, setSearchResults] = useState([]);
+
+
     const [query, setQuery] = useState("");
-    const handleSearch = () => {
+
+    const handleSearch = async () => {
       if (query.trim() !== "") {
-        onSearch(query);
-      }
-    };
+      setLoading(true);
+    setError("");
+    try {
+      console.log("QUERY",query)
+      const products = await searchProducts(query);
+      setProducts(products.data);
+      console.log("Searchhhhh result",products) // Pass results to parent component
+    } catch (err) {
+      setError("No matching products found.");
+    } finally {
+      setLoading(false);
+    }
+  }
+}
 
   return (
     <div className="m-1">
@@ -219,7 +241,7 @@ function ProductCreation() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="CategoryName or ProductName"
+                placeholder="ProductName"
                 className="px-1 py-1 w-64 focus:outline-none rounded-l"
               />
               <button

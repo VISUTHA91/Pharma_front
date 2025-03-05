@@ -13,7 +13,6 @@ const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
 });
-
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
@@ -239,8 +238,7 @@ export const register = async (formData) => {
       console.error("Error fetching product details:", error);
       throw error;
     }
-  };
-  
+  };  
 
   export const createProduct = async (productData) => {
     // console.log("API  Submit",productData)
@@ -252,19 +250,6 @@ export const register = async (formData) => {
       throw error;
     }
   };
-
-  // export const uploadParsedData = async (parsedData) => {
-  //   console.log("API Submitting",parsedData)
-  //   try {
-  //     const response = await axiosInstance.post(`${API_BASE_URL}products/import`, {
-  //       data: parsedData,
-  //     });
-  //     return response.data;
-  //   } catch (error) {
-  //     console.error("Error uploading data:", error);
-  //     throw error;
-  //   }
-  // };
 
   export const uploadParsedData = async (formData) => {
     console.log("API Submitting file");
@@ -471,6 +456,27 @@ export const register = async (formData) => {
     }
   };
 
+   export const productService = {
+     searchProducts: async (searchTerm) => {
+      console.log("Query APi",searchTerm);
+      if (!searchTerm || searchTerm.trim() === "") {
+        throw new Error("Search term is required.");
+      }
+      try {
+        const response = await axiosInstance.get(`${API_BASE_URL}products/searchProducts?`, {
+          params: {searchTerm },
+        });
+        console.log("Search API Page",response);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+        throw error; // Rethrow error for handling in the component
+      }
+    },
+  };
+  
+
+
 
   export const productpermanentdelete = async (categoryId) => {
     console.log("Deleting the Product ID:",categoryId)
@@ -635,8 +641,6 @@ export const register = async (formData) => {
       throw error;
     }
   };
-
-
 
   export const downloadSalesReport = async (format) => {
     const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";

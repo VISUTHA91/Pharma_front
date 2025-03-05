@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 const Billing = () => {
   const [product, setproduct] = useState([]);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
-
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
