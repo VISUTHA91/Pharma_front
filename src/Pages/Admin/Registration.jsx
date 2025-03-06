@@ -35,6 +35,8 @@ const Registration = () => {
   });
   const [editIndex, setEditIndex] = useState(null);
   const [error, setError] = useState();
+  const [passwordError, setPasswordError] = useState("");
+
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -78,10 +80,72 @@ const Registration = () => {
 
 
 
+  const handlenumberChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  const handlenameChange = (e) => {
+    const { name, value } = e.target;
+    // Allow alphabets and alphabets with numbers, but not only numbers
+    if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+  const handleemailChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Email validation regex pattern
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    // Allow only valid email format  
+    if (emailPattern.test(value) || value === "") {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+
+    }
+  };
+  // const handlePasswordChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   // Allow only up to 8 characters
+  //   if (value.length > 8) return;
+
+  //   // Regex: Exactly 8 characters, must contain only letters (A-Z, a-z) and numbers (0-9), no special characters
+  //   const passwordPattern = /^[A-Za-z0-9]{8}$/;
+
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+
+  //   if (!passwordPattern.test(value)) {
+  //     setPasswordError(
+  //       "Password must be exactly 8 characters and contain only letters and numbers."
+  //     );
+  //   } else {
+  //     setPasswordError(""); // Clear error when valid
+  //   }
+  // };
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+
+    // Regex: Only letters (A-Z, a-z) and numbers (0-9), no special characters
+    const passwordPattern = /^[A-Za-z0-9]+$/;
+
+    // Update state regardless of validation
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Show error message only if length exceeds 8
+    if (value.length > 8) {
+      setPasswordError("Password must be exactly 8 characters long.");
+    } else if (!passwordPattern.test(value)) {
+      setPasswordError("Password can only contain letters and numbers.");
+    } else {
+      setPasswordError(""); // Clear error when valid
+    }
+  };
+
+  
 
 
   // const handleSubmit = async (e) => {
@@ -296,7 +360,7 @@ const Registration = () => {
                     name="username"
                     required
                     value={formData.username}
-                    onChange={handleChange}
+                    onChange={handlenameChange}
                     placeholder="Name"
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                   />
@@ -313,7 +377,7 @@ const Registration = () => {
                     type="text"
                     name="contact_number"
                     value={formData.contact_number}
-                    onChange={handleChange}
+                    onChange={handlenumberChange}
                     required
                     placeholder="Contact No"
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
@@ -335,7 +399,7 @@ const Registration = () => {
                     type="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={handleemailChange}
                     required
                     placeholder="Email"
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
@@ -344,7 +408,7 @@ const Registration = () => {
 
                 <div className="relative">
 
-                  <div className="mb-4">
+                  <div className="mb-4 relative">
                     <label
                       className="block text-gray-700 text-sm font-bold mb-2"
                       htmlFor="description"
@@ -353,16 +417,15 @@ const Registration = () => {
                     </label>
 
                     <input
-                      // type="password"
-                      type={showPassword ? "text" : "password"}
-
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      // required
-                      placeholder="Password"
-                      className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
-                    />
+        type={showPassword ? "text" : "password"}
+        name="password"
+        value={formData.password}
+        onChange={handlePasswordChange}
+        placeholder="Password"
+        required
+        className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700 pr-10"
+      />
+         
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -370,6 +433,9 @@ const Registration = () => {
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
+                    {passwordError && (
+                  <p className="text-red-500 text-sm mt-1 w-full flex absolute">{passwordError}</p>
+      )}
                   </div>
                 </div>
 
@@ -387,8 +453,8 @@ const Registration = () => {
                       type={showconfirmPassword ? "text" : "password"}
                       name="confirm_password"
                       value={formData.confirm_password}
-                      onChange={handleChange}
-                      // required
+                      onChange={handlePasswordChange}
+                      required
                       placeholder="ConfirmPassword"
                       className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                     />

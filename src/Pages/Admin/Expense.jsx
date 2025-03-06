@@ -38,9 +38,22 @@ const Expense = () => {
   });
   const [year, month, day] = formData.date.split("-");
   const formattedDate = `${day}-${month}-${year}`;
+
+
+  
+  const handleInputCategoryChange = (e) => {
+    const { name, value } = e.target;
+    if (/^[A-Za-z]*$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  
+    // Allow only numbers (digits 0-9), prevent spaces, alphabets, and special characters
+    if (/^\d*$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
  const handleFormSubmit = async (e) => {
@@ -104,7 +117,7 @@ const Expense = () => {
                   type="text"
                   name="category"
                   value={formData.category}
-                  onChange={handleInputChange}
+                  onChange={handleInputCategoryChange}
                   className="border border-gray-300 rounded w-full px-3 py-2"
                   required
                 />
@@ -136,7 +149,7 @@ const Expense = () => {
                 <textarea
                   name="description"
                   value={formData.description}
-                  onChange={handleInputChange}
+                  onChange={handleInputCategoryChange}
                   className="border border-gray-300 rounded w-full px-3 py-2"
                   required
                 ></textarea>

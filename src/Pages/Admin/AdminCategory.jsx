@@ -205,12 +205,24 @@ function AdminCategory() {
           >
             Category Name
           </label>
-        <input
+        {/* <input
           type="text"
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
           className="mt-2 p-2 border rounded w-full"
-        />
+        /> */}
+        <input
+  type="text"
+  value={categoryName}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
+      setCategoryName(value);
+    }
+  }}
+  className="mt-2 p-2 border rounded w-full"
+/>
+
            <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -222,7 +234,13 @@ function AdminCategory() {
             type="text"
             id="descripton"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            // onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
+                setDescription(value);
+              }
+            }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
@@ -337,7 +355,12 @@ function AdminCategory() {
             type="text"
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
+                setDescription(value);
+              }
+            }}
             className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             required
           />

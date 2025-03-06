@@ -16,10 +16,6 @@ import { fetchProductbyID } from '../../Api/apiservices';
 import { FaSearch } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { productService } from '../../Api/apiservices';
-import { searchProducts} from '../../Api/apiservices';
-
-
 function ProductCreation() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -75,6 +71,18 @@ function ProductCreation() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  const handleFormnameChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Allow alphabets and alphabets with numbers, but not only numbers
+    if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  
+
+
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -99,8 +107,6 @@ function ProductCreation() {
     if (showModal) {
     }
   }, [showModal, formData]);
-
-
   useEffect(() => {
   }, [formData]);
 
@@ -208,28 +214,12 @@ function ProductCreation() {
       toast.error("Failed to delete Product:");
     }
   };
-
-  const [searchResults, setSearchResults] = useState([]);
-
-
     const [query, setQuery] = useState("");
-
-    const handleSearch = async () => {
+    const handleSearch = () => {
       if (query.trim() !== "") {
-      setLoading(true);
-    setError("");
-    try {
-      console.log("QUERY",query)
-      const products = await searchProducts(query);
-      setProducts(products.data);
-      console.log("Searchhhhh result",products) // Pass results to parent component
-    } catch (err) {
-      setError("No matching products found.");
-    } finally {
-      setLoading(false);
-    }
-  }
-}
+        onSearch(query);
+      }
+    };
 
   return (
     <div className="m-1">
@@ -241,7 +231,7 @@ function ProductCreation() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="ProductName"
+                placeholder="CategoryName or ProductName"
                 className="px-1 py-1 w-64 focus:outline-none rounded-l"
               />
               <button
@@ -371,7 +361,7 @@ function ProductCreation() {
                     type="text"
                     name="product_name"
                     value={formData.product_name}
-                    onChange={handleFormChange}
+                    onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
                   />
@@ -382,7 +372,7 @@ function ProductCreation() {
                     type="text"
                     name="generic_name"
                     value={formData.generic_name}
-                    onChange={handleFormChange}
+                    onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
                   />
@@ -393,7 +383,7 @@ function ProductCreation() {
                     type="text"
                     name="brand_name"
                     value={formData.brand_name}
-                    onChange={handleFormChange}
+                    onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
                   />
@@ -447,7 +437,7 @@ function ProductCreation() {
                   <textarea
                     name="product_description"
                     value={formData.product_description}
-                    onChange={handleFormChange}
+                    onChange={handleFormnameChange}
                     rows="3"
                     className="w-full border rounded p-2"
                   ></textarea>
@@ -458,7 +448,7 @@ function ProductCreation() {
                     type="text"
                     name="product_batch_no"
                     value={formData.product_batch_no}
-                    onChange={handleFormChange}
+                    onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
                   />
@@ -622,7 +612,6 @@ function ProductCreation() {
     </div>);
 }
 export default ProductCreation;
-
 
 {/* <button
           onClick={() => {

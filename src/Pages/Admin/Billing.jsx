@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 const Billing = () => {
   const [product, setproduct] = useState([]);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
+
   const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -69,8 +70,6 @@ const Billing = () => {
   useEffect(() => {
     console.log("Updated Invoice Details:", products);
   }, [products]);
-
-  // Fetch search results
   const fetchproduct = async () => {
     setLoading(true);
     const product = await searchProducts(query);
@@ -114,7 +113,16 @@ const Billing = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (/^\d{0,10}$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  const handleInputnameChange = (e) => {
+    const { name, value } = e.target;
+    // Allow only alphabets (uppercase and lowercase)
+    if (/^[A-Za-z]*$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
   };
   const handleQuantityChange = (index, value) => {
     const updatedInvoice = [...products];
@@ -183,13 +191,12 @@ const Billing = () => {
             type="text"
             name="customer_name"
             value={formData.customer_name}
-            onChange={handleInputChange}
+            onChange={handleInputnameChange}
             className="w-full border border-gray-300 px-3 py-2 rounded"
-            // disabled={!!formData.customerName} // Disable if auto-filled
-            // disabled={formData.customerName && isAutoFilled}
             disabled={isInputDisabled}
             required
           />
+          
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Date & Time</label>
@@ -377,73 +384,3 @@ const Billing = () => {
     </div>);
 };
 export default Billing;
-
-{/* Modal */ }
-{/* {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg w-1/2">
-            <div className="p-4">
-              <h2 className="text-xl font-bold mb-4">Invoice Preview</h2>
-              <p className="mb-4"><strong>Customer Name:</strong> {formData.customerName}</p>
-              <p className="mb-4"><strong>phone Number:</strong> {formData.phoneNumber}</p>
-              <p className="mb-4"><strong>Date & Time:</strong> {formData.dateTime}</p>
-              <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-4 py-2">Product Name</th>
-                    <th className="border border-gray-300 px-4 py-2">Batch No</th>
-                    <th className="border border-gray-300 px-4 py-2">Expiry Date</th>
-                    <th className="border border-gray-300 px-4 py-2">MRP</th>
-                    <th className="border border-gray-300 px-4 py-2">GST</th>
-                    <th className="border border-gray-300 px-4 py-2">Quantity</th>
-                    <th className="border border-gray-300 px-4 py-2">Selling Price</th>
-                    <th className="border border-gray-300 px-4 py-2">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product, index) => (
-                    <tr key={index}>
-                      <td className="border border-gray-300 px-4 py-2">{product.name}</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.batchNo}</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.expDate}</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.mrp}</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.gst}%</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.quantity}</td>
-                      <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td>
-                      <td className="border border-gray-300 px-4 py-2">
-                        {calculateAmount(product.quantity, product.sellingPrice)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="mt-4 flex justify-end gap-4">
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirm}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )} */}
-
-
-       // Check for existing customer when phone number changes
-    // if (name === "phoneNumber") {
-    //   const customer = mockInvoiceData.find((item) => item.phoneNumber === value);
-    //   if (customer) {
-    //     setFormData({ ...formData, phoneNumber: value, customerName: customer.customerName });
-    //     setIsInputDisabled(true);
-    //   } else {
-    //     setFormData({ ...formData, phoneNumber: value, customerName: "" });
-    //   }
-    // }
