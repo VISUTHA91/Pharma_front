@@ -92,7 +92,7 @@ export const register = async (formData) => {
   export const adminlogin = async (logindata) => {
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}admin/login`,logindata);
-      console.log("Login data",response.data);
+      console.log("Login data",response);
       return response.data;
     } catch (error) {
       return error.response ? error.response.data : new Error("Sign In Failed");
@@ -146,6 +146,17 @@ export const register = async (formData) => {
         params: { page, limit } });
         console.log("Api Category",response)
       return response.data;
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      throw error;
+    }
+  };
+  export const getCategorywithoutpagination = async (page, limit) => {
+    try {
+      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category`,{
+        params: { page, limit } });
+        console.log("Api Category pagination",response)
+      return response;
     } catch (error) {
       console.error("Error fetching categories:", error);
       throw error;
@@ -648,10 +659,10 @@ export const register = async (formData) => {
       console.log(`📤 Requesting ${format.toUpperCase()} report...`);
 
       const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
-        responseType: "blob", // Important for file downloads
+        responseType: "arraybuffer", // Alternative responseType for PDFs
       });
       // Create a URL and trigger the download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data],{ type: "application/pdf" }));
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", `invoice/sales-report.${format}`);

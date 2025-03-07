@@ -45,7 +45,7 @@ function Login() {
           toast.success(data.message);
           navigate("/Dashboard");
         } else {
-          toast.error("Login Failed" + data.message);
+          toast.error("Login Failed");
         }
       } else {
         throw new Error("Please select a role");

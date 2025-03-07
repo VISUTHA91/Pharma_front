@@ -62,6 +62,22 @@ function Supplier() {
       [name]: value,
     }));
   };
+  const handleFormnameChange = (e) => {
+    const { name, value } = e.target;
+    // Allow alphabets and alphanumeric values but NOT only numbers
+    if (/^(?!\d+$)[a-zA-Z0-9 ]*$/.test(value) || value === "") {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  const handleFormnumberChange = (e) => {
+    const { name, value } = e.target;
+    // Allow only numbers and ensure it does not exceed 10 digits
+    if (/^\d{0,10}$/.test(value)) {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+  
+  
 
   // Handle Edit action (populate the form with the selected supplier's data)
   const handleEdit = (supplier) => {
@@ -277,7 +293,7 @@ function Supplier() {
               type="text"
               name="company_name"
               value={formData.company_name}
-              onChange={handleFormChange}
+              onChange={handleFormnameChange}
               required
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
             />
@@ -287,13 +303,13 @@ function Supplier() {
               Phone No
             </label>
             <input
-              type="text"
+              type="number"
               name="phone_number"
               value={formData.phone_number}
-              onChange={handleFormChange}
+              onChange={handleFormnumberChange}
               required
+              maxLength={10} // Ensures only 10 characters can be entered
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
-              
             />
           </div>
           <div>

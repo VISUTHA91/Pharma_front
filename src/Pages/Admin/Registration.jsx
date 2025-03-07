@@ -22,6 +22,8 @@ const Registration = () => {
   const [limit, setLimit] = useState(10);
   const [showPassword, setShowPassword] = useState(false);
   const [showconfirmPassword, setShowconfirmPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+
 
   const [formData, setFormData] = useState({
     username: "",
@@ -89,43 +91,38 @@ const Registration = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  // const handlenameChange = (e) => {
+  //   const { name, value } = e.target;
+  //   // Allow alphabets and alphabets with numbers, but not only numbers
+  //   if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  //   }
+  // };
   const handlenameChange = (e) => {
     const { name, value } = e.target;
-    // Allow alphabets and alphabets with numbers, but not only numbers
-    if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  
+    // Allow alphabets, numbers, and spaces, but prevent input with only spaces
+    if (/^(?!\s*$)(?!\d+$)[A-Za-z0-9 ]*$/.test(value)) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
   const handleemailChange = (e) => {
     const { name, value } = e.target;
   
+    // Update input value while typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  
     // Email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    // Allow only valid email format  
-    if (emailPattern.test(value) || value === "") {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-
+  
+    // Show an error message if the email format is incorrect
+    if (value && !emailPattern.test(value)) {
+      setEmailError("Invalid email format");
+    } else {
+      setEmailError("");
     }
   };
-  // const handlePasswordChange = (e) => {
-  //   const { name, value } = e.target;
 
-  //   // Allow only up to 8 characters
-  //   if (value.length > 8) return;
-
-  //   // Regex: Exactly 8 characters, must contain only letters (A-Z, a-z) and numbers (0-9), no special characters
-  //   const passwordPattern = /^[A-Za-z0-9]{8}$/;
-
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-
-  //   if (!passwordPattern.test(value)) {
-  //     setPasswordError(
-  //       "Password must be exactly 8 characters and contain only letters and numbers."
-  //     );
-  //   } else {
-  //     setPasswordError(""); // Clear error when valid
-  //   }
-  // };
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
 
@@ -404,6 +401,8 @@ const Registration = () => {
                     placeholder="Email"
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                   />
+                  {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+
                 </div>
 
                 <div className="relative">
@@ -463,7 +462,7 @@ const Registration = () => {
                       onClick={() => setShowconfirmPassword(!showconfirmPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400"
                     >
-                      {showconfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                      {showconfirmPassword ?  <FaEye />:<FaEyeSlash />}
                     </button>
                   </div>
                 </div>

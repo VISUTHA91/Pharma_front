@@ -264,60 +264,6 @@ function AdminCategory() {
     </div>
   </div>
 )}
-
-
-    {/* {showCreateForm && (
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded-lg px-6 pt-2 mt-4 h-72"
-      >
-        <h1 className="text-center text-2xl mb-2 border bg-[#019493] text-white rounded-lg p-1">
-          Create Category
-        </h1>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="categoryname"
-          >
-            Category Name
-          </label>
-          <input
-            type="text"
-            id="category_name"
-            value={categoryName}
-            onChange={(e) => setCategoryName(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="description"
-          >
-            Descripton
-          </label>
-          <input
-            type="text"
-            id="descripton"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            required
-          />
-        </div>
-
-
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Submit
-          </button>
-        </div>
-      </form>
-    )} */}
     {showCreateForm && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white p-6 rounded-lg w-1/2 shadow-lg">
@@ -344,9 +290,7 @@ function AdminCategory() {
             }}
             className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
             required
-          />
-        </div>
-
+          /> </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
             Description
@@ -357,7 +301,9 @@ function AdminCategory() {
             value={description}
             onChange={(e) => {
               const value = e.target.value;
-              if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
+              if (/^(?=.*[A-Za-z])[A-Za-z0-9\s]*$/.test(value)) {
+
+              // if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
                 setDescription(value);
               }
             }}

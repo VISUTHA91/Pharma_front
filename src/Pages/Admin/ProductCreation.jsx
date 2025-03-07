@@ -16,6 +16,8 @@ import { fetchProductbyID } from '../../Api/apiservices';
 import { FaSearch } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { getCategorywithoutpagination } from "../../Api/apiservices";
+
 function ProductCreation() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -47,7 +49,7 @@ function ProductCreation() {
     GST: "",
     stock_status: "Available",
   });
-
+// Product List
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -82,11 +84,11 @@ function ProductCreation() {
   
 
 
-
+// Categories Fetch From Backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const staticCategories = await getCategory();
+        const staticCategories = await getCategorywithoutpagination();
         setCategory(staticCategories.data);
         console.log("Static Categories:", staticCategories.data);
       } catch (error) {
@@ -254,7 +256,6 @@ function ProductCreation() {
             onClick={handleClick}
             className="flex items-center text-xl text-white border-black rounded-lg px-2 py-1 gap-1 bg-cyan-700 mb-2"
           >
-            {/* <FcPlus size={28} /> Bulk Insert */}
             <FaFileExcel  size={26} title="Import to Excel"/>
             <input
               id="fileInput"
@@ -458,10 +459,10 @@ function ProductCreation() {
                   <input
                     type="date"
                     name="MFD"
-                    // value={formData.MFD}
                     value={formData.MFD ? formData.MFD.split("T")[0] : ""} // Convert ISO to "yyyy-MM-dd"
                     onChange={handleFormChange}
                     required
+                    max={new Date().toISOString().split("T")[0]} // Restrict future dates
                     className="w-full border rounded p-2"
                   />
                 </div>
@@ -470,11 +471,11 @@ function ProductCreation() {
                   <input
                     type="date"
                     name="expiry_date"
-                    // value={formData.expiry_date}
                     value={formData.expiry_date ? formData.expiry_date.split("T")[0] : ""} // Convert ISO to "yyyy-MM-dd"
 
                     onChange={handleFormChange}
                     required
+                    min={new Date().toISOString().split("T")[0]} // Restrict past dates
                     className="w-full border rounded p-2"
                   />
                 </div>
