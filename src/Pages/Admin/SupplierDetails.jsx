@@ -7,6 +7,7 @@ import { createsupplierinvoice } from "../../Api/apiservices";
 import { createSupplierPayment } from "../../Api/apiservices";
 import { supplierById } from "../../Api/apiservices";
 import {categoryListBySupplierId} from "../../Api/apiservices";
+// import { fetchSupplierDetails} from '../../Api/apiservices';
 
 Modal.setAppElement("#root");
 
@@ -121,7 +122,8 @@ const SupplierDetails = ({ selectedSupplier }) => {
     try {
       await createSupplierPayment(paymentForm);
       setIsPaymentModalOpen(false);
-      fetchSupplierDetails(selectedSupplier.id); // Refresh data
+      // fetchSupplierDetails(selectedSupplier.id); // Refresh data
+      fetchSupplierInvoiceList(selectedSupplier.id); // Refresh data
     } catch (error) {
       console.error("Error saving payment:", error);
       toast.error("Error saving payment:", error);
@@ -187,6 +189,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
               "Bill No",
               "Date",
               "Total Bill Amount",
+              "Paid Amount",
               "Balance",
               "Due Date",
               "Payment Date",
@@ -207,6 +210,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
               <td className="p-2">{item.supplier_bill_no}</td>
               <td className="p-2">{item.invoice_bill_date ? item.invoice_bill_date.split("T")[0]:"N/A"}</td>
               <td className="p-2">{item.bill_amount}</td>
+              <td className="p-2">{item.total_paid}</td>
               <td className="p-2">{item.balance_bill_amount}</td>
               <td className="p-2">{item.due_date ? item.due_date.split("T")[0] : "N/A"}</td>
               <td className="p-2">{item.created_at ? item.created_at.split("T")[0]:"N/A"}</td>

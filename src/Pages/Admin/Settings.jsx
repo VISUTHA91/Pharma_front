@@ -27,7 +27,7 @@ const Settings = () => {
     }, []); 
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     try {
       if (!details.shop_id) {
         alert("Error: Pharmacy ID is missing.");
@@ -41,10 +41,10 @@ const Settings = () => {
         isGovtRegistered: details.isGovtRegistered
       };
       console.log("asdsdads",details.shop_id)
+      console.log("updated",updatedData)
       await updatePharmacyDetails(details.shop_id, updatedData);
-      
       toast.success('Pharmacy details updated successfully');
-      setIsEditing(false);
+      setIsEditing(true);
     } catch (error) {
       toast.error('Failed to update pharmacy details. Please try again.');
     }

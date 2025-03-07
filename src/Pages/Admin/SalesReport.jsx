@@ -225,7 +225,7 @@ onClick={() => setShowOptions(!showOptions)}>
   <table className="w-full border-collapse border border-gray-300">
     <thead>
       <tr className="bg-gray-200">
-        <th className="border border-gray-300 px-2 py-2">Medicine Name</th>
+        <th className="border border-gray-300 px-2 py-2">Product Name</th>
         <th className="border border-gray-300 px-2 py-2">Category Name</th>
         {/* <th className="border border-gray-300 px-4 py-2">Price</th> */}
         <th className="border border-gray-300 px-2 py-2">Sale Quantity</th>

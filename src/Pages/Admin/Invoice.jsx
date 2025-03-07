@@ -88,7 +88,7 @@ const Invoice = () => {
                             <td className="border border-gray-300 px-2 py-1">{index + 1}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_number}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td>
-                            <td className="border border-gray-300 px-2 py-1">{invoice.total_price}</td>
+                            <td className="border border-gray-300 px-2 py-1">{invoice.finalPriceWithGST}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.payment_status}</td>
                             <td className="border border-gray-300 px-2 py-1">
                                 <button

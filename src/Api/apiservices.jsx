@@ -71,8 +71,6 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-
 const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
@@ -513,6 +511,7 @@ export const register = async (formData) => {
   }; 
 
   export const updatePharmacyDetails = async (shopId, updatedData) => {
+    console.log("Shop",updatedData)
     try {
       const response = await axiosInstance.put(`${API_BASE_URL}shop/update/${shopId}`, updatedData);
       return response.data;
@@ -675,6 +674,31 @@ export const register = async (formData) => {
       throw error;
     }
   };
+
+//   export const downloadSalesReport = async (format) => {
+//     const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";
+//     try {
+//         console.log(`📤 Requesting ${format.toUpperCase()} report...`);
+
+//         const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
+//             responseType: "arraybuffer", // ✅ Ensure binary data format
+//         });
+
+//         console.log("✅ Response received:", response);
+
+//         const blob = new Blob([response.data], { type: "application/pdf" });
+//         const url = window.URL.createObjectURL(blob);
+//         const link = document.createElement("a");
+//         link.href = url;
+//         link.setAttribute("download", `sales-report.${format}`);
+//         document.body.appendChild(link);
+//         link.click();
+//         document.body.removeChild(link);
+//         console.log("🎉 File download triggered successfully!");
+//     } catch (error) {
+//         console.error("❌ Error exporting report:", error);
+//     }
+// };
 
   export const getIncomeReport = async (type) => {
     console.log("typesdfghjkghjkl",type)

@@ -522,10 +522,12 @@ function ProductCreation() {
                     required
                     className="w-full border rounded p-2"
                   >
-                     {isEditing ?
+                     {/* {isEditing ?
                     (<div><option value="Available">Available</option>
                     <option value="Unavailable">Unavailable</option></div>) :
-                    (<div><option value="Available">Available</option></div>)}
+                    (<div><option value="Available">Available</option></div>)} */}
+                    <option value="Available">Available </option>
+                    <option value="UnAvailable">UnAvailable </option>
                   </select>
                 </div>
               </div>

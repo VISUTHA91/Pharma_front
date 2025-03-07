@@ -112,7 +112,7 @@ const Expense = () => {
             <h2 className="text-xl font-bold mb-4">Add New Expense</h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Category</label>
+                <label className="block text-sm font-medium mb-2">Reason</label>
                 <input
                   type="text"
                   name="category"
