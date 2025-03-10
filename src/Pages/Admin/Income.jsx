@@ -5,12 +5,16 @@ import PaginationComponent from "../../Components/PaginationComponent";
 import {getIncomeReport} from '../../Api/apiservices';
 import { toast } from "react-toastify";
 import { AiOutlineEye, AiOutlineEyeInvisible, } from "react-icons/ai";
+// import Month from "react-datepicker/dist/month";
+// import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Ensure this is included
+
 
 const IncomePage = () => {
   const [incomeData, setIncomeData] = useState({
     today: 0,
-    week: 0,
     month: 0,
+    sixmonth: 0,
     year: 0,
   });
   const [invoices, setInvoices] = useState([]);
@@ -20,29 +24,30 @@ const IncomePage = () => {
   const [limit, setLimit] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showIncome, setShowIncome] = useState(true); // Toggle visibility
+  const [showIncome, setShowIncome] = useState(false);
+
 
 
   useEffect(() => {
     const fetchAllReports = async () => {
       try {
         setLoading(true);
-        const [daily, weekly, monthly, yearly] = await Promise.all([
-          getIncomeReport("daily"),
-          getIncomeReport("weekly"),
-          getIncomeReport("monthly"),
-          getIncomeReport("yearly"),
+        const [daily,monthly,sixmonth, yearly] = await Promise.all([
+          getIncomeReport("DAILY"),
+          getIncomeReport("MONTHLY"),
+          getIncomeReport("6MONTH"),
+          getIncomeReport("YEARLY"),
         ]);
         // Update state with fetched values
-        // console.log("Daily Income Report:", daily.data.total_income);
-        // console.log("Weekly Income Report:", weekly.data.total_income);
-        // console.log("Monthly Income Report:", monthly.data.total_income);
-        // console.log("Yearly Income Report:", yearly.data.total_income);
+        console.log("Daily Income Report:", daily.data.total_income);
+        console.log("Monthly Income Report:", monthly.data.total_income);
+        console.log("Weekly Income Report:", sixmonth.data.total_income);
+        console.log("Yearly Income Report:", yearly.data.total_income);
         getIncomeReport("daily").then(console.log).catch(console.error);
         setIncomeData({
           today: daily.data.total_income || 0,
-          week: weekly.data.total_income || 0,
           month: monthly.data.total_income || 0,
+          sixmonth: sixmonth.data.total_income || 0,
           year: yearly.data.total_income || 0,
         });
         // console.log("Updated Income Data:", {
@@ -77,56 +82,29 @@ const IncomePage = () => {
     };
     invoicelist();
   }, [currentPage]);
+
   const cards = [
     { title: "Today", value: incomeData.daily, icon: <AiOutlineCalendar />, bgColor: "from-blue-500 to-blue-300" },
-    { title: "This Week", value: incomeData.week, icon: <AiOutlineBarChart />, bgColor: "from-green-500 to-green-300" },
     { title: "This Month", value:incomeData.month, icon: <AiOutlinePieChart />, bgColor: "from-yellow-500 to-yellow-300" },
+    { title: "Six Month", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "from-green-500 to-green-300" },
     { title: "This Year", value:incomeData.year, icon: <AiOutlineRise />, bgColor: "from-purple-500 to-purple-300" },
   ];
-
-
-
-
 
   return (
     <div className="p-2">
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Income Overview</h1>
-      {/* Cards */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {[
-          { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
-          { label: "This Week", value: incomeData.week, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
-          { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
-          { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
-        ].map((card, index) => (
-            <div
-            key={index}
-            className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap- transform hover:scale-105 transition duration-300 overflow-hidden`}
-          >
-            <div className="text-white text-4xl -ml-4">{card.icon}</div>
-            <div >
-              <h2 className="text-white text-lg font-medium">{card.label}</h2>
-              <p className="text-white text-3xl font-bold ">
-                ₹{card.value.toLocaleString()}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div> */}
-          <div className="relative">
-      {/* Eye Button for Toggling Visibility */}
+      {/* <div className="relative">
       <button
         onClick={() => setShowIncome(!showIncome)}
         className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition"
       >
         {showIncome ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
       </button>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
         {[
           { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
-          { label: "This Week", value: incomeData.week, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
           { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
+          { label: "Six Months ", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
           { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
         ].map((card, index) => (
           <div
@@ -143,7 +121,39 @@ const IncomePage = () => {
           </div>
         ))}
       </div>
-    </div>
+    </div> */}
+    <div className="relative min-h-[50px]">
+    <button
+  onClick={() => setShowIncome(!showIncome)}
+  className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-400 transition z-50"
+>
+  {showIncome ?   <AiOutlineEyeInvisible size={20} />: <AiOutlineEye size={20} />  }
+</button>
+  
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
+    {[
+      { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
+      { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
+      { label: "Six Months", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
+      { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
+    ].map((card, index) => (
+      <div
+        key={index}
+        className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-2 transform hover:scale-105 transition duration-300 overflow-hidden`}
+      >
+        <div className="text-white text-4xl">{card.icon}</div>
+        <div>
+          <h2 className="text-white text-lg font-medium">{card.label}</h2>
+          <div className="flex ">
+  <p className="text-white text-3xl font-bold flex-1 truncate">
+    {showIncome ? `₹${card.value.toLocaleString()}` : "*****"}
+  </p>
+</div>
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
        <div className="mt-4 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Income List</h2>

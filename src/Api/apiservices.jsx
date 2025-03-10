@@ -700,18 +700,32 @@ export const register = async (formData) => {
 //     }
 // };
 
-  export const getIncomeReport = async (type) => {
-    console.log("typesdfghjkghjkl",type)
+  // export const getIncomeReport = async (type) => {
+  //   console.log("typesdfghjkghjkl",type)
+  //   try {
+  //     const response = await axiosInstance.get(`${API_BASE_URL}report/income-report/${type}`);
+  //     console.log("APIIIIIIIIIIIIIIIII",response)
+  //     return response; // Return the income report data
+  //   } catch (error) {
+  //     console.error("Error fetching income report:", error);
+  //     throw error;
+  //   }
+  // };
+
+  export const getIncomeReport = async (interval) => {
+    console.log("Fetching income report for interval:", interval);
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}report/income-report/${type}`);
-      console.log("APIIIIIIIIIIIIIIIII",response)
-      return response; // Return the income report data
+      const response = await axiosInstance.get(`${API_BASE_URL}report/income-report`, {
+        params: { interval } // Passing interval as a query parameter
+      });
+      console.log("API Response:", response.data);
+      return response.data; // Return the income report data
     } catch (error) {
       console.error("Error fetching income report:", error);
       throw error;
     }
   };
-
+  
 
   export const fetchFilteredSalesData = async (start, end, filterType) => {
     try {
