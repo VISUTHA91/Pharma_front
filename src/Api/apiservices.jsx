@@ -167,8 +167,8 @@ export const register = async (formData) => {
       console.log("API Category List", response.data); // Indicate success
       return response;
     } catch (error) {
-      console.error("Error deleting supplier:", error);
-      throw error;
+      // console.error("Error deleting supplier:", error);
+      // throw error;
     }
   };
   export const createCategory = async (categoryData) => {
@@ -250,7 +250,7 @@ export const register = async (formData) => {
   };  
 
   export const createProduct = async (productData) => {
-    // console.log("API  Submit",productData)
+    console.log("API  Submit",productData)
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}products/inproduct`, productData);
       return response.data;
@@ -311,8 +311,8 @@ export const register = async (formData) => {
       console.log("API", response.data); // Indicate success
       return response;
     } catch (error) {
-      console.error("Error deleting supplier:", error);
-      throw error;
+      // console.error("Error deleting supplier:", error);
+      // throw error;
     }
   };
 
@@ -351,7 +351,7 @@ export const register = async (formData) => {
       return response.data;
     } catch (error) {
       console.error("Error creating Invoice:", error);
-      throw error;
+      // throw error;
     }
   };
   export const createSupplierPayment = async (paymentData) => {
@@ -372,7 +372,7 @@ export const register = async (formData) => {
       return response.data;
     } catch (error) {
       console.error("Error fetching product details:", error);
-      throw error;
+      // throw error;
     }
   };
 

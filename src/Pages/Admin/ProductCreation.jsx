@@ -76,8 +76,8 @@ function ProductCreation() {
   const handleFormnameChange = (e) => {
     const { name, value } = e.target;
   
-    // Allow alphabets and alphabets with numbers, but not only numbers
-    if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
+    // Allow alphabets, numbers, and spaces, but not only numbers or only spaces
+    if (/^(?!\d+$)(?!\s+$)[A-Za-z0-9 ]*$/.test(value)) {
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -97,6 +97,7 @@ function ProductCreation() {
     };
     fetchCategories();
   }, []);
+
   useEffect(() => {
     const getSuppliers = async () => {
       const data = await fetchSuppliers();
@@ -143,13 +144,14 @@ function ProductCreation() {
   };
 
    const handleFormSubmit = async (e) => {
-    // e.preventDefault(); // Prevents default form submission
+    e.preventDefault(); // Prevents default form submission
     try {
       if (selectedProduct) {
         // console.log("Edited ProductID Befor Sending API", selectedProduct.product_id)
         await updateProduct(selectedProduct.product_id, formData);
         toast.success("Product Updated Successfully!");
       } else {
+        console.log("Product DAta Befor Sending API", formData)
         await createProduct(formData);
         toast.success("Product Created Successfully!");
       }
@@ -350,7 +352,7 @@ function ProductCreation() {
                   >
                     <option value={formData.product_category}>{formData.product_category}</option>
                     {Array.isArray(category) && category.map((cat) => (
-                      <option key={cat.id} value={cat.category_name}>
+                      <option key={cat.id} value={cat.id}>
                         {cat.category_name}
                       </option>
                     ))}

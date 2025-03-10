@@ -37,15 +37,15 @@ const SupplierDetails = ({ selectedSupplier }) => {
   });
 
   useEffect(() => {
-    console.log("Supplier ID in above",supplierId); // Check if supplierId is available
+    console.log("Supplier ID in above",supplierId);
     if (!supplierId) return;                
-    const fetchCategories = async () => {    // Fetch supplier invoice list           
+    const fetchCategories = async () => {             
       try {
         const data = await categoryListBySupplierId(supplierId);
         setCategories(data.data);                               
-        console.log("categories...........",data.data); // Log the data
+        console.log("categories...........",data.data); 
       } catch (err) {
-        setError(error); // Log error message
+        // setError(error); // Log error message
       } 
     };
     fetchCategories(); // Call the function
@@ -60,7 +60,9 @@ const SupplierDetails = ({ selectedSupplier }) => {
         setSupplier(data.data);
         console.log("SupplierDetails",data);
       } catch (err) {
-        setError("Failed to fetch supplier details");
+        // setError("Failed to fetch supplier details");
+        // toast.error(error);
+
       } finally {
         setLoading(false);
       }
@@ -87,7 +89,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
         setSupplierInfo(response.data);
         console.log("SupplierDetails Info",response.data);
       } catch (err) {
-        setError(err.message || "Failed to fetch supplier.");
+        setError("Failed to fetch supplier.");
       } finally {
         setLoading(false);
       }
@@ -125,7 +127,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
       // fetchSupplierDetails(selectedSupplier.id); // Refresh data
       fetchSupplierInvoiceList(selectedSupplier.id); // Refresh data
     } catch (error) {
-      console.error("Error saving payment:", error);
+      // console.error("Error saving payment:", error);
       toast.error("Error saving payment:", error);
     }
   };
