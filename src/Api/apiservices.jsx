@@ -1,16 +1,20 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+
 
 // Base URL for your API
 // export const API_BASE_URL = "https://pvpzxbb1-3001.inc1.devtunnels.ms/";
 // export const API_BASE_URL = "https://pvpzxbb1-3001.inc1.devtunnels.ms/";
 // export const API_BASE_URL = "http://192.168.20.7:3002/";
-export const API_BASE_URL = "http://localhost:3002/";
+export const API_BASE_URL = "http://192.168.20.7:3002/";
 
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    Accept: "application/pdf",
+
   },
 });
 axiosInstance.interceptors.request.use(
@@ -67,7 +71,8 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/Signin";
     }
     console.error("API Error:", error.response || error.message);
-    alert(error.response?.data?.message || error.message);
+toast.error(error.response || error.message)
+    // alert(error.response?.data?.message || error.message);
     return Promise.reject(error);
   }
 );
@@ -219,7 +224,7 @@ export const register = async (formData) => {
       throw error.response ? error.response.data : error;
     }
   };
-  export const fetchProductsforreport = async (page,limit) => {
+  export const fetchProductsforreport = async () => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}products/Allpro_list`);
       // console.log("Fetched Products:", response.data); // Debugging
@@ -436,7 +441,7 @@ export const register = async (formData) => {
   export const getBinList = async () => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}products/list-soft-deleted`);
-      console.log("Api Bin",response)
+      console.log("Api Bin",response);
       return response.data;
     } catch (error) {
       console.error("Error fetching Bindata:", error);
@@ -652,28 +657,28 @@ export const register = async (formData) => {
     }
   };
 
-  export const downloadSalesReport = async (format) => {
-    const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";
-    try {
-      console.log(`📤 Requesting ${format.toUpperCase()} report...`);
+  // export const downloadSalesReport = async (format) => {
+  //   const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";
+  //   try {
+  //     console.log(`📤 Requesting ${format.toUpperCase()} report...`);
 
-      const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
-        responseType: "arraybuffer", // Alternative responseType for PDFs
-      });
-      // Create a URL and trigger the download
-      const url = window.URL.createObjectURL(new Blob([response.data],{ type: "application/pdf" }));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `invoice/sales-report.${format}`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log("🎉 File download triggered successfully!");
-    } catch (error) {
-      console.error("Error exporting report:", error);
-      throw error;
-    }
-  };
+  //     const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
+  //       responseType: "arraybuffer", // Alternative responseType for PDFs
+  //     });
+  //     // Create a URL and trigger the download
+  //     const url = window.URL.createObjectURL(new Blob([response.data],{ type: "application/pdf" }));
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `invoice/sales-report.${format}`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     console.log("🎉 File download triggered successfully!");
+  //   } catch (error) {
+  //     console.error("Error exporting report:", error);
+  //     throw error;
+  //   }
+  // };
 
 //   export const downloadSalesReport = async (format) => {
 //     const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";
@@ -712,6 +717,186 @@ export const register = async (formData) => {
   //   }
   // };
 
+  // export const downloadSalesReport = async (format) => {
+  //   const endpoint = format === "csv" ? "invoice/sales-report/csv" : "invoice/sales-report/pdf";
+  //   try {
+  //     console.log(`📤 Requesting ${format.toUpperCase()} report...`);
+  //     const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
+  //       responseType: "blob", // Ensures binary data is received
+  //       headers: {
+  //         Accept: format === "csv" ? "text/csv" : "application/pdf", // Set appropriate headers
+  //       },
+  //     });
+  
+  //     // Check if the response is valid
+  //     const contentType = response.headers["content-type"];
+  //     console.log("📑 Received content type:", contentType);
+  
+  //     if (
+  //       (format === "csv" && !contentType.includes("csv")) ||
+  //       (format === "pdf" && !contentType.includes("pdf"))
+  //     ) {
+  //       console.error("❌ Unexpected file type received:", contentType);
+  //       return;
+  //     }
+  
+  //     // Create a URL and trigger the download
+  //     const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", `invoice-sales-report.${format}`);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+      
+  //     console.log("🎉 File download triggered successfully!");
+  //   } catch (error) {
+  //     console.error("❌ Error exporting report:", error);
+  //     throw error;
+  //   }
+  // };
+
+export const downloadSalesReportCSV = async () => {
+  const endpoint = "invoice/sales-report/csv";
+  try {
+    console.log("📤 Requesting CSV sales report...");
+    const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
+      responseType: "blob", // Ensures binary data is received
+      headers: {
+        Accept: "text/csv", // Correct MIME type
+      },
+    });
+    // Validate content type
+    if (!response.headers["content-type"].includes("csv")) {
+      console.error("❌ Unexpected file type received:", response.headers["content-type"]);
+      return;
+    }
+
+    // Create URL and trigger download
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "invoice-sales-report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log("🎉 CSV file download triggered successfully!");
+  } catch (error) {
+    console.error("❌ Error exporting CSV report:", error);
+    throw error;
+  }
+};
+
+export const downloadSalesReportPDF = async () => { 
+  try {
+    console.log("📤 Requesting PDF sales report...");
+
+    const response = await axiosInstance.get(`${API_BASE_URL}invoice/sales-report/pdf`, {
+      responseType: "blob", 
+      // responseType: "arraybuffer",
+      // Ensures binary data is received
+      headers: {
+        Accept: "application/pdf", // Requesting a PDF file
+      },
+    });
+
+    // Check if response data is a valid Blob (PDF content)
+    if (!response.data || response.data.size === 0) {
+      console.error("❌ Received empty or invalid PDF file.");
+      return;
+    }
+
+    // Create a URL for the received Blob
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "invoice-sales-report.pdf");
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup: Remove link & revoke URL
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    console.log("🎉 PDF file download triggered successfully!");
+  } catch (error) {
+    console.error("❌ Error exporting PDF report:", error);
+    alert("Failed to download the sales report. Please try again.");
+  }
+};
+
+export const downloadStockReportPDF = async () => {
+  try {
+    console.log("📤 Requesting PDF Stock report...");
+
+    const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockPDF`, {
+      responseType: "blob", 
+      // responseType: "arraybuffer",
+      // Ensures binary data is received
+      headers: {
+        Accept: "application/pdf", // Requesting a PDF file
+      },
+    });
+
+    // Check if response data is a valid Blob (PDF content)
+    if (!response.data || response.data.size === 0) {
+      console.error("❌ Received empty or invalid PDF file.");
+      return;
+    }
+    // Create a URL for the received Blob
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "invoice-stock-report.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+    console.log("🎉 PDF file download triggered successfully!");
+  } catch (error) {
+    console.error("❌ Error exporting PDF report:", error);
+    alert("Failed to download the stock report. Please try again.");
+  }
+};
+
+export const downloadStockReportCSV = async () => {
+  try {
+    console.log("📤 Requesting CSV stock report...");
+    const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockCSV`, {
+      responseType: "blob", // Ensures binary data is received
+      headers: {
+        Accept: "text/csv", // Correct MIME type
+      },
+    });
+    // Validate content type
+    if (!response.headers["content-type"].includes("csv")) {
+      console.error("❌ Unexpected file type received:", response.headers["content-type"]);
+      return;
+    }
+
+    // Create URL and trigger download
+    const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "invoice-stock-report.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    console.log("🎉 CSV file download triggered successfully!");
+  } catch (error) {
+    console.error("❌ Error exporting CSV report:", error);
+    throw error;
+  }
+};
+
+  
+  
   export const getIncomeReport = async (interval) => {
     console.log("Fetching income report for interval:", interval);
     try {
@@ -742,6 +927,7 @@ export const register = async (formData) => {
       throw error;
     }
   };
+
   export const printDocument = async (invoiceId) => {
     console.log("Printing invoice with ID:", invoiceId);
     try {
@@ -815,4 +1001,3 @@ export const getTotalCustomerCount = async () => {
   }
 };
 
-// invoice/invoice_total_amount --overall sales report amount

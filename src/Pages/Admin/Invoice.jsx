@@ -76,7 +76,7 @@ const Invoice = () => {
                     <tr className="bg-cyan-700 text-white">
                         <th className="border border-gray-300 px-2 py-1">S.No</th>
                         <th className="border border-gray-300 px-2 py-1">Invoice No</th>
-                        <th className="border border-gray-300 px-2 py-1">Date</th>
+                        <th className="border border-gray-300 px-2 py-1">Invoice Date</th>
                         <th className="border border-gray-300 px-2 py-1">Amount</th>
                         <th className="border border-gray-300 px-2 py-1">Status</th>
                         <th className="border border-gray-300 px-2 py-1">Action</th>

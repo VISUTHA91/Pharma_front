@@ -5,6 +5,11 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart,Li
 import { fetchProductsforreport } from "../../Api/apiservices";
 import { FaSearch } from "react-icons/fa";
 import { PiExportBold } from "react-icons/pi";
+import { downloadStockReportPDF} from '../../Api/apiservices';
+import { downloadStockReportCSV} from '../../Api/apiservices';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 
 
@@ -12,13 +17,14 @@ import { PiExportBold } from "react-icons/pi";
 const StockReport = () => {
   const [stockData, setStockData] = useState([]);
     const [query, setQuery] = useState("");
-  
     const handleSearch = () => {
       if (query.trim() !== "") {
         onSearch(query);
       }
     };
     const [selectedStatus, setSelectedStatus] = useState("");
+      const [showOptions, setShowOptions] = useState(false);
+    
 
     // const FixedHeaderTable = () => {
     //   const data = Array.from({ length: 20 }, (_, i) => ({
@@ -46,34 +52,37 @@ const StockReport = () => {
     }
   };
 
+  const handleExport = async (format) => {
+    try {
+      if (format === "csv") {
+        await downloadStockReportCSV();
+      } else if (format === "pdf") {
+        await downloadStockReportPDF();
+      } else {
+        throw new Error("Invalid format specified");
+      }
+      toast.success("Download Successfully");
+    } catch (error) {
+      // console.error("Export failed:", error);
+      toast.error("Export failed");
+    }
+    setShowOptions(false);
+  };
+
   return (
     <div className=" ">
       <h2 className="text-xl font-semibold">Stock Report</h2>
-
-      {/* Stock Overview Chart */}
-      {/* <ResponsiveContainer width="100%" height={250}>
-        <BarChart data={stockData}>
-          <XAxis dataKey="product_name" />
-          <YAxis />
-          <Tooltip />
-          <Bar dataKey="product_quantity" fill="#4CAF50" />
-        </BarChart>
-      </ResponsiveContainer> */}
       <ResponsiveContainer width="100%" height={150}>
   <LineChart data={stockData}>
     <XAxis dataKey="product_name" />
     <YAxis   domain={[0, 1000]}  // Define the min & max range
       ticks={[0, 200, 400, 600, 800,1000]} // Custom tick values
       tickCount={7} 
-      // Ensures all 6 ticks are considered
-      // label={{ value: "Stock Quantity", angle: -90, position: "insideLeft" ,offset: 10, fill: "black",fontWeight: "bold"}}
       />
     <Tooltip />
     <Line type="monotone" dataKey="product_quantity" stroke="#82ca9d" strokeWidth={3} />
   </LineChart>
 </ResponsiveContainer>
-
-
       {/* Stock Report Table */}
       <div className="mt-4">
         <div className="flex justify-end items-center">
@@ -105,11 +114,29 @@ const StockReport = () => {
         <option value="out-of-stock">Out of Stock</option>
       </select>
     </div>
-    <button
-        className="bg-[#027483] text-white px-2 py-1 rounded mb-1"
-        >
-        <PiExportBold />
-      </button>
+   <div className="relative">
+   <button className="bg-[#027483] text-white px-2 py-1 rounded mb-1"
+   onClick={() => setShowOptions(!showOptions)}>
+   
+   <PiExportBold  size={24} title="Export Report"/>
+   </button>
+     {showOptions && (
+           <div className="absolute w-12 bg-white border border-gray-300 shadow-lg rounded">
+             <button
+               className="block w-full text-left px-2 py-1 hover:bg-gray-100"
+               onClick={() => handleExport("csv")}
+             >
+                CSV
+             </button>
+             <button
+               className="block w-full text-left  px-2  py-1 hover:bg-gray-100"
+               onClick={() => handleExport("pdf")}
+             >
+              PDF
+             </button>
+           </div>
+         )}
+           </div>
           </div>   
       <div className="h-64  overflow-y-auto">
        <table className="w-full border-collapse">
@@ -148,19 +175,12 @@ const StockReport = () => {
 >
   {item.stock_status}
 </td>
-{/* 
-        <td className="p-2 border">
-          <button className="bg-blue-500 text-white px-2 py-1 rounded">Restock</button>
-        </td> */}
       </tr>
     ))}
   </tbody>
 </table>
 </div>
 </div>
- 
-
-
     </div>
   );
 };

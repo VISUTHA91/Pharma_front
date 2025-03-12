@@ -92,11 +92,10 @@ function AdminCategory() {
                 }
               };
           const handleDelete = async (categoryId) => {
-            console.log("FUN",categoryId)
+            const isConfirmed = window.confirm("Are you sure you want to delete this category?");
+            if (!isConfirmed) return; 
             try {
               await deleteCategory(categoryId);
-              alert("Category deleted successfully!"); // Replace with modal if needed
-              // Optionally, refresh category list
               toast.success("Category Deleted Sucessfully!");
               setCategories(categories.filter(category => category.id !== categoryId));
               window.location.reload();
@@ -106,6 +105,7 @@ function AdminCategory() {
               toast.error("Error : ",error);
             }
           };   
+          
           const handleOpenEditModal = (category) => {
             if (!category) return;
             console.log("Category Data in Modal:", category); // Debugging
@@ -302,7 +302,6 @@ function AdminCategory() {
             onChange={(e) => {
               const value = e.target.value;
               if (/^(?=.*[A-Za-z])[A-Za-z0-9\s]*$/.test(value)) {
-
               // if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
                 setDescription(value);
               }

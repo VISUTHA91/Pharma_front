@@ -5,8 +5,11 @@ import { getMostSoldItems } from "../../Api/apiservices";
 import { FaSearch } from "react-icons/fa";
 import {getAllSoldProducts} from '../../Api/apiservices';
 import { PiExportBold } from "react-icons/pi";
-import {downloadSalesReport } from '../../Api/apiservices';
+// import {downloadSalesReport } from '../../Api/apiservices';
 import { toast } from "react-toastify";
+import {downloadSalesReportCSV} from '../../Api/apiservices';
+import {downloadSalesReportPDF}from '../../Api/apiservices';
+
 const SalesReport = () => {
   const [selectedFilter, setSelectedFilter] = useState(7);
   const [mostSold, setMostSold] = useState([]);
@@ -108,15 +111,32 @@ const handleSearch = () => {
   fetchSoldProducts(); // Fetch filtered products after updating state
 };
 
+// const handleExport = async (format) => {
+//   try {
+//     await downloadSalesReport(format); // Call API service
+//     toast.success("Download Successfully");
+//   } catch (error) {
+//     toast.error("Export failed:", error);
+//   }
+//   setShowOptions(false);
+// };
 const handleExport = async (format) => {
   try {
-    await downloadSalesReport(format); // Call API service
+    if (format === "csv") {
+      await downloadSalesReportCSV();
+    } else if (format === "pdf") {
+      await downloadSalesReportPDF();
+    } else {
+      throw new Error("Invalid format specified");
+    }
     toast.success("Download Successfully");
   } catch (error) {
-    toast.error("Export failed:", error);
+    console.error("Export failed:", error);
+    toast.error("Export failed");
   }
   setShowOptions(false);
 };
+
 
   return (
     <div className="p-4">

@@ -136,7 +136,7 @@ const Expense = () => {
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">Date</label>
                 <input
-                  type="date"
+                  type="text"
                   name="date"
                   value={formData.date}
                   onChange={handleInputChange}

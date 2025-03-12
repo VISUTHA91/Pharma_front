@@ -22,6 +22,8 @@ const SupplierDetails = ({ selectedSupplier }) => {
   const [error, setError] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState(null);
+  const [placeholder, setPlaceholder] = useState("Enter Invoice Date (DD/MM/YYYY)"); // Custom placeholder
+
   const [invoiceForm, setInvoiceForm] = useState({
    supplierId: supplierId || "",
     supplierBillNo: "",
@@ -102,6 +104,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
   const handleInvoiceChange = (e) => {
     setInvoiceForm({ ...invoiceForm, [e.target.name]: e.target.value });
   };
+
 
   const handlePaymentChange = (e) => {
     setPaymentForm({ ...paymentForm, [e.target.name]: e.target.value });
@@ -189,7 +192,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
             {[
               "Invoice ID",
               "Bill No",
-              "Date",
+              " Invoice Date",
               "Total Bill Amount",
               "Paid Amount",
               "Balance",
@@ -210,12 +213,15 @@ const SupplierDetails = ({ selectedSupplier }) => {
               {/* <td className="px-2">{item.company_name}</td> */}
               <td className="p-2">{item.invoice_id}</td>
               <td className="p-2">{item.supplier_bill_no}</td>
-              <td className="p-2">{item.invoice_bill_date ? item.invoice_bill_date.split("T")[0]:"N/A"}</td>
+              <td className="p-2">{item.invoice_bill_date ? new Date(item.invoice_bill_date).toLocaleDateString("en-GB"):"N/A"}</td>
               <td className="p-2">{item.bill_amount}</td>
               <td className="p-2">{item.total_paid}</td>
               <td className="p-2">{item.balance_bill_amount}</td>
-              <td className="p-2">{item.due_date ? item.due_date.split("T")[0] : "N/A"}</td>
-              <td className="p-2">{item.created_at ? item.created_at.split("T")[0]:"N/A"}</td>
+              {/* <td className="p-2">{item.due_date ? item.due_date.split("T")[0] : "N/A"}</td> */}
+              <td className="p-2">{item.due_date 
+    ? new Date(item.due_date).toLocaleDateString("en-GB") // Converts to DD/MM/YYYY
+    : "N/A"}</td>
+              <td className="p-2">{item.created_at ? new Date(item.created_at).toLocaleDateString("en-GB"):"N/A"}</td>
               {/* <td className="p-2 cursor-pointer" onClick={() => handleRowClick(item.status, item.invoice_id)}>
               {item.status}
               </td> */}
@@ -234,9 +240,15 @@ const SupplierDetails = ({ selectedSupplier }) => {
       </table>
       </div>
       {/* Invoice Modal */}
-      <Modal isOpen={isInvoiceModalOpen} onRequestClose={() => setIsInvoiceModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-10">
+      <Modal isOpen={isInvoiceModalOpen} onRequestClose={() => setIsInvoiceModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-2">
         <div className="flex justify-between items-center mb-4">
                    <h2 className="text-lg font-bold mb-4">Create Invoice</h2>
+                   <button 
+      onClick={() => setIsInvoiceModalOpen(false)} 
+      className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+    >
+      &times;
+    </button>
         </div>
  
         <form onSubmit={handleInvoiceSubmit} className="space-y-3">
@@ -244,6 +256,9 @@ const SupplierDetails = ({ selectedSupplier }) => {
           <input type="text" name="supplierBillNo" placeholder="Bill No" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
           <input type="text" name="description" placeholder="Description" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
           <input type="number" name="totalAmount" placeholder="Total Bill Amount" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
+          <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
+    Invoice Date
+  </label>
           <input type="date" name="invoiceDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required  placeholder="CurrentDate"/>
           {/* <div className="relative">
   <input
@@ -262,7 +277,9 @@ const SupplierDetails = ({ selectedSupplier }) => {
     InvoiceDate
   </label>
 </div> */}
-
+  <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
+    Due Date
+  </label>
 
           <input type="date" name="dueDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
           <button type="submit" className="w-full bg-[#027483] text-white p-2 rounded">Submit</button>
@@ -270,7 +287,15 @@ const SupplierDetails = ({ selectedSupplier }) => {
       </Modal>
       {/* Payment Modal */}
       <Modal isOpen={isPaymentModalOpen} onRequestClose={() => setIsPaymentModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-10">
-        <h2 className="text-lg font-bold mb-4">Enter Payment Details</h2>
+      <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-bold mb-4">Enter Payment Details</h2>
+        <button 
+      onClick={() => setIsInvoiceModalOpen(false)} 
+      className="text-gray-500 hover:text-gray-700 text-xl font-bold"
+    >
+      &times;
+    </button>
+    </div>
         <form onSubmit={handlePaymentSubmit} className="space-y-3">
           <input type="number" name="paymentAmount" placeholder="Amount" onChange={handlePaymentChange} className="w-full border p-2 rounded" required />
           <input type="date" name="paymentDate" onChange={handlePaymentChange} className="w-full border p-2 rounded" required />

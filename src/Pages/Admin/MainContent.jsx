@@ -60,7 +60,7 @@ function MainContent() {
   const [totalSales, setTotalSales] = useState(null);
   const [totalproducts, setTotalproducts] = useState(null);
   const [totalCustomer, setTotalCustomer] = useState(null);
-  const [showPrice, setShowPrice] = useState(true); // State to toggle price visibility
+  const [showPrice, setShowPrice] = useState(false); // State to toggle price visibility
 
 
 
