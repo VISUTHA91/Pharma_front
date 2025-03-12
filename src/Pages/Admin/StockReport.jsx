@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 // import { Table, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
 const StockReport = () => {
   const [stockData, setStockData] = useState([]);
+  const [loading , setLoading] = useState([]);
     const [query, setQuery] = useState("");
     const handleSearch = () => {
       if (query.trim() !== "") {
@@ -24,34 +25,71 @@ const StockReport = () => {
     };
     const [selectedStatus, setSelectedStatus] = useState("");
       const [showOptions, setShowOptions] = useState(false);
-    
+      const [products, setProducts] = useState([]);
+      const [error , setError] = useState([]);
 
-    // const FixedHeaderTable = () => {
-    //   const data = Array.from({ length: 20 }, (_, i) => ({
-    //     name: `Product ${i + 1}`,
-    //     price: `$${(i + 1) * 5}`,
-    //     quantity: Math.floor(Math.random() * 10) + 1,
-    //   }));
 
     const handleChange = (event) => {
       const value = event.target.value;
+      console.log("event.target.value",event.target.value);
       setSelectedStatus(value);
       onFilterChange(value); // Pass selected filter to parent component
     };
+  //   useEffect(() => {
+  //     const fetchProducts = async () => {
+  //       setLoading(true);
+  //       try {
+  //         const data = await getAllProductsStockSearch({
+  //           status: selectedStatus, // Send selected filter
+  //         });
+  //         setStockData(data.data); // Set fetched products
+  //       } catch (err) {
+  //         setError(err.message);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+  //     fetchProducts();
+  //   }, [selectedStatus]);
 
-  useEffect(() => {
-    fetchStockReport();
-  }, []);
+  // useEffect(() => {
+  //   fetchStockReport();
+  // }, []);
 
-  const fetchStockReport = async () => {
+  // const fetchStockReport = async () => {
+  //   try {
+  //     const response = await fetchProductsforreport();
+  //     setStockData(response.data);
+  //   } catch (error) {
+  //     console.error("Error fetching stock report:", error);
+  //   }
+  // };
+
+  
+  
+
+useEffect(() => {
+  const fetchStockData = async () => {
+    setLoading(true);
     try {
-      const response = await fetchProductsforreport();
-      setStockData(response.data);
-    } catch (error) {
-      console.error("Error fetching stock report:", error);
+      let data;
+      if (selectedStatus) {
+        data = await getAllProductsStockSearch({ status: selectedStatus });
+      } else {
+        data = await fetchProductsforreport(); // Fetch all products when no filter is selected
+      }
+      console.log("Sales DATA:::::",data)
+      setStockData(data.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  fetchStockData();
+}, [selectedStatus]);
+  
   const handleExport = async (format) => {
     try {
       if (format === "csv") {
@@ -109,9 +147,9 @@ const StockReport = () => {
         className="border p-1 w-full rounded focus:ring-2 focus:ring-blue-500"
       >
         <option value="">Status</option>
-        <option value="low-stock">Low Stock</option>
+        <option value="lowstock">Low Stock</option>
         <option value="available">Available</option>
-        <option value="out-of-stock">Out of Stock</option>
+        <option value="outofstock">Out of Stock</option>
       </select>
     </div>
    <div className="relative">
@@ -178,7 +216,7 @@ const StockReport = () => {
       </tr>
     ))}
   </tbody>
-</table>
+    </table>
 </div>
 </div>
     </div>

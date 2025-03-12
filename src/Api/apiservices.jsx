@@ -989,7 +989,6 @@ export const getTotalProductCount = async () => {
     throw error;
   }
 };
-
 export const getTotalCustomerCount = async () => {
   try {
     const response = await axiosInstance.get(`${API_BASE_URL}invoice/customers/count`);

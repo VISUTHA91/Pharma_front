@@ -256,7 +256,7 @@ const Billing = () => {
                     <td className="border border-gray-300 px-2 py-1">{product.product_batch_no}</td>
                     <td className="border border-gray-300 px-2 py-1">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
                     </td>
-                    <td className="border border-gray-300 px-2 py-1">{product.mrp}</td>
+                    <td className="border border-gray-300 px-2 py-1">{product.sellingPrice}</td>
                     <td className="border border-gray-300 px-2 py-1">{product.gst}%</td>
                     <td className="border border-gray-300 px-2 py-1">
                       <input
@@ -352,7 +352,6 @@ const Billing = () => {
                   <option value="UPI">UPI</option>
                 </select>
               </div>
-
               {/* Checkbox for Payment Status */}
               <div className="flex items-center gap-2">
                 <input
@@ -366,7 +365,6 @@ const Billing = () => {
                   Paid
                 </label>
               </div>
-
               <button
                 onClick={() => setModalOpen(false)}
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
