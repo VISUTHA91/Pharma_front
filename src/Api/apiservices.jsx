@@ -999,4 +999,15 @@ export const getTotalCustomerCount = async () => {
     throw error;
   }
 };
-
+export const getAllProductsStockSearch = async ({ status , search}) => {
+  try {
+    const response = await axiosInstance.get(`${API_BASE_URL}products/stock_list_product`, {
+      params: { status , search},
+    });
+    console.log("><><><><>",response)
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw new Error(error.response?.data?.message || "Failed to fetch products");
+  }
+};

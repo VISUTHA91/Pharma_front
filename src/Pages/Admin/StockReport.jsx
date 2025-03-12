@@ -9,20 +9,11 @@ import { downloadStockReportPDF} from '../../Api/apiservices';
 import { downloadStockReportCSV} from '../../Api/apiservices';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-
-
-
-// import { Table, TableHead, TableRow, TableBody, TableCell } from "@/components/ui/table";
+import {getAllProductsStockSearch} from '../../Api/apiservices';
 const StockReport = () => {
   const [stockData, setStockData] = useState([]);
   const [loading , setLoading] = useState([]);
     const [query, setQuery] = useState("");
-    const handleSearch = () => {
-      if (query.trim() !== "") {
-        onSearch(query);
-      }
-    };
     const [selectedStatus, setSelectedStatus] = useState("");
       const [showOptions, setShowOptions] = useState(false);
       const [products, setProducts] = useState([]);
@@ -31,54 +22,31 @@ const StockReport = () => {
 
     const handleChange = (event) => {
       const value = event.target.value;
-      console.log("event.target.value",event.target.value);
       setSelectedStatus(value);
-      onFilterChange(value); // Pass selected filter to parent component
     };
-  //   useEffect(() => {
-  //     const fetchProducts = async () => {
-  //       setLoading(true);
-  //       try {
-  //         const data = await getAllProductsStockSearch({
-  //           status: selectedStatus, // Send selected filter
-  //         });
-  //         setStockData(data.data); // Set fetched products
-  //       } catch (err) {
-  //         setError(err.message);
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-  //     fetchProducts();
-  //   }, [selectedStatus]);
 
-  // useEffect(() => {
-  //   fetchStockReport();
-  // }, []);
+    const handleSearch = async () => {
+      if (query.trim() !== "") {
+        await fetchStockData(); // Manually trigger fetching when searching
 
-  // const fetchStockReport = async () => {
-  //   try {
-  //     const response = await fetchProductsforreport();
-  //     setStockData(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching stock report:", error);
-  //   }
-  // };
-
-  
-  
-
+      }
+    };
+    
 useEffect(() => {
+  fetchStockData();
+}, [selectedStatus,query]);
+  
+  
+
   const fetchStockData = async () => {
     setLoading(true);
     try {
       let data;
-      if (selectedStatus) {
-        data = await getAllProductsStockSearch({ status: selectedStatus });
+      if (selectedStatus || query) {
+        data = await getAllProductsStockSearch({ status: selectedStatus , search: query });
       } else {
         data = await fetchProductsforreport(); // Fetch all products when no filter is selected
       }
-      console.log("Sales DATA:::::",data)
       setStockData(data.data);
     } catch (err) {
       setError(err.message);
@@ -87,8 +55,7 @@ useEffect(() => {
     }
   };
 
-  fetchStockData();
-}, [selectedStatus]);
+
   
   const handleExport = async (format) => {
     try {
@@ -121,7 +88,6 @@ useEffect(() => {
     <Line type="monotone" dataKey="product_quantity" stroke="#82ca9d" strokeWidth={3} />
   </LineChart>
 </ResponsiveContainer>
-      {/* Stock Report Table */}
       <div className="mt-4">
         <div className="flex justify-end items-center">
           <div className="flex items-center">
@@ -147,9 +113,9 @@ useEffect(() => {
         className="border p-1 w-full rounded focus:ring-2 focus:ring-blue-500"
       >
         <option value="">Status</option>
-        <option value="lowstock">Low Stock</option>
-        <option value="available">Available</option>
-        <option value="outofstock">Out of Stock</option>
+        <option value="Low Stock">Low Stock</option>
+        <option value="Available">Available</option>
+        <option value="Out of Stock">Out of Stock</option>
       </select>
     </div>
    <div className="relative">
