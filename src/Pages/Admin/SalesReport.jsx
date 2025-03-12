@@ -68,7 +68,6 @@ const SalesReport = () => {
     setFilteredSalesData(salesData[selectedFilter] || []);
   }, [salesData, selectedFilter]);
 
-
   const [soldProducts, setSoldProducts] = useState([]);
   const [filters, setFilters] = useState({
     startDate: "",
@@ -82,6 +81,7 @@ const SalesReport = () => {
   }, []);
 
   const fetchSoldProducts = async () => {
+    console.log("FILTER",filters)
     try {
       const data = await getAllSoldProducts(filters);
       console.log("PAGE SALES DATA",data)
@@ -90,17 +90,7 @@ const SalesReport = () => {
       console.error("Failed to fetch sold products:", error);
     }
   };
-// const filterSalesData = (start, end) => {
-//   if (start && end) {
-//     const filtered = salesData[selectedFilter].filter((item) => {
-//       const saleDate = new Date(item.saleDate); // Assuming each sale has a `saleDate`
-//       return saleDate >= new Date(start) && saleDate <= new Date(end);
-//     });
-//     setFilteredSalesData(filtered);
-//   } else {
-//     setFilteredSalesData(salesData[selectedFilter]);
-//   }
-// };
+
 const handleSearch = () => {
   setFilters((prevFilters) => ({
     ...prevFilters,
@@ -108,18 +98,15 @@ const handleSearch = () => {
     startDate: startDate ? startDate.toString().split("T")[0] : "",
     endDate: endDate ? endDate.toString().split("T")[0] : "",
   }));
-  fetchSoldProducts(); // Fetch filtered products after updating state
 };
 
-// const handleExport = async (format) => {
-//   try {
-//     await downloadSalesReport(format); // Call API service
-//     toast.success("Download Successfully");
-//   } catch (error) {
-//     toast.error("Export failed:", error);
-//   }
-//   setShowOptions(false);
-// };
+useEffect(() => {
+  if (filters.productName || filters.startDate || filters.endDate) {
+    fetchSoldProducts();
+  }
+}, [filters]); // Only fetch when filter values change
+
+
 const handleExport = async (format) => {
   try {
     if (format === "csv") {
@@ -172,7 +159,6 @@ const handleExport = async (format) => {
         ></div>
       </div>
     </div>))):(<>No Data</>)}
-              {/* {!loading && salesData.length === 0 && !error && <p>No data available.</p>} */}
 
 </div>
 
@@ -203,9 +189,7 @@ const handleExport = async (format) => {
     className="border border-gray-300 rounded px-1 py-1 w-28"
   />
 
-  {/* 'To' Label */}
   <span className="text-gray-600 font-medium">To</span>
-  {/* End Date Picker */}
   <DatePicker
     selected={filters.endDate}
     onChange={(date) => setFilters((prev) => ({ ...prev, endDate: date }))}

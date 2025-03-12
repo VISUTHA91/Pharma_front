@@ -17,6 +17,7 @@ import { FaSearch } from "react-icons/fa";
 import { FaFileExcel } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { getCategorywithoutpagination } from "../../Api/apiservices";
+import {getAllProductsStockSearch} from '../../Api/apiservices';
 
 function ProductCreation() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -41,6 +42,7 @@ function ProductCreation() {
     product_price: "",
     product_discount: "",
     supplier_price: "",
+    selling_price:" ",
     product_description: "",
     product_batch_no: "",
     expiry_date: "",
@@ -68,7 +70,6 @@ function ProductCreation() {
     };
     getProducts();
   }, [currentPage]);
-
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -81,9 +82,6 @@ function ProductCreation() {
       setFormData({ ...formData, [name]: value });
     }
   };
-  
-
-
 // Categories Fetch From Backend
   useEffect(() => {
     const fetchCategories = async () => {
@@ -97,7 +95,6 @@ function ProductCreation() {
     };
     fetchCategories();
   }, []);
-
   useEffect(() => {
     const getSuppliers = async () => {
       const data = await fetchSuppliers();
@@ -105,14 +102,12 @@ function ProductCreation() {
     };
     getSuppliers();
   }, []);
-
   useEffect(() => {
     if (showModal) {
     }
   }, [showModal, formData]);
   useEffect(() => {
   }, [formData]);
-
   const handleEdit = async (productId) => {
     setIsEditing(true);
     setEditingProductId(productId);
@@ -129,6 +124,7 @@ function ProductCreation() {
         product_price: product.product_price || "",
         product_discount: product.product_discount || "",
         supplier_price: product.supplier_price || "",
+        selling_price : product.selling_price || "",
         product_description: product.product_description || "",
         product_batch_no: product.product_batch_no || "",
         expiry_date: product.expiry_date || "",
@@ -142,7 +138,6 @@ function ProductCreation() {
       toast.error("Error Fetching Product Details:", error);
     }
   };
-
    const handleFormSubmit = async (e) => {
     e.preventDefault(); // Prevents default form submission
     try {
@@ -169,6 +164,7 @@ function ProductCreation() {
       product_price: "",
       product_discount: "",
       supplier_price: "",
+      selling_price:" ",
       product_description: "",
       product_batch_no: "",
       expiry_date: "",
@@ -209,7 +205,6 @@ function ProductCreation() {
     try {
       await deleteproduct(productId);
       toast.success("Product deleted successfully!");
-      // Optionally, update the UI by refetching categories
       setProducts((prevProducts) =>
         prevProducts.filter((product) => product.id !== productId)
       );
@@ -218,12 +213,31 @@ function ProductCreation() {
       toast.error("Failed to delete Product:");
     }
   };
-    const [query, setQuery] = useState("");
-    const handleSearch = () => {
+
+
+  const [query, setQuery] = useState("");
+
+  const handleSearch = async () => {
       if (query.trim() !== "") {
-        onSearch(query);
+        setLoading(true);
+        try {
+          const response = await getAllProductsStockSearch({ search: query });
+          console.log("Filters Results:",response);
+          setProducts(response.data);
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
       }
-    };
+  };
+const handleKeyDown = (e) => {
+  if (e.key === "Enter") {
+    handleSearch();
+  }
+};
+
 
   return (
     <div className="m-1">
@@ -236,6 +250,7 @@ function ProductCreation() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="CategoryName or ProductName"
+                onKeyDown={handleKeyDown}
                 className="px-1 py-1 w-64 focus:outline-none rounded-l"
               />
               <button
@@ -245,7 +260,7 @@ function ProductCreation() {
                 <FaSearch />
               </button>
               </div>
-     <div className="flex gap-2">
+        <div className="flex gap-2">
           <button
             onClick={() => {
               resetForm();
@@ -272,6 +287,7 @@ function ProductCreation() {
         </div>
       </div>
       <div className="items-center  mb-0">
+
       <table className="table-fixed w-[96%] bg-white rounded-lg shadow-md text-left mb-1">
         <thead className="bg-[#027483] text-white">
           <tr>
@@ -323,6 +339,7 @@ function ProductCreation() {
           ))}
         </tbody>
       </table>
+
       <PaginationComponent
           totalPages={totalPages}
           currentPage={currentPage}
@@ -425,11 +442,22 @@ function ProductCreation() {
                   />
                 </div>
                 <div>
+                  <label className="block text-sm font-medium">Selling Price</label>
+                  <input
+                    type="number"
+                    name="selling_price"
+                    value={formData.selling_price}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium">Supplier Price</label>
                   <input
                     type="number"
                     name="supplier_price"
-                    value={formData.supplier_price}
+                    value={formData.selling_price}
                     onChange={handleFormChange}
                     required
                     className="w-full border rounded p-2"
@@ -617,40 +645,3 @@ function ProductCreation() {
     </div>);
 }
 export default ProductCreation;
-
-{/* <button
-          onClick={() => {
-            resetForm();
-            setShowCreateForm(true);
-          }}
-          className="bg-[#027483] text-white px-8 py-2 rounded hover:bg-cyan-700"
-        >
-           <FcPlus size={28} />Add 
-        </button> */}
-
-
-// const handleEdit = (product) => {
-//   console.log("Editing Product Data:", product); // Debugging log
-//   setIsEditing(true);
-//   setEditingProductId(product.id);
-//   setFormData({
-//     product_name: product.product_name || "",
-//     generic_name: product.generic_name || "",
-//     brand_name: product.brand_name || "",
-//     product_quantity: product.product_quantity || 0,
-//     product_category: product.product_category ? String(product.product_category) : "", // Ensure it's a string
-//     product_price: product.product_price || "",
-//     product_discount: product.product_discount || "",
-//     supplier_price: product.supplier_price || "",
-//     product_description: product.product_description || "",
-//     product_batch_no: product.product_batch_no || "",
-//     expiry_date: product.expiry_date || "",
-//     MFD: product.MFD || "",
-//     supplier: product.supplier ? String(product.supplier) : "", // Ensure it's a string
-//     GST: product.GST ? String(product.GST) : "0", // Ensure it's a string
-//     stock_status: product.stock_status || "Available",
-//   });
-//   setShowModal(true);
-//   console.log("showModal state after setting:", showModal);
-
-// };

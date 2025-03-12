@@ -7,8 +7,6 @@ import { toast } from "react-toastify";
 // export const API_BASE_URL = "https://pvpzxbb1-3001.inc1.devtunnels.ms/";
 // export const API_BASE_URL = "http://192.168.20.7:3002/";
 export const API_BASE_URL = "http://192.168.20.7:3002/";
-
-
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -1004,7 +1002,6 @@ export const getAllProductsStockSearch = async ({ status , search}) => {
     const response = await axiosInstance.get(`${API_BASE_URL}products/stock_list_product`, {
       params: { status , search},
     });
-    console.log("><><><><>",response)
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);

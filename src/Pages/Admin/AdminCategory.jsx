@@ -11,6 +11,8 @@ import * as XLSX from "xlsx";
 import PaginationComponent from '../../Components/PaginationComponent';
 import { FaSearch } from "react-icons/fa";
 import { toast } from 'react-toastify';
+import { MdRemoveRedEye } from "react-icons/md";
+
 // import { Tooltip } from "@/components/ui/tooltip";
 
 function AdminCategory() {
@@ -23,6 +25,7 @@ function AdminCategory() {
     const [limit,setLimit] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track current page
     const [totalPages, setTotalPages] = useState([]);  
+      const [showModal, setShowModal] = useState(false);
     
         
     useEffect(() => {
@@ -122,6 +125,15 @@ function AdminCategory() {
             }
           }, [showEditModal, selectedCategory]);
 
+          const handleView = (product) => {
+            setSelectedCategory(product);
+            setShowModal(true);
+          };
+          const closeModal = () => {
+            setShowModal(false);
+            setSelectedCategory(null);
+          };
+
   return (
 <div className="m-2">
   <div className="flex justify-between items-center w-[96%]">
@@ -131,7 +143,7 @@ function AdminCategory() {
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder="CategoryName or ProductName"
+                    placeholder="CategoryName"
                     className="px-1 py-1 w-64 focus:outline-none rounded-l"
                   />
 
@@ -158,7 +170,6 @@ function AdminCategory() {
       {/* </Tooltip> */}
 
   </div>
-
   <table className="table-fixed w-[96%] bg-white  justify-center rounded-lg shadow-md text-left mb-1 mt-1 ">
   <thead className="bg-[#027483] text-white">
     <tr className=''>
@@ -178,6 +189,12 @@ function AdminCategory() {
         <td className="py-2 px-4 overflow-hidden truncate">{category.category_name}</td>
         <td className="py-2 px-4 overflow-hidden truncate">{category.description}</td>
         <td className="py-2 px-28 flex gap-4">
+        <button
+                  className="text-cyan-700 "
+                  onClick={() => handleView(category)}
+                >
+                  <MdRemoveRedEye size={20} />
+                </button>
           <button
             className="text-cyan-700"
             onClick={() => handleOpenEditModal(category)} >
@@ -331,6 +348,47 @@ function AdminCategory() {
     </div>
   </div>
 )}
+{/* View Modal */}
+{showModal && selectedCategory && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl w-2/3 max-w-4xl">
+            {/* Modal Header */}
+            <div className="flex justify-between items-center bg-cyan-700 text-white px-6 py-4 rounded-t-xl">
+              <h2 className="text-2xl font-semibold">Product Details</h2>
+            </div>
+            {/* Modal Content */}
+            <div className="p-6 space-y-4 text-gray-800 ">
+              <div className="grid grid-cols-2 gap-4">
+                <p>
+                  <strong className="font-semibold"> Category Name :</strong> {selectedCategory.category_name}
+                </p>
+                <p>
+                  <strong className="font-semibold">Category ID :</strong> {selectedCategory.id}
+                </p>
+               
+              
+               
+                <p>
+                  <strong className="font-semibold">Created Date :</strong> {selectedCategory.created_at ? selectedCategory.created_at.split("T")[0] : "N/A"}
+                </p>
+              
+              </div>
+              <div>
+                <p>
+                  <strong className="font-semibold">Description :</strong>
+                </p>
+                <p className="bg-gray-100 p-3 rounded-md text-sm">{selectedCategory.description}</p>
+              </div>
+            </div>
+            <div className="flex justify-end items-center px-6 py-4 bg-gray-100 rounded-b-xl">
+              <button
+                onClick={closeModal}
+                className="bg-cyan-700 text-white px-6 py-2 rounded-lg font-semibold hover:bg-cyan-800 transition duration-200">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>)}
 <PaginationComponent
           totalPages={totalPages}
           currentPage={currentPage}

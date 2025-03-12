@@ -25,10 +25,10 @@ const StockReport = () => {
       setSelectedStatus(value);
     };
 
+    
     const handleSearch = async () => {
       if (query.trim() !== "") {
         await fetchStockData(); // Manually trigger fetching when searching
-
       }
     };
     
@@ -36,8 +36,6 @@ useEffect(() => {
   fetchStockData();
 }, [selectedStatus,query]);
   
-  
-
   const fetchStockData = async () => {
     setLoading(true);
     try {
@@ -68,7 +66,6 @@ useEffect(() => {
       }
       toast.success("Download Successfully");
     } catch (error) {
-      // console.error("Export failed:", error);
       toast.error("Export failed");
     }
     setShowOptions(false);
@@ -112,7 +109,7 @@ useEffect(() => {
         onChange={handleChange}
         className="border p-1 w-full rounded focus:ring-2 focus:ring-blue-500"
       >
-        <option value="">Status</option>
+        <option value="">All</option>
         <option value="Low Stock">Low Stock</option>
         <option value="Available">Available</option>
         <option value="Out of Stock">Out of Stock</option>
