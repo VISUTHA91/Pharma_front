@@ -142,7 +142,6 @@ function ProductCreation() {
     e.preventDefault(); // Prevents default form submission
     try {
       if (selectedProduct) {
-        // console.log("Edited ProductID Befor Sending API", selectedProduct.product_id)
         await updateProduct(selectedProduct.product_id, formData);
         toast.success("Product Updated Successfully!");
       } else {

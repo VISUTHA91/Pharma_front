@@ -62,12 +62,13 @@ const Registration = () => {
   };
 
   useEffect(() => {
-    const fetchStaffList = async (page, limit) => {
+    const fetchStaffList = async () => {
       try {
-        const data = await getStaffList();
+        const data = await getStaffList(currentPage, limit);
         setLimit(data.limit);
         setTotalPages(data.totalPages);
-        setCurrentPage(data.page)
+        setCurrentPage(data.currentPage)
+        // console.log("page",data.currentPage)
         setStaffList(data); // Update the staff list state
         // console.log(",.,,,.,.,",data)
         setLoading(false); // Set loading to false after data is fetched
@@ -76,7 +77,6 @@ const Registration = () => {
         setLoading(false);
       }
     };
-
     fetchStaffList(); // Call the fetch function
   }, [currentPage]);
 
@@ -100,7 +100,6 @@ const Registration = () => {
   // };
   const handlenameChange = (e) => {
     const { name, value } = e.target;
-  
     // Allow alphabets, numbers, and spaces, but prevent input with only spaces
     if (/^(?!\s*$)(?!\d+$)[A-Za-z0-9 ]*$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));

@@ -63,12 +63,12 @@ const Invoice = () => {
               totalPages={totalPages}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}/>
-              <button
+              {/* <button
         className="bg-[#027483] text-white px-2 py-1 rounded mb-1"
         // onClick={() => setIsInvoiceModalOpen(true)}
         >
         Export
-      </button>
+      </button> */}
               
             </div>
             <table className="w-full  border-gray-300 text-left mt-4">
@@ -77,6 +77,7 @@ const Invoice = () => {
                         <th className="border border-gray-300 px-2 py-1">S.No</th>
                         <th className="border border-gray-300 px-2 py-1">Invoice No</th>
                         <th className="border border-gray-300 px-2 py-1">Invoice Date</th>
+                        <th className="border border-gray-300 px-2 py-1">GST</th>
                         <th className="border border-gray-300 px-2 py-1">Amount</th>
                         <th className="border border-gray-300 px-2 py-1">Status</th>
                         <th className="border border-gray-300 px-2 py-1">Action</th>
@@ -88,6 +89,8 @@ const Invoice = () => {
                             <td className="border border-gray-300 px-2 py-1">{index + 1}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_number}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td>
+                            
+                            <td className="border border-gray-300 px-2 py-1">{invoice.totalGST}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.finalPriceWithGST}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.payment_status}</td>
                             <td className="border border-gray-300 px-2 py-1">
@@ -127,6 +130,7 @@ const Invoice = () => {
                             <p><strong>Amount:</strong> {selectedInvoice.finalPriceWithGST}</p>
                             <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
                             <p><strong>Quantity:</strong> {selectedInvoice.quantity}</p>
+                            <p><strong>GST:</strong> {selectedInvoice.totalGST}</p>
                             <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
                             {/* <p><strong>Status:</strong> {selectedInvoice.payment_status}</p> */}
                         </div>

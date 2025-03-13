@@ -46,10 +46,9 @@ const SalesReport = () => {
         if ((response.data)) {
           setSalesData(prevData => ({
             ...prevData,
-            [period]: response.data // Store response in correct period key
+            [period]: response.data
           }));
         }
-        // console.log("Most Sold Items in Page", response.data);
       } catch (err) {
         setError("Error fetching data. Please try again.");
       }

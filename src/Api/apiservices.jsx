@@ -1,18 +1,14 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { BASEURL } from "../utils/envExport";
 
+export const API_BASE_URL = BASEURL;
 
-// Base URL for your API
-// export const API_BASE_URL = "https://pvpzxbb1-3001.inc1.devtunnels.ms/";
-// export const API_BASE_URL = "https://pvpzxbb1-3001.inc1.devtunnels.ms/";
-// export const API_BASE_URL = "http://192.168.20.7:3002/";
-export const API_BASE_URL = "http://192.168.20.7:3002/";
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/pdf",
-
   },
 });
 axiosInstance.interceptors.request.use(
@@ -55,7 +51,7 @@ axiosInstance.interceptors.response.use(
       if (response.data?.statusCode === 700 || response.status === 500 || response.status === 401) {
         alert("Session expired. Please log in again.");
         localStorage.removeItem("authToken"); // Clear the token
-        window.location.href = "/Signin"; // Redirect to login page
+        // window.location.href = "/Signin"; // Redirect to login page
       }
     } catch (error) {
       console.error("Error handling token expiration:", error);
@@ -69,7 +65,7 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/Signin";
     }
     console.error("API Error:", error.response || error.message);
-toast.error(error.response || error.message)
+    toast.error(error.response || error.message)
     // alert(error.response?.data?.message || error.message);
     return Promise.reject(error);
   }
@@ -117,15 +113,10 @@ export const register = async (formData) => {
     return response.data;
   };
   export const getStaffList = async (page, limit) => {
+    console.log("Api Data:",limit);
     try {
-      // const token = localStorage.getItem('authToken');
-      // console.log("Token being sent:", token);
-      // if (!token) {
-      //   throw new Error("Token not found. Please log in.");
-      // }
       const response = await axiosInstance.get(`${API_BASE_URL}staff/getstaff`,{
         params: { page, limit } });
-      console.log("Api Data:",response.data)
       return response.data;
     } catch (error) {
       console.error('Error fetching staff list:', error);
@@ -989,7 +980,7 @@ export const getTotalProductCount = async () => {
 };
 export const getTotalCustomerCount = async () => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}invoice/customers/count`);
+    const response = await axiosInstance.get(`${API_BASE_URL}customer/cus_total_count`);
     console.log("Total Customer Count",response.data)
     return response.data;
   } catch (error) {
