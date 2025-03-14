@@ -20,12 +20,13 @@ function AdminCategory() {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [categoryName, setCategoryName] = useState("");
     const [category_description, setCategory_description] = useState("");
+    const [description, setDescription] = useState("");
     const [showEditModal, setShowEditModal] = useState(false); // For modal visibility
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [limit,setLimit] = useState([]);
     const [currentPage, setCurrentPage] = useState(1); // Track current page
     const [totalPages, setTotalPages] = useState([]);  
-      const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     
         
     useEffect(() => {
@@ -51,9 +52,11 @@ function AdminCategory() {
       };      
           const handleSubmit = async (e) => {
             try {
+              console.log("Category:", categoryName);
+    console.log("Description:", description);
               const newCategory = {
                 category_name: categoryName,
-                description:category_description, // Include description if needed
+                description: description, // Include description if needed
               };
               const response = await createCategory(newCategory); // API call
               setCategories((prev) => [...prev, response]); // Update UI with API response
@@ -122,9 +125,18 @@ function AdminCategory() {
               setCategory_description(selectedCategory.category_description);
             }
           }, [showEditModal, selectedCategory]);
-          const handleView = (product) => {
-            setSelectedCategory(product);
-            setShowModal(true);
+
+          const handleView = async(categoryId) => {
+            try{
+              // setSelectedCategory(product);
+              await deleteCategory(categoryId);
+
+              setShowModal(true);
+            }
+            catch (error) {
+              toast.error("Error : ",error);
+            }
+            
           };
           const closeModal = () => {
             setShowModal(false);
@@ -141,8 +153,8 @@ function AdminCategory() {
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="CategoryName"
                     className="px-1 py-1 w-64 focus:outline-none rounded-l"
-                  /> */}
-                  {/* <button
+                  /> 
+                   <button
                     onClick={handleSearch}
                     className="bg-[#028090] hover:bg-[#027483] text-white px-2 py-2 flex rounded-r"
                   >
@@ -186,7 +198,7 @@ function AdminCategory() {
         <td className="py-2 px-28 flex gap-4">
         <button
                   className="text-cyan-700 "
-                  onClick={() => handleView(category)}
+                  onClick={() => handleView(category.id)}
                 >
                   <MdRemoveRedEye size={20} />
                 </button>
@@ -270,6 +282,7 @@ function AdminCategory() {
     </div>
   </div>
 )}
+
     {showCreateForm && (
   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white p-6 rounded-lg w-1/2 shadow-lg">
@@ -286,7 +299,6 @@ function AdminCategory() {
             type="text"
             id="category_name"
             value={categoryName}
-            // onChange={(e) => setCategoryName(e.target.value)}
             onChange={(e) => {
               const value = e.target.value;
               // Ensure at least one alphabet is present while allowing numbers and spaces

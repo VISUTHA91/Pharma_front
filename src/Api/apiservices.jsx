@@ -147,10 +147,10 @@ export const register = async (formData) => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category`,{
         params: { page, limit } });
-        console.log("Api Category pagination",response)
+        // console.log("Api Category pagination",response)
       return response;
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      // console.error("Error fetching categories:", error);
       throw error;
     }
   };
@@ -175,8 +175,6 @@ export const register = async (formData) => {
     }
   };
   export const updateCategory = async (categoryId, updatedData) => {
-    console.log("Updating Category with ID:", categoryId);
-    console.log("Updated Data:", updatedData);
     if (!categoryId) {
       console.error("Error: categoryId is undefined or null!");
       return;
@@ -200,6 +198,19 @@ export const register = async (formData) => {
       throw error.response ? error.response.data : error;
     }
   };
+  export const getCategoryById = async (categoryId) => {
+    console.log("For View",categoryId);
+    try {
+      const response = await axiosInstance.delete(`${API_BASE_URL}pro_category/category_product/${categoryId}`
+      );
+      console.log("Category View:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting category:", error.response ? error.response.data : error);
+      throw error.response ? error.response.data : error;
+    }
+  };
+
   export const fetchProducts = async (page,limit) => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}products/Allpro_pagination`,{

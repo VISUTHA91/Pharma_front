@@ -4,10 +4,11 @@ import { fetchInvoices } from "../../Api/apiservices";
 import PaginationComponent from "../../Components/PaginationComponent";
 import {getIncomeReport} from '../../Api/apiservices';
 import { toast } from "react-toastify";
-import { AiOutlineEye, AiOutlineEyeInvisible, } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEyeInvisible,   AiOutlineClose} from "react-icons/ai";
 // import Month from "react-datepicker/dist/month";
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Ensure this is included
+import { Link } from "react-router-dom";
 
 
 const IncomePage = () => {
@@ -26,9 +27,15 @@ const IncomePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showIncome, setShowIncome] = useState(false);
   const [showModal, setShowModal] = useState(false); // Modal state
+  const [activeModal, setActiveModal] = useState(null); // Track which modal is open
+  const openModal = (type) => {
+    setActiveModal(type);
+  };
 
-
-
+  // Function to close modals
+  const closeModal = () => {
+    setActiveModal(null);
+  };
 
   useEffect(() => {
     const fetchAllReports = async () => {
@@ -46,10 +53,10 @@ const IncomePage = () => {
         console.log("Yearly Income Report:", yearly.data);
         getIncomeReport("daily").then(console.log).catch(console.error);
         setIncomeData({
-          today: daily.data.total_income || 0,
-          month: monthly.data.total_income || 0,
-          sixmonth: sixmonth.data.total_income || 0,
-          year: yearly.data.total_income || 0,
+          today: daily.data || 0,
+          month: monthly.data || 0,
+          // sixmonth: sixmonth.data || 0,
+          year: yearly.data || 0,
         });
       } catch (err) {
         setError(err.message);
@@ -77,6 +84,8 @@ const IncomePage = () => {
     };
     invoicelist();
   }, [currentPage]);
+  
+  
   return (
     <div className="p-2">
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Income Overview</h1>
@@ -89,18 +98,26 @@ const IncomePage = () => {
 </button>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
     {[
-      { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
-      { label: "Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
-      { label: "Profit", value: incomeData.year, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
-      { label: "Expense", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
+      { label: "Today", value: incomeData.today.total_income, type: "today", icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
+      { label: "Month", value: incomeData.month.total_income, type:"month",icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
+      { label: "Profit", value: incomeData.year.total_profit, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
+      { label: "Expense", value: incomeData.year.expense, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400"  },
     ].map((card, index) => (
       <div
         key={index}
         className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-2 transform hover:scale-105 transition duration-300 overflow-hidden`}
+        onClick={() => openModal(card.type)} // Open specific modal
       >
         <div className="text-white text-4xl">{card.icon}</div>
         <div>
-          <h2 className="text-white text-lg font-medium">{card.label}</h2>
+          {/* <h2 className="text-white text-lg font-medium">{card.label}</h2> */}
+          {card.label === "Expense" ? (
+      <h2 className="text-white text-lg font-medium">
+        <Link to={'Expense'} className="hover:underline">{card.label}</Link>
+      </h2>
+    ) : (
+      <h2 className="text-white text-lg font-medium">{card.label}</h2>
+    )}
           <div className="flex ">
   <p className="text-white text-3xl font-bold flex-1 truncate">
     {showIncome ? `₹${(card.value ?? 0).toLocaleString()}` : "*****"}
@@ -111,8 +128,42 @@ const IncomePage = () => {
     ))}
   </div>
 </div>
+{activeModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 relative">
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+            >
+              <AiOutlineClose size={24} />
+            </button>
+            <h2 className="text-2xl font-semibold mb-4">
+              {activeModal === "today" && "Today's Income Details"}
+              {activeModal === "month" && "Monthly Income Details"}
+              {activeModal === "profit" && "Profit Details"}
+              {activeModal === "expense" && "Expense Details"}
+            </h2>
+            <p className="text-lg font-medium">
+              {activeModal === "today" &&(<> 
+              <p>Today Income: ₹{incomeData.today.total_income.toLocaleString()}</p>
+              <p>Today Expense: ₹{incomeData.today.expense.toLocaleString()}</p>
+              <p>Today Supplier Cost : ₹{incomeData.today.total_cost.toLocaleString()}</p>
+              <p>Today Profit: ₹{incomeData.today.total_profit.toLocaleString()}</p>
+              </>)}
+              {activeModal === "month" && (<> 
+              <p>This Month Income: ₹{incomeData.month.total_income}</p>
+              <p>This Month Expense: ₹{incomeData.month.expense.toLocaleString()}</p>
+              <p>This Month Supplier Cost : ₹{incomeData.month.total_cost.toLocaleString()}</p>
+              <p>This Month Profit: ₹{incomeData.month.total_profit.toLocaleString()}</p>
+              </>)}
+              {activeModal === "profit" && `Total Profit: ₹${incomeData.sixmonth.toLocaleString()}`}
+              {activeModal === "expense" && `Total Expense: ₹${incomeData.year.toLocaleString()}`}
+            </p>
+          </div>
+        </div>
+      )}
 
-
+{/* Income Table */}
 
        <div className="mt-4 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">

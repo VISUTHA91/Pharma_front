@@ -57,6 +57,7 @@ function App() {
       <Route path='Billing' element= {<Billing/>} />
       <Route path='Income' element= {<Income />} />
       <Route path='Expense' element= {<Expense />} />
+      <Route path='Income/Expense' element= {<Expense />} />
       <Route path='Invoice' element= {<Invoice />} />
       <Route path='SalesReport' element = {<SalesReport /> } />
       <Route path='StockReport' element = {<StockReport /> } />

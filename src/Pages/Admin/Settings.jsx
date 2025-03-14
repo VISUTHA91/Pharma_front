@@ -224,8 +224,8 @@ const Settings = () => {
           <h2 className="text-lg font-semibold">Email Support</h2>
           <div className='flex gap-2'>
           <p>For queries, email us at:</p>
-          <a href="mailto:support@pharmacy.com" className="text-blue-500 hover:underline">
-            support@pharmacy.com
+          <a href="mailto:pharmasupport@evvisolutions.com" className="text-blue-500 hover:underline">
+            pharmasupport@evvisolutions.com
           </a>
           </div>
         </div>
