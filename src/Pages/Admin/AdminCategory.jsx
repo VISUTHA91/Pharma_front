@@ -19,7 +19,7 @@ function AdminCategory() {
     const [categories, setCategories] = useState([]);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [categoryName, setCategoryName] = useState("");
-    const [description, setDescription] = useState("");
+    const [category_description, setCategory_description] = useState("");
     const [showEditModal, setShowEditModal] = useState(false); // For modal visibility
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [limit,setLimit] = useState([]);
@@ -53,7 +53,7 @@ function AdminCategory() {
             try {
               const newCategory = {
                 category_name: categoryName,
-                description:description, // Include description if needed
+                description:category_description, // Include description if needed
               };
               const response = await createCategory(newCategory); // API call
               setCategories((prev) => [...prev, response]); // Update UI with API response
@@ -67,27 +67,27 @@ function AdminCategory() {
               toast.error("Error Creating Category : ",error)
             }
           };
-
           const handleEditSubmit = async (e) => {
-            // e.preventDefault();
+            e.preventDefault();
+            console.log("Selected Category",selectedCategory.category_id);
             try {
               const updatedData = { 
                 category_name: categoryName, // Ensure correct key
-                description 
+                description : category_description
               };
               console.log("Final Data Sent to API:", updatedData); // Debugging
-              await updateCategory(selectedCategory.id, updatedData);
+              console.log(" ID Sent to API:", selectedCategory.category_id); // Debugging
+              await updateCategory(selectedCategory.category_id, updatedData);
               // alert("Category updated successfully!");
               toast.success("Category Updated Sucessfully !");
               setShowEditModal(false);
-              window.location.reload();
+              // window.location.reload();
             } catch (error) {
               console.error("Error updating category:", error);
               alert("Failed to update category!");
               toast.error("Failed to Update Category !");
             }
           };
-
            const [query, setQuery] = useState("");
               const handleSearch = () => {
                 if (query.trim() !== "") {
@@ -108,23 +108,20 @@ function AdminCategory() {
               toast.error("Error : ",error);
             }
           };   
-          
           const handleOpenEditModal = (category) => {
             if (!category) return;
             console.log("Category Data in Modal:", category); // Debugging
             setCategoryName(category.category_name || ""); // Ensure correct key
-            setDescription(category.description || "");
+            setCategory_description(category.category_description || "");
             setSelectedCategory(category);
             setShowEditModal(true);
           };
-          
           useEffect(() => {
             if (showEditModal && selectedCategory) {
               setCategoryName(selectedCategory.category_name);
-              setDescription(selectedCategory.description);
+              setCategory_description(selectedCategory.category_description);
             }
           }, [showEditModal, selectedCategory]);
-
           const handleView = (product) => {
             setSelectedCategory(product);
             setShowModal(true);
@@ -133,7 +130,6 @@ function AdminCategory() {
             setShowModal(false);
             setSelectedCategory(null);
           };
-
   return (
 <div className="m-2">
   <div className="flex justify-between items-center w-[96%]">
@@ -187,7 +183,7 @@ function AdminCategory() {
       >
         <td className="py-2 px-4">{index + 1}</td>
         <td className="py-2 px-4 overflow-hidden truncate">{category.category_name}</td>
-        <td className="py-2 px-4 overflow-hidden truncate">{category.description}</td>
+        <td className="py-2 px-4 overflow-hidden truncate">{category.category_description}</td>
         <td className="py-2 px-28 flex gap-4">
         <button
                   className="text-cyan-700 "
@@ -222,12 +218,6 @@ function AdminCategory() {
           >
             Category Name
           </label>
-        {/* <input
-          type="text"
-          value={categoryName}
-          onChange={(e) => setCategoryName(e.target.value)}
-          className="mt-2 p-2 border rounded w-full"
-        /> */}
         <input
   type="text"
   value={categoryName}
@@ -249,13 +239,13 @@ function AdminCategory() {
           </label>
           <input
             type="text"
-            id="descripton"
-            value={description}
+            id="category_description"
+            value={category_description}
             // onChange={(e) => setDescription(e.target.value)}
             onChange={(e) => {
               const value = e.target.value;
               if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
-                setDescription(value);
+                setCategory_description(value);
               }
             }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -363,13 +353,34 @@ function AdminCategory() {
                   <strong className="font-semibold"> Category Name :</strong> {selectedCategory.category_name}
                 </p>
                 <p>
-                  <strong className="font-semibold">Category ID :</strong> {selectedCategory.id}
+                  <strong className="font-semibold">Category ID :</strong> {selectedCategory.cat_auto_gen_id
+                  }
                 </p>
-               
-              
-               
+                {/* {selectedCategory.products && selectedCategory.products.length > 0 && (
+  <p>
+    <strong className="font-semibold">Products:</strong>{" "}
+    {selectedCategory.products.map((product, index) => (
+      <span key={index}>
+        {product.product_name}
+        {index !== selectedCategory.products.length - 1 && ", "} 
+      </span>
+    ))}
+  </p>
+)} */}
+
+{selectedCategory.products && selectedCategory.products.length > 0 && (
+  <div>
+    <strong className="font-semibold">Products:</strong>
+    <ul className="ml-16">
+      {selectedCategory.products.map((product, index) => (
+        <li key={index}>{product.product_name}</li>
+      ))}
+    </ul>
+  </div>
+)}
+
                 <p>
-                  <strong className="font-semibold">Created Date :</strong> {selectedCategory.created_at ? selectedCategory.created_at.split("T")[0] : "N/A"}
+                  <strong className="font-semibold">Created Date :</strong> {selectedCategory.category_created_at ? selectedCategory.category_created_at.split("T")[0] : "N/A"}
                 </p>
               
               </div>
@@ -377,7 +388,7 @@ function AdminCategory() {
                 <p>
                   <strong className="font-semibold">Description :</strong>
                 </p>
-                <p className="bg-gray-100 p-3 rounded-md text-sm">{selectedCategory.description}</p>
+                <p className="bg-gray-100 p-3 rounded-md text-sm">{selectedCategory.category_description}</p>
               </div>
             </div>
             <div className="flex justify-end items-center px-6 py-4 bg-gray-100 rounded-b-xl">
@@ -393,10 +404,7 @@ function AdminCategory() {
           totalPages={totalPages}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage} />
-
   </div>
     )
 }
-
 export default AdminCategory
-  {/* <div className="lg:flex lg:flex-row sm:flex-col w-full"> */}

@@ -177,7 +177,6 @@ export const register = async (formData) => {
   export const updateCategory = async (categoryId, updatedData) => {
     console.log("Updating Category with ID:", categoryId);
     console.log("Updated Data:", updatedData);
-  
     if (!categoryId) {
       console.error("Error: categoryId is undefined or null!");
       return;
@@ -887,7 +886,6 @@ export const downloadStockReportCSV = async () => {
   
   
   export const getIncomeReport = async (interval) => {
-    console.log("Fetching income report for interval:", interval);
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}report/income-report`, {
         params: { interval } // Passing interval as a query parameter

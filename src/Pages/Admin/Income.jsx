@@ -38,24 +38,17 @@ const IncomePage = () => {
           getIncomeReport("6MONTH"),
           getIncomeReport("YEARLY"),
         ]);
-        // Update state with fetched values
-        console.log("Daily Income Report:", daily.data.total_income);
-        console.log("Monthly Income Report:", monthly.data.total_income);
-        console.log("Weekly Income Report:", sixmonth.data.total_income);
-        console.log("Yearly Income Report:", yearly.data.total_income);
+        console.log("Daily Income Report:", daily.data);
+        console.log("Monthly Income Report:", monthly.data);
+        console.log("Weekly Income Report:", sixmonth.data);
+        console.log("Yearly Income Report:", yearly.data);
         getIncomeReport("daily").then(console.log).catch(console.error);
         setIncomeData({
-          today: daily.data.total_income || 0,
+          today: daily.data || 0,
           month: monthly.data.total_income || 0,
           sixmonth: sixmonth.data.total_income || 0,
           year: yearly.data.total_income || 0,
         });
-        // console.log("Updated Income Data:", {
-        //   today: daily?.total_income || 0,
-        //   week: weekly?.total_income || 0,
-        //   month: monthly?.total_income || 0,
-        //   year: yearly?.total_income || 0,
-        // });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -82,46 +75,9 @@ const IncomePage = () => {
     };
     invoicelist();
   }, [currentPage]);
-
-  const cards = [
-    { title: "Today", value: incomeData.daily, icon: <AiOutlineCalendar />, bgColor: "from-blue-500 to-blue-300" },
-    { title: "This Month", value:incomeData.month, icon: <AiOutlinePieChart />, bgColor: "from-yellow-500 to-yellow-300" },
-    { title: "Six Month", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "from-green-500 to-green-300" },
-    { title: "This Year", value:incomeData.year, icon: <AiOutlineRise />, bgColor: "from-purple-500 to-purple-300" },
-  ];
-
   return (
     <div className="p-2">
       <h1 className="text-3xl font-bold text-gray-800 mb-2">Income Overview</h1>
-      {/* <div className="relative">
-      <button
-        onClick={() => setShowIncome(!showIncome)}
-        className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition"
-      >
-        {showIncome ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-      </button>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
-        {[
-          { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
-          { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
-          { label: "Six Months ", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
-          { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
-        ].map((card, index) => (
-          <div
-            key={index}
-            className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-4 transform hover:scale-105 transition duration-300 overflow-hidden`}
-          >
-            <div className="text-white text-4xl">{card.icon}</div>
-            <div>
-              <h2 className="text-white text-lg font-medium">{card.label}</h2>
-              <p className="text-white text-3xl font-bold">
-                {showIncome ? `₹${card.value.toLocaleString()}` : "****"}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div> */}
     <div className="relative min-h-[50px]">
     <button
   onClick={() => setShowIncome(!showIncome)}
@@ -129,12 +85,11 @@ const IncomePage = () => {
 >
   {showIncome ?   <AiOutlineEyeInvisible size={20} />: <AiOutlineEye size={20} />  }
 </button>
-  
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
     {[
-      { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
+      { label: "Today", value: incomeData.today.data, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
       { label: "Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
-      { label: "Profit", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
+      { label: "Profit", value: incomeData.year, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
       { label: "Expense", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
     ].map((card, index) => (
       <div
@@ -146,7 +101,7 @@ const IncomePage = () => {
           <h2 className="text-white text-lg font-medium">{card.label}</h2>
           <div className="flex ">
   <p className="text-white text-3xl font-bold flex-1 truncate">
-    {showIncome ? `₹${card.value.toLocaleString()}` : "*****"}
+    {showIncome ? `₹${(card.value ?? 0).toLocaleString()}` : "*****"}
   </p>
 </div>
         </div>
@@ -169,18 +124,14 @@ const IncomePage = () => {
                 <th className="px-4 py-2 border border-gray-300">Invoice ID</th>
                 <th className="px-4 py-2 border border-gray-300">Date</th>
                 <th className="px-4 py-2 border border-gray-300">Amount</th>
-                {/* <th className="px-4 py-2 border border-gray-300">Detail</th> */}
               </tr>
             </thead>
             <tbody>
             {invoices.map((invoice, index) => (
-              // {incomeList.map((income, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-4 py-2 border border-gray-300">{invoice.invoice_number}</td>
-                  {/* <td className="px-4 py-2 border border-gray-300">{invoice.category}</td> */}
                   <td className="px-4 py-2 border border-gray-300">{invoice.invoice_created_at.split("T")[0]}</td>
                   <td className="px-4 py-2 border border-gray-300">₹{invoice.finalPriceWithGST}</td>
-                  {/* <td className="px-4 py-2 border border-gray-300">{invoice.detail}</td> */}
                 </tr>
               ))}
             </tbody>
@@ -251,3 +202,41 @@ export default IncomePage;
 //     </div>
 //   );
 // }
+
+
+   {/* <div className="relative">
+      <button
+        onClick={() => setShowIncome(!showIncome)}
+        className="absolute top-2 right-2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 transition"
+      >
+        {showIncome ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+      </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
+        {[
+          { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
+          { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
+          { label: "Six Months ", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
+          { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
+        ].map((card, index) => (
+          <div
+            key={index}
+            className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-4 transform hover:scale-105 transition duration-300 overflow-hidden`}
+          >
+            <div className="text-white text-4xl">{card.icon}</div>
+            <div>
+              <h2 className="text-white text-lg font-medium">{card.label}</h2>
+              <p className="text-white text-3xl font-bold">
+                {showIncome ? `₹${card.value.toLocaleString()}` : "****"}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div> */}
+
+     // const cards = [
+  //   { title: "Today", value: incomeData.daily, icon: <AiOutlineCalendar />, bgColor: "from-blue-500 to-blue-300" },
+  //   { title: "This Month", value:incomeData.month, icon: <AiOutlinePieChart />, bgColor: "from-yellow-500 to-yellow-300" },
+  //   { title: "Six Month", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "from-green-500 to-green-300" },
+  //   { title: "This Year", value:incomeData.year, icon: <AiOutlineRise />, bgColor: "from-purple-500 to-purple-300" },
+  // ];
