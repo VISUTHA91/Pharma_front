@@ -132,10 +132,11 @@ export const register = async (formData) => {
       throw error;
     }
   };
-  export const getCategory = async (page, limit) => {
+  export const getCategory = async (page,limit) => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category_pagination`,{
-        params: { page, limit } });
+        params: { page, limit } }
+      );
         console.log("Api Category",response)
       return response.data;
     } catch (error) {

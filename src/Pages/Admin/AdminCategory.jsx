@@ -33,6 +33,7 @@ function AdminCategory() {
         const fetchCategories =async () => {
           try {
             const staticCategories = await getCategory(currentPage, limit);
+            // const staticCategories = await getCategory();
             setLimit(staticCategories.limit);
             setTotalPages(staticCategories.totalPages);
             setCurrentPage(staticCategories.page)
@@ -194,7 +195,7 @@ function AdminCategory() {
       >
         <td className="py-2 px-4">{index + 1}</td>
         <td className="py-2 px-4 overflow-hidden truncate">{category.category_name}</td>
-        <td className="py-2 px-4 overflow-hidden truncate">{category.category_description}</td>
+        <td className="py-2 px-4 overflow-hidden truncate">{category.description}</td>
         <td className="py-2 px-28 flex gap-4">
         <button
                   className="text-cyan-700 "
@@ -399,7 +400,7 @@ function AdminCategory() {
                 <p>
                   <strong className="font-semibold">Description :</strong>
                 </p>
-                <p className="bg-gray-100 p-3 rounded-md text-sm">{selectedCategory.category_description}</p>
+                <p className="bg-gray-100 p-3 rounded-md text-sm">{selectedCategory.description}</p>
               </div>
             </div>
             <div className="flex justify-end items-center px-6 py-4 bg-gray-100 rounded-b-xl">
