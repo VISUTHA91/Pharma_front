@@ -135,13 +135,13 @@ function AdminCategory() {
   <div className="flex justify-between items-center w-[96%]">
     <h1 className="text-xl font-bold ml-2">Category Details</h1>
       <div className="flex items-center">
-                <input
+                {/* <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="CategoryName"
                     className="px-1 py-1 w-64 focus:outline-none rounded-l"
-                  />
+                  /> */}
 
                   {/* <button
                     onClick={handleSearch}

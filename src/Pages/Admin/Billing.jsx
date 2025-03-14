@@ -164,6 +164,7 @@ const Billing = () => {
       alert("Failed to save invoice. Please try again.");
     }
   };
+  
 
   const handlePrint = async (selectedInvoiceId) => {
     console.log("Print");

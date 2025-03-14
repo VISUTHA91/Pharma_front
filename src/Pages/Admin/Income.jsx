@@ -25,6 +25,8 @@ const IncomePage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [showIncome, setShowIncome] = useState(false);
+  const [showModal, setShowModal] = useState(false); // Modal state
+
 
 
 
@@ -44,7 +46,7 @@ const IncomePage = () => {
         console.log("Yearly Income Report:", yearly.data);
         getIncomeReport("daily").then(console.log).catch(console.error);
         setIncomeData({
-          today: daily.data || 0,
+          today: daily.data.total_income || 0,
           month: monthly.data.total_income || 0,
           sixmonth: sixmonth.data.total_income || 0,
           year: yearly.data.total_income || 0,
@@ -87,7 +89,7 @@ const IncomePage = () => {
 </button>
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
     {[
-      { label: "Today", value: incomeData.today.data, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
+      { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
       { label: "Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
       { label: "Profit", value: incomeData.year, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
       { label: "Expense", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
@@ -109,6 +111,9 @@ const IncomePage = () => {
     ))}
   </div>
 </div>
+
+
+
        <div className="mt-4 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Income List</h2>
