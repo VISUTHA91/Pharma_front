@@ -143,12 +143,12 @@ function AdminCategory() {
                     className="px-1 py-1 w-64 focus:outline-none rounded-l"
                   />
 
-                  <button
+                  {/* <button
                     onClick={handleSearch}
                     className="bg-[#028090] hover:bg-[#027483] text-white px-2 py-2 flex rounded-r"
                   >
                     <FaSearch />
-                  </button>
+                  </button> */}
                   </div>
                   {/* <Tooltip content="Add Category"> */}
 
