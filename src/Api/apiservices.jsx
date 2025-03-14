@@ -65,7 +65,7 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/Signin";
     }
     console.error("API Error:", error.response || error.message);
-    toast.error(error.response || error.message)
+    // toast.error(error.response || error.message)
     // alert(error.response?.data?.message || error.message);
     return Promise.reject(error);
   }
@@ -244,12 +244,12 @@ export const register = async (formData) => {
   };  
 
   export const createProduct = async (productData) => {
-    console.log("API  Submit",productData)
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}products/inproduct`, productData);
       return response.data;
     } catch (error) {
-      console.error("Error creating product:", error);
+      // console.error("Error creating product:", error.response.data.message);
+      toast.error(error.response.data.message)
       throw error;
     }
   };

@@ -80,6 +80,7 @@ const Invoice = () => {
                         <th className="border border-gray-300 px-2 py-1">GST</th>
                         <th className="border border-gray-300 px-2 py-1">Amount</th>
                         <th className="border border-gray-300 px-2 py-1">Status</th>
+                        <th className="border border-gray-300 px-2 py-1">Method</th>
                         <th className="border border-gray-300 px-2 py-1">Action</th>
                     </tr>
                 </thead>
@@ -91,8 +92,9 @@ const Invoice = () => {
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td>
                             
                             <td className="border border-gray-300 px-2 py-1">{invoice.totalGST}</td>
-                            <td className="border border-gray-300 px-2 py-1">{invoice.finalPriceWithGST}</td>
+                            <td className="border border-gray-300 px-2 py-1">{invoice.total_price}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.payment_status}</td>
+                            <td className="border border-gray-300 px-2 py-1">{invoice.payment_method}</td>
                             <td className="border border-gray-300 px-2 py-1">
                                 <button
                                     className="text-cyan-700 px-4 py-1"
@@ -131,7 +133,8 @@ const Invoice = () => {
                             <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
                             <p><strong>Quantity:</strong> {selectedInvoice.quantity}</p>
                             <p><strong>GST:</strong> {selectedInvoice.totalGST}</p>
-                            <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
+                            <p><strong>Payment Status:</strong> {selectedInvoice.payment_status}</p>
+                            <p><strong>Payment Method:</strong> {selectedInvoice.payment_method}</p>
                             {/* <p><strong>Status:</strong> {selectedInvoice.payment_status}</p> */}
                         </div>
                     </div>

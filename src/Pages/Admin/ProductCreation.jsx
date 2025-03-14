@@ -108,10 +108,14 @@ function ProductCreation() {
   }, [showModal, formData]);
   useEffect(() => {
   }, [formData]);
+  const handleView = (product) => {
+    setSelectedProduct(product);
+    setShowModal(true);
+  };
   const handleEdit = async (productId) => {
     setIsEditing(true);
     setEditingProductId(productId);
-    // console.log("Editing Product ID:", productId); // Debugging log
+    console.log("Editing Product ID:", productId); // Debugging log
     try {
       const response = await fetchProductbyID(productId);
       const product = response.data;
@@ -138,19 +142,19 @@ function ProductCreation() {
       toast.error("Error Fetching Product Details:", error);
     }
   };
-   const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault(); // Prevents default form submission
-    try {
-      if (selectedProduct) {
-        await updateProduct(selectedProduct.product_id, formData);
+        try {
+      if (editingProductId) {
+        await updateProduct(editingProductId, formData);
         toast.success("Product Updated Successfully!");
       } else {
-        console.log("Product DAta Befor Sending API", formData)
+        console.log("Product Data Before Sending API", formData)
         await createProduct(formData);
         toast.success("Product Created Successfully!");
       }
     } catch (error) {
-      toast.error("Failed to save Product Please Try Again");
+      console.log("Failed to save Product Please Try Again");
     }
   };
   const resetForm = () => {
@@ -175,10 +179,7 @@ function ProductCreation() {
     setEditingProductId(null);
     setIsEditing(false);
   };
-  const handleView = (product) => {
-    setSelectedProduct(product);
-    setShowModal(true);
-  };
+ 
   const closeModal = () => {
     setShowModal(false);
     setSelectedProduct(null);
@@ -286,7 +287,6 @@ const handleKeyDown = (e) => {
         </div>
       </div>
       <div className="items-center  mb-0">
-
       <table className="table-fixed w-[96%] bg-white rounded-lg shadow-md text-left mb-1">
         <thead className="bg-[#027483] text-white">
           <tr>
@@ -456,7 +456,7 @@ const handleKeyDown = (e) => {
                   <input
                     type="number"
                     name="supplier_price"
-                    value={formData.selling_price}
+                    value={formData.supplier_price}
                     onChange={handleFormChange}
                     required
                     className="w-full border rounded p-2"

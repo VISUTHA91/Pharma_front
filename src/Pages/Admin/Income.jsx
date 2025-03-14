@@ -133,9 +133,9 @@ const IncomePage = () => {
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
     {[
       { label: "Today", value: incomeData.today, icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
-      { label: "This Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
-      { label: "Six Months", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
-      { label: "This Year", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
+      { label: "Month", value: incomeData.month, icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
+      { label: "Profit", value: incomeData.sixmonth, icon: <AiOutlineBarChart />, bgColor: "bg-green-400" },
+      { label: "Expense", value: incomeData.year, icon: <AiOutlinePieChart />, bgColor: "bg-purple-400" },
     ].map((card, index) => (
       <div
         key={index}

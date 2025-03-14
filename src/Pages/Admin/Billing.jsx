@@ -46,6 +46,7 @@ const Billing = () => {
       setproducts((prevproducts) => {
         const existingProduct = prevproducts.find((p) => p.id === productDetails.id);
         if (!existingProduct) {
+          console.log("<><><><>EXISTING",existingProduct)
           return [
             ...prevproducts,
             {
@@ -53,10 +54,10 @@ const Billing = () => {
               product_name: productDetails.product_name,
               product_batch_no: productDetails.product_batch_no || "N/A",
               expiry_date: productDetails.expiry_date || "N/A",
-              mrp: productDetails.selling_price || 0,
+              mrp: productDetails.product_price,
               gst: productDetails.GST,
               quantity: productDetails.product_quantity,
-              sellingPrice: productDetails.product_price || 0,
+              sellingPrice: productDetails.selling_price
             },
           ];
         }
@@ -66,10 +67,10 @@ const Billing = () => {
       console.error("Error fetching product:", error);
     }
   };
-
   useEffect(() => {
     console.log("Updated Invoice Details:", products);
   }, [products]);
+
   const fetchproduct = async () => {
     setLoading(true);
     const product = await searchProducts(query);
@@ -77,7 +78,6 @@ const Billing = () => {
     setFilteredproduct(product?.data || []);
     setLoading(false);
   };
-
   // Debounce search API call
   useEffect(() => {
     if (!query) {
@@ -126,11 +126,16 @@ const Billing = () => {
   };
   const handleQuantityChange = (index, value) => {
     const updatedInvoice = [...products];
-    const product_quantity = parseInt(value)  // Ensure it's a valid number
+    const product_quantity = parseInt(value) 
+     // Ensure it's a valid number
+    console.log("Updated Quantity:", product_quantity); // Debugging purpose
+    console.log("Updated :", updatedInvoice[index].gst); // Debugging purpose
+    const gst =  updatedInvoice[index].gst // Debugging purpose
+    console.log("Updated After:", (gst/100)); // Debugging purpose
     updatedInvoice[index].quantity = product_quantity;
-    updatedInvoice[index].amount = quantity * updatedInvoice[index].sellingPrice;
+    updatedInvoice[index].amount = (product_quantity * (updatedInvoice[index].sellingPrice * (1 + gst / 100) ));
     setproducts(updatedInvoice);
-    console.log("Updated Quantity:", quantity); // Debugging purpose
+    console.log("asdfghj",updatedInvoice)
   };
   const handlePreview = () => {
     setModalOpen(true);
@@ -256,7 +261,7 @@ const Billing = () => {
                     <td className="border border-gray-300 px-2 py-1">{product.product_batch_no}</td>
                     <td className="border border-gray-300 px-2 py-1">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
                     </td>
-                    <td className="border border-gray-300 px-2 py-1">{product.sellingPrice}</td>
+                    <td className="border border-gray-300 px-2 py-1">{product.mrp}</td>
                     <td className="border border-gray-300 px-2 py-1">{product.gst}%</td>
                     <td className="border border-gray-300 px-2 py-1">
                       <input
@@ -269,7 +274,8 @@ const Billing = () => {
                     </td>
                     {/* <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td> */}
                     <td className="border border-gray-300 px-4 py-2">
-                      {calculateAmount(product.product_quantity, product.sellingPrice)}
+                      {/* {calculateAmount(product.product_quantity, product.sellingPrice)} */}
+                      {product.amount}
                     </td>
                     <td className="border border-gray-300 px-4 py-2">
                       <button
@@ -334,11 +340,19 @@ const Billing = () => {
                       <td className="border border-gray-300 px-4 py-2">{product.quantity}</td>
                       <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td>
                       <td className="border border-gray-300 px-4 py-2">
-                        {calculateAmount(product.product_quantity, product.sellingPrice)}
+                        {/* {calculateAmount(product.product_quantity, product.sellingPrice)} */}
+                        {product.amount}
                       </td>
                     </tr>
                   ))}
+                   <tr className="bg-gray-200 font-bold">
+      <td className="border border-gray-300 px-4 py-2 text-right" colSpan="7">Total Amount:</td>
+      <td className="border border-gray-300 px-4 py-2">
+        {products.reduce((total, product) => total + (product.amount || 0), 0)}
+      </td>
+    </tr>
                 </tbody>
+
               </table>
             </div>
             <div className="p-4 border-t flex justify-end gap-4">
