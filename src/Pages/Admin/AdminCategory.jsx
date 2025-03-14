@@ -116,7 +116,7 @@ function AdminCategory() {
             if (!category) return;
             console.log("Category Data in Modal:", category); // Debugging
             setCategoryName(category.category_name || ""); // Ensure correct key
-            setCategory_description(category.category_description || "");
+            setCategory_description(category.description || "");
             setSelectedCategory(category);
             setShowEditModal(true);
           };
