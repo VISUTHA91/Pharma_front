@@ -142,7 +142,6 @@ function AdminCategory() {
                     placeholder="CategoryName"
                     className="px-1 py-1 w-64 focus:outline-none rounded-l"
                   /> */}
-
                   {/* <button
                     onClick={handleSearch}
                     className="bg-[#028090] hover:bg-[#027483] text-white px-2 py-2 flex rounded-r"
