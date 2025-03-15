@@ -202,7 +202,7 @@ export const register = async (formData) => {
   export const getCategoryById = async (categoryId) => {
     console.log("For View",categoryId);
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}pro_category/category_product/${categoryId}`
+      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/id_category/${categoryId}`
       );
       console.log("Category View:", response.data);
       return response.data;
@@ -395,9 +395,10 @@ export const register = async (formData) => {
   
 
   export const fetchProductsByInvoice = async (invoiceNo) => {
+    console.log("INVOICE ID BEFORE API SEND",invoiceNo)
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}invoice/invoice/${invoiceNo}`);
-      console.log("FetchProductsByInvoice",response.data);
+      console.log("FetchProductsByInvoice",response);
       return response.data;
     } catch (error) {
       console.error("Error fetching product details:", error);
@@ -828,19 +829,26 @@ export const downloadSalesReportPDF = async () => {
   }
 };
 
-export const downloadStockReportPDF = async () => {
+export const downloadStockReportPDF = async ( status , downloadStockPDF) => {
+
+console.log("📤 API Call Params:", status, downloadStockPDF);
+
   try {
     console.log("📤 Requesting PDF Stock report...");
-
     const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockPDF`, {
+      params: { 
+        status : status,  // Ensure proper URL encoding
+        downloadStockPDF: true              // Always set this as true
+    },
       responseType: "blob", 
-      // responseType: "arraybuffer",
-      // Ensures binary data is received
       headers: {
         Accept: "application/pdf", // Requesting a PDF file
-      },
-    });
-
+      }, paramsSerializer: (params) => {
+        return Object.entries(params)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join("&");
+    }
+});
     // Check if response data is a valid Blob (PDF content)
     if (!response.data || response.data.size === 0) {
       console.error("❌ Received empty or invalid PDF file.");
@@ -856,7 +864,6 @@ export const downloadStockReportPDF = async () => {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-
     console.log("🎉 PDF file download triggered successfully!");
   } catch (error) {
     console.error("❌ Error exporting PDF report:", error);
@@ -864,14 +871,24 @@ export const downloadStockReportPDF = async () => {
   }
 };
 
-export const downloadStockReportCSV = async () => {
+export const downloadStockReportCSV = async (status , downloadStockCSV) => {
+  console.log("📤 API Call Params:", status, downloadStockCSV);
   try {
     console.log("📤 Requesting CSV stock report...");
     const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockCSV`, {
+      params: { 
+        status : status,  // Ensure proper URL encoding
+        downloadStockCSV: true              // Always set this as true
+    },
       responseType: "blob", // Ensures binary data is received
       headers: {
         Accept: "text/csv", // Correct MIME type
       },
+      paramsSerializer: (params) => {
+        return Object.entries(params)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join("&");
+    }
     });
     // Validate content type
     if (!response.headers["content-type"].includes("csv")) {
@@ -957,13 +974,14 @@ export const returnCustomerproducts = async (page,limit) => {
   }
 };
 
-//    create return Request
+//  create return Request
 export const submitReturnRequest = async (returnData) => {
   try {
-    const response = await axiosInstance.post(`${API_BASE_URL}return/return_product`, returnData);
-    return response.data; // Axios automatically parses JSON
+    const response = await axiosInstance.post(`${API_BASE_URL}return/return_products`, returnData);
+    return response; // Axios automatically parses JSON
   } catch (error) {
-    console.error("Error submitting return:", error.response?.data || error.message);
+    toast.error("Error submitting return:", error.response?.data || error.response.message);
+    // toast.error(error.response.message)
     throw error;
   }
 };

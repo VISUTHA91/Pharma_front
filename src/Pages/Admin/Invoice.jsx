@@ -90,7 +90,6 @@ const Invoice = () => {
                             <td className="border border-gray-300 px-2 py-1">{index + 1}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_number}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td>
-                            
                             <td className="border border-gray-300 px-2 py-1">{invoice.totalGST}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.total_price}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.payment_status}</td>
@@ -131,11 +130,20 @@ const Invoice = () => {
                             <p><strong>Name:</strong> {selectedInvoice.customer_name}</p>
                             <p><strong>Amount:</strong> {selectedInvoice.finalPriceWithGST}</p>
                             <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
-                            <p><strong>Quantity:</strong> {selectedInvoice.quantity}</p>
+                            {selectedInvoice.products && selectedInvoice.products.length > 0 && (
+                  <div>
+                    <strong className="font-semibold">Products:</strong>
+                    <ul className="ml-16">
+                      {selectedInvoice.products.map((product, index) => (
+                        <li key={index}>{product.product_name} - {product.quantity}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                            
                             <p><strong>GST:</strong> {selectedInvoice.totalGST}</p>
                             <p><strong>Payment Status:</strong> {selectedInvoice.payment_status}</p>
                             <p><strong>Payment Method:</strong> {selectedInvoice.payment_method}</p>
-                            {/* <p><strong>Status:</strong> {selectedInvoice.payment_status}</p> */}
                         </div>
                     </div>
                 </div>    

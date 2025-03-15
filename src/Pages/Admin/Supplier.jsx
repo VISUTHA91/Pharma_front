@@ -115,7 +115,7 @@ function Supplier() {
   // };
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     try {
       if (selectedSupplier) {
         // Update existing supplier via API
@@ -126,6 +126,7 @@ function Supplier() {
           sup.supplier_id === selectedSupplier.supplier_id ? { ...sup, ...formData } : sup
         );
         setSuppliers(updatedSuppliers);
+        window.location.reload();
       } else {
         // Create a new supplier via API
         const response = await createSupplier(formData);
@@ -135,8 +136,8 @@ function Supplier() {
       }
   
       toast.success("Supplier saved successfully!");
-  
-      // Reset form and hide the form
+      window.location.reload();
+
       setFormData({
         supplier_name: "",
         phone_number: "",
@@ -162,6 +163,8 @@ function Supplier() {
         const updatedSuppliers = suppliers.filter((sup) => sup.supplier_id !== supplierId);
         setSuppliers(updatedSuppliers);
         toast.success("Supplier deleted successfully!");
+        window.location.reload();
+
       } catch (error) {
         toast.error("Failed to delete supplier. Please try again.");
       }
@@ -202,7 +205,7 @@ function Supplier() {
                   <th className="p-2">S.No</th>
                   <th className="p-2">Name</th>
                   <th className="p-2">Phone No</th>
-                  <th className="p-2">Location</th>
+                  {/* <th className="p-2 w-20">Location</th> */}
                   <th className="p-2">GST No</th>
                   <th className="p-2">Status</th>
                   <th className="p-2">Actions</th>
@@ -216,9 +219,10 @@ function Supplier() {
                      } hover:bg-gray-200`}
                  >
                    <td className ="py-2 px-4">{index + 1}</td>
-                    <td className="px-2 py-1">{supplier.company_name}</td> 
+                    <td className="px-2 py-1 truncate">{supplier.company_name}</td> 
                     <td className="px-2 py-1">{supplier.phone_number}</td>
-                    <td className="px-2 py-1">{supplier.city},{supplier.state}</td>
+                    {/* <td className="px-2 py-1 truncate w-20 bg-red-200 whitespace-nowrap overflow-hidden" style={{ textOverflow: "ellipsis" }}>
+  {supplier.address}{supplier.city}{supplier.state}</td> */}
                     <td className="px-2 py-1">{supplier.supplier_gst_number}</td>
                     <td className="px-2 py-1">{supplier.status}</td>
                     <td className="px-2 py-1 flex gap-2">

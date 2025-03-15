@@ -24,6 +24,7 @@ function ProductCreation() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [viewshowModal, setViewShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -76,12 +77,13 @@ function ProductCreation() {
   };
   const handleFormnameChange = (e) => {
     const { name, value } = e.target;
-  
     // Allow alphabets, numbers, and spaces, but not only numbers or only spaces
     if (/^(?!\d+$)(?!\s+$)[A-Za-z0-9 ]*$/.test(value)) {
       setFormData({ ...formData, [name]: value });
     }
   };
+
+
 // Categories Fetch From Backend
   useEffect(() => {
     const fetchCategories = async () => {
@@ -110,8 +112,60 @@ function ProductCreation() {
   }, [formData]);
   const handleView = (product) => {
     setSelectedProduct(product);
-    setShowModal(true);
+    setViewShowModal(true);
   };
+  useEffect(() => {
+    if (isEditing && formData.product_category) {
+      const selectedCategory = category.find(cat => cat.category_name === formData.product_category);
+      setFormData(prevData => ({
+        ...prevData,
+        product_category: selectedCategory ? selectedCategory.id : prevData.product_category,
+      }));
+    }
+  
+    if (isEditing && formData.supplier) {
+      const selectedSupplier = suppliers.find(supp => supp.company_name === formData.supplier);
+      setFormData(prevData => ({
+        ...prevData,
+        supplier: selectedSupplier ? selectedSupplier.supplier_id : prevData.supplier,
+      }));
+    }
+  }, [isEditing, category, suppliers]); // Runs when `category` and `suppliers` are loaded
+
+  const handleFormeditChange = (e) => {
+    const { name, value } = e.target;
+  
+    // Validation regex: No only numbers, no only spaces, allows letters & numbers
+    const textValidationRegex = /^(?!\d+$)(?!\s+$)[A-Za-z0-9 ]*$/;
+    if (name === "product_category") {
+      const selectedCategory = category.find(cat => cat.id.toString() === value);
+      setFormData({
+        ...formData,
+        product_category: selectedCategory ? selectedCategory.id : "",
+      });
+    } else if (name === "supplier") {
+      const selectedSupplier = suppliers.find(supp => supp.supplier_id.toString() === value);
+      setFormData({
+        ...formData,
+        supplier: selectedSupplier ? selectedSupplier.supplier_id : "",
+      });
+    } else {
+      // Apply validation for text-based fields
+      if (["product_name", "brand_name", "generic_name"].includes(name)) {
+        if (!textValidationRegex.test(value)) {
+          alert("Invalid input! Only letters and numbers are allowed. No only spaces or only numbers.");
+          return;
+        }
+      }
+  
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
+  };
+  
+  
   const handleEdit = async (productId) => {
     setIsEditing(true);
     setEditingProductId(productId);
@@ -148,10 +202,13 @@ function ProductCreation() {
       if (editingProductId) {
         await updateProduct(editingProductId, formData);
         toast.success("Product Updated Successfully!");
+        window.location.reload();
+
       } else {
         console.log("Product Data Before Sending API", formData)
         await createProduct(formData);
         toast.success("Product Created Successfully!");
+        window.location.reload();
       }
     } catch (error) {
       console.log("Failed to save Product Please Try Again");
@@ -213,8 +270,6 @@ function ProductCreation() {
       toast.error("Failed to delete Product:");
     }
   };
-
-
   const [query, setQuery] = useState("");
 
   const handleSearch = async () => {
@@ -362,11 +417,11 @@ const handleKeyDown = (e) => {
                   <select
                     name="product_category"
                     value={formData.product_category || ''}
-                    onChange={handleFormChange}
+                    onChange={handleFormeditChange}
                     required
                     className="w-full border rounded p-2"
                   >
-                    <option value={formData.product_category}>{formData.product_category}</option>
+                    <option value="">{formData.product_category}</option>
                     {Array.isArray(category) && category.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.category_name}
@@ -514,11 +569,11 @@ const handleKeyDown = (e) => {
                   <select
                     name="supplier"
                     value={formData.supplier || " "}
-                    onChange={handleFormChange}
+                    onChange={handleFormeditChange}
                     required
                     className="w-full border rounded p-2"
                   >
-                    <option value={formData.supplier}>{formData.supplier}</option>
+                    <option value="">{formData.supplier}</option>
                     {suppliers.map((supp) => (
                       <option key={supp.supplier_id} value={supp.supplier_id}>
                         {supp.company_name}
@@ -550,13 +605,13 @@ const handleKeyDown = (e) => {
                     onChange={handleFormChange}
                     required
                     className="w-full border rounded p-2"
-                  >
-                     {/* {isEditing ?
-                    (<div><option value="Available">Available</option>
-                    <option value="Unavailable">Unavailable</option></div>) :
-                    (<div><option value="Available">Available</option></div>)} */}
-                    <option value="Available">Available </option>
-                    <option value="UnAvailable">UnAvailable </option>
+                   >
+                  {isEditing ?
+                     (<div><option value="Available">Available</option>
+                     <option value="Unavailable">Unavailable</option></div>) :
+                     (<div><option value="Available">Available</option></div>)} 
+                   {/* <option value="Available">Available </option> */}
+                   {/* <option value="UnAvailable">UnAvailable </option> */}
                   </select>
                 </div>
               </div>
@@ -577,8 +632,10 @@ const handleKeyDown = (e) => {
             </form>
           </div>
         </div>)}
+
+
       {/* View Modal */}
-      {showModal && selectedProduct && (
+      {viewshowModal && selectedProduct && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white rounded-xl shadow-2xl w-2/3 max-w-4xl">
             {/* Modal Header */}

@@ -179,6 +179,7 @@ const Registration = () => {
         if (updatedStaff.status === 400) { // Use updatedStaff, not response
           alert(updatedStaff.message);
           toast.success(updatedStaff.message);
+          window.location.reload();
         }
       } else {
         const response = await register(formData);
@@ -190,11 +191,8 @@ const Registration = () => {
       console.error("Error while submitting staff data:", error);
       toast.error("Error while submitting staff data:",error);
       if (error.response?.status === 401) {
-        // alert("Session expired. Please log in again.");
         toast.info("Session expired. Please log in again!");
-
         localStorage.removeItem("authToken");
-        // window.location.href = "/Signin";
         window.location.reload();
 
       } else {

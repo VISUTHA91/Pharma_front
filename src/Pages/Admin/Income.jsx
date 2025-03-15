@@ -88,7 +88,7 @@ const IncomePage = () => {
   
   return (
     <div className="p-2">
-      <h1 className="text-3xl font-bold text-gray-800 mb-2">Income Overview</h1>
+      <h1 className="text-3xl font-bold text-gray-800">Income Overview</h1>
     <div className="relative min-h-[50px]">
     <button
   onClick={() => setShowIncome(!showIncome)}
@@ -96,7 +96,7 @@ const IncomePage = () => {
 >
   {showIncome ?   <AiOutlineEyeInvisible size={20} />: <AiOutlineEye size={20} />  }
 </button>
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-10 relative">
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 mt-4 relative">
     {[
       { label: "Today", value: incomeData.today.total_income, type: "today", icon: <AiOutlineCalendar />, bgColor: "bg-blue-400" },
       { label: "Month", value: incomeData.month.total_income, type:"month",icon: <AiOutlineRise />, bgColor: "bg-yellow-400" },
@@ -165,9 +165,15 @@ const IncomePage = () => {
 
 {/* Income Table */}
 
-       <div className="mt-4 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
+       <div className="mt-0 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Income List</h2>
+        <button
+    // onClick={handleGSTReport}
+    className="bg-green-500 text-white px-6 py-1 rounded hover:bg-green-600"
+  >
+    GST Report
+  </button>
         <PaginationComponent
           totalPages={totalPages}
           currentPage={currentPage}

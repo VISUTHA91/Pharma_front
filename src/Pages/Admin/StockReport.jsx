@@ -14,7 +14,7 @@ const StockReport = () => {
   const [stockData, setStockData] = useState([]);
   const [loading , setLoading] = useState([]);
     const [query, setQuery] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState([]);
       const [showOptions, setShowOptions] = useState(false);
       const [products, setProducts] = useState([]);
       const [error , setError] = useState([]);
@@ -53,14 +53,14 @@ useEffect(() => {
     }
   };
 
-
   
   const handleExport = async (format) => {
+    console.log("Format",format)
     try {
-      if (format === "csv") {
-        await downloadStockReportCSV();
-      } else if (format === "pdf") {
-        await downloadStockReportPDF();
+      if (format === "pdf") {
+      await downloadStockReportPDF(selectedStatus , {downloadStockPDF: true});
+      } else if (format === "csv") {
+        await downloadStockReportCSV(selectedStatus , {downloadStockCSV: true});
       } else {
         throw new Error("Invalid format specified");
       }
@@ -70,6 +70,27 @@ useEffect(() => {
     }
     setShowOptions(false);
   };
+
+
+  //  const handleExport = async (format) => {
+  //   console.log("STARUSSSSSSSSSS",selectedStatus )
+  //   console.log("FormAT",format )
+  //   try {
+  //     if (format === "pdf" || selectedStatus) {
+  //       await downloadStockReportPDF({  status: typeof selectedStatus === "string" ? selectedStatus : String(selectedStatus),
+  //         downloadStockPDF: true });
+  //     } else if (format === "csv") {
+  //       await downloadStockReportCSV({ selectedStatus ,downloadStockCSV: true});
+  //     } else {
+  //       throw new Error("Invalid format specified");
+  //     }
+  //     toast.success("Download Successfully");
+  //   } catch (error) {
+  //     toast.error("Export failed");
+  //   }
+  //   setShowOptions(false);
+  // };
+
 
   return (
     <div className=" ">

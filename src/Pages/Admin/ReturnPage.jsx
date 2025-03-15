@@ -200,9 +200,8 @@ const ReturnPage = () => {
   // };
   const [returns, setReturns] = useState([]);
   const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]); // Stores selected products with quantity & reason
+  const [selectedProducts, setSelectedProducts] = useState([]); 
   const [invoiceId , setInvoiveId] = useState([]);
-
   const [formData, setFormData] = useState({
     invoiceNo: "",
   });
@@ -210,17 +209,16 @@ const ReturnPage = () => {
   const handleInvoiceChange = async (e) => {
     const invoiceNo = e.target.value;
     setFormData({ invoiceNo });
-
     if (invoiceNo.trim() !== "") {
       const data = await fetchProductsByInvoice(invoiceNo);
-      setProducts(data.products);
-      console.log("REturn invoice Id",data.invoice_id);
-      setInvoiveId(data.invoice_id);
-
+      setProducts(data.data.products);
+      console.log("REturn invoice Id",data.data);
+      setInvoiveId(data.data.invoice_id);
     } else {
       setProducts([]);
     }
   };
+  // console.log("ID................",invoiceId)
 
   const handleProductSelect = (productId, productName) => {
     // Check if already selected
@@ -263,7 +261,7 @@ const ReturnPage = () => {
       setSelectedProducts([]);
       setIsModalOpen(false);
     } catch (error) {
-      toast.error("Error submitting return:", error);
+      // toast.error("Error submitting return:", error);
     }
   };
 
@@ -304,7 +302,115 @@ const ReturnPage = () => {
           </tbody>
         </table>
       </div>
-      {/* {isModalOpen && (
+
+{isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Add New Return</h2>
+            <form onSubmit={handleFormSubmit}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">Invoice No</label>
+                <input
+                  type="text"
+                  name="invoiceNo"
+                  value={formData.invoiceNo}
+                  onChange={handleInvoiceChange}
+                  className="w-full border border-gray-300 px-3 py-2 rounded"
+                  required
+                />
+              </div>
+
+              {/* {products.length > 0 && ( */}
+              {Array.isArray(products) && products.length > 0 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Select Product</label>
+                  <select
+                    onChange={(e) => {
+                      const productId = e.target.value;
+                      const productName = products.find((p) => p.product_id === productId)?.product_name;
+                      handleProductSelect(productId, productName);
+                    }}
+                    className="w-full border border-gray-300 px-3 py-2 rounded"
+                  >
+                    <option value="">Select a Product</option>
+                    {products.map((product) => (
+                      <option key={product.product_id} value={product.product_id}>
+                        {product.product_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Display selected products with quantity & reason inputs */}
+              {selectedProducts.length > 0 &&
+                selectedProducts.map((product, index) => (
+                  <div key={product.productId} className="border p-3 mb-2 rounded">
+                    <h4 className="font-semibold">{product.productName}</h4>
+                    <label className="block text-sm font-medium mb-1">Quantity</label>
+                    <input
+                      type="number"
+                      value={product.quantity}
+                      onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
+                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      required
+                    />
+                    <label className="block text-sm font-medium mb-1 mt-2">Reason</label>
+                    <textarea
+                      value={product.reason}
+                      onChange={(e) => handleInputChange(index, "reason", e.target.value)}
+                      className="w-full border border-gray-300 px-3 py-2 rounded"
+                      required
+                    />
+                  </div>
+                ))}
+
+              <div className="flex justify-end mt-4">
+                <button
+                  type="button"
+                  className="bg-gray-300 text-black px-4 py-2 rounded mr-2 hover:bg-gray-400"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+export default ReturnPage;
+
+
+ // const handleFormSubmit = (e) => {
+  //   e.preventDefault();
+  //   const selectedProductName = products.find(
+  //     (product) => product.productId === formData.selectedProduct
+  //   )?.productName;
+  //   setReturns([
+  //     ...returns,
+  //     {
+  //       invoiceNO: formData.invoiceNo,
+  //       productName: selectedProductName,
+  //       quantity: formData.quantity,
+  //       reason: formData.reason,
+  //     },
+  //   ]);
+  //   setFormData({
+  //     invoiceNO: '',
+  //     selectedProduct: '',
+  //     quantity: '',
+  //     reason: '',
+  //   });
+  //   setProducts([]);
+  //   setIsModalOpen(false);
+  // };
+     {/* {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Add New Return</h2>
@@ -419,111 +525,3 @@ const ReturnPage = () => {
           </div>
         </div>
       )} */}
-
-{isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add New Return</h2>
-            <form onSubmit={handleFormSubmit}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Invoice No</label>
-                <input
-                  type="text"
-                  name="invoiceNo"
-                  value={formData.invoiceNo}
-                  onChange={handleInvoiceChange}
-                  className="w-full border border-gray-300 px-3 py-2 rounded"
-                  required
-                />
-              </div>
-
-              {products.length > 0 && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Select Product</label>
-                  <select
-                    onChange={(e) => {
-                      const productId = e.target.value;
-                      const productName = products.find((p) => p.product_id === productId)?.product_name;
-                      handleProductSelect(productId, productName);
-                    }}
-                    className="w-full border border-gray-300 px-3 py-2 rounded"
-                  >
-                    <option value="">Select a Product</option>
-                    {products.map((product) => (
-                      <option key={product.product_id} value={product.product_id}>
-                        {product.product_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              {/* Display selected products with quantity & reason inputs */}
-              {selectedProducts.length > 0 &&
-                selectedProducts.map((product, index) => (
-                  <div key={product.productId} className="border p-3 mb-2 rounded">
-                    <h4 className="font-semibold">{product.productName}</h4>
-                    <label className="block text-sm font-medium mb-1">Quantity</label>
-                    <input
-                      type="number"
-                      value={product.quantity}
-                      onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
-                      required
-                    />
-                    <label className="block text-sm font-medium mb-1 mt-2">Reason</label>
-                    <textarea
-                      value={product.reason}
-                      onChange={(e) => handleInputChange(index, "reason", e.target.value)}
-                      className="w-full border border-gray-300 px-3 py-2 rounded"
-                      required
-                    />
-                  </div>
-                ))}
-
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
-                  className="bg-gray-300 text-black px-4 py-2 rounded mr-2 hover:bg-gray-400"
-                  onClick={() => setIsModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-export default ReturnPage;
-
-
- // const handleFormSubmit = (e) => {
-  //   e.preventDefault();
-  //   const selectedProductName = products.find(
-  //     (product) => product.productId === formData.selectedProduct
-  //   )?.productName;
-  //   setReturns([
-  //     ...returns,
-  //     {
-  //       invoiceNO: formData.invoiceNo,
-  //       productName: selectedProductName,
-  //       quantity: formData.quantity,
-  //       reason: formData.reason,
-  //     },
-  //   ]);
-  //   setFormData({
-  //     invoiceNO: '',
-  //     selectedProduct: '',
-  //     quantity: '',
-  //     reason: '',
-  //   });
-  //   setProducts([]);
-  //   setIsModalOpen(false);
-  // };
-

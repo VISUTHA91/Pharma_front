@@ -111,11 +111,12 @@ const SupplierDetails = ({ selectedSupplier }) => {
   };
 
   const handleInvoiceSubmit = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     try {
+      console.log("INVOICE FORM",invoiceForm)
       const response = await createsupplierinvoice(invoiceForm);
       setIsInvoiceModalOpen(false);
-      setIsPaymentModalOpen(true); // Open payment modal
+      setIsPaymentModalOpen(true); 
       setPaymentForm({ ...paymentForm, invoiceId: response.invoiceId });
     } catch (error) {
       console.error("Error saving invoice:", error);
@@ -128,12 +129,15 @@ const SupplierDetails = ({ selectedSupplier }) => {
       await createSupplierPayment(paymentForm);
       setIsPaymentModalOpen(false);
       // fetchSupplierDetails(selectedSupplier.id); // Refresh data
+
       fetchSupplierInvoiceList(selectedSupplier.id); // Refresh data
     } catch (error) {
-      // console.error("Error saving payment:", error);
-      toast.error("Error saving payment:", error);
+      // toast.error("Error saving payment:", error);
     }
+          window.location.reload();
+
   };
+
   const handleRowClick = (status, invoiceId) => {
     console.log("Clicked status:", status,"Invoice ID:", invoiceId);
     if (status === "Pending") {
@@ -280,7 +284,6 @@ const SupplierDetails = ({ selectedSupplier }) => {
   <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
     Due Date
   </label>
-
           <input type="date" name="dueDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
           <button type="submit" className="w-full bg-[#027483] text-white p-2 rounded">Submit</button>
         </form>

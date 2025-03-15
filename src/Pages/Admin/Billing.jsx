@@ -175,8 +175,229 @@ const Billing = () => {
       console.error("Printing failed:", error);
     }
   };
+  // return (
+  //   <div className="max-w-screen-lg mx-auto mr-4">
+  //     <h1 className="text-3xl font-bold mb-6 text-center">Pharmacy Invoice</h1>
+  //     {/* Customer Details */}
+  //     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+  //       <div>
+  //         <label className="block text-sm font-medium mb-1">Phone Number</label>
+  //         <input
+  //           type="tel"
+  //           name="phone"
+  //           value={formData.phone}
+  //           onChange={handleInputChange}
+  //           className="w-full border border-gray-300 px-4 py-2 rounded"
+  //           required
+  //         />
+  //       </div>
+  //       <div>
+  //         <label className="block text-sm font-medium mb-1">Customer Name</label>
+  //         <input
+  //           type="text"
+  //           name="customer_name"
+  //           value={formData.customer_name}
+  //           onChange={handleInputnameChange}
+  //           className="w-full border border-gray-300 px-3 py-2 rounded"
+  //           disabled={isInputDisabled}
+  //           required
+  //         />
+          
+  //       </div>
+  //       <div>
+  //         <label className="block text-sm font-medium mb-1">Date & Time</label>
+  //         <input
+  //           type="text"
+  //           value={formData.dateTime}
+  //           className="w-full border border-gray-300 px-3 py-2 rounded bg-gray-100"
+  //           disabled
+  //         />
+  //       </div>
+  //     </div>
+  //     <input
+  //       type="text"
+  //       value={query}
+  //       onChange={handleSearch}
+  //       placeholder="Search product..."
+  //       className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  //     />
+  //     {loading && <p className="text-sm text-gray-500 mt-1">Loading...</p>}
+  //     {filteredproduct.length > 0 && (
+  //       <ul className="absolute p-2 bg-white border border-gray-300 mt-1 rounded-md shadow-lg max-h-40 overflow-y-auto">
+  //         {filteredproduct.map((product) => (
+  //           <li
+  //             key={product.product_id}
+  //             className="p-2 cursor-pointer hover:bg-gray-100"
+  //             onClick={() => handleSelect(product)}
+  //           >
+  //             <div className="flex gap-4 items-center">
+  //               <span className="font-semibold text-gray-800">{product.product_name}</span>
+  //               <span className="text-gray-600">({product.product_quantity})</span>
+  //               <span className="text-red-500">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}</span>
+  //             </div>
+  //           </li>
+  //         ))}
+  //       </ul>
+  //     )}
+  //     <div>
+  //       <div className="max-h-64 overflow-y-auto border border-gray-300 mt-8">
+  //         <table className="w-full border-gray-300">
+  //           <thead>
+  //             <tr className="bg-gray-00">
+  //               <th className="border border-gray-300 px-2 py-1">Product Name</th>
+  //               <th className="border border-gray-300 px-2 py-1">Batch No</th>
+  //               <th className="border border-gray-300 px-2 py-1">Expiry Date</th>
+  //               <th className="border border-gray-300 px-2 py-1">MRP</th>
+  //               <th className="border border-gray-300 px-2 py-1">GST</th>
+  //               <th className="border border-gray-300 px-2 py-1">Quantity</th>
+  //               <th className="border border-gray-300 px-2 py-1">Amount</th>
+  //               <th className="border border-gray-300 px-2 py-1">Action</th>
+  //             </tr>
+  //           </thead>
+  //           <tbody>
+  //             {Array.isArray(products) &&
+  //               products.map((product, index) => (
+  //                 <tr key={index} className="text-sm">
+  //                   <td className="border border-gray-300 px-2 py-1">{product.product_name}</td>
+  //                   <td className="border border-gray-300 px-2 py-1">{product.product_batch_no}</td>
+  //                   <td className="border border-gray-300 px-2 py-1">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
+  //                   </td>
+  //                   <td className="border border-gray-300 px-2 py-1">{product.mrp}</td>
+  //                   <td className="border border-gray-300 px-2 py-1">{product.gst}%</td>
+  //                   <td className="border border-gray-300 px-2 py-1">
+  //                     <input
+  //                       type="number"
+  //                       min="1"
+  //                       value={product.product_quantity}
+  //                       onChange={(e) => handleQuantityChange(index, e.target.value)}
+  //                       className="w-12 border border-gray-300 px-2 py-1 rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+  //                     />
+  //                   </td>
+  //                   {/* <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td> */}
+  //                   <td className="border border-gray-300 px-4 py-2">
+  //                     {/* {calculateAmount(product.product_quantity, product.sellingPrice)} */}
+  //                     {product.amount}
+  //                   </td>
+  //                   <td className="border border-gray-300 px-4 py-2">
+  //                     <button
+  //                       onClick={() => handleRemoveProduct(index)}
+  //                       className="text-red-500 hover:underline">
+  //                       Remove
+  //                     </button>
+  //                   </td>
+  //                 </tr>
+  //               ))}
+  //           </tbody>
+  //         </table>
+  //       </div>
+  //     </div>
+
+  //     {/* Preview and Submit */}
+  //     <div className="mt-2 text-right">
+  //       <button
+  //         onClick={handlePreview}
+  //         className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mr-4"
+  //       >
+  //         Preview
+  //       </button>
+  //     </div>
+  //     {modalOpen && (
+  //       <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+  //         <div className="bg-white rounded-lg shadow-lg w-3/4 max-h-screen overflow-hidden">
+  //           <div className="p-4 flex justify-between items-center border-b">
+  //             <h2 className="text-xl font-bold">Invoice Preview</h2>
+  //             <button
+  //               onClick={() => setModalOpen(false)}
+  //               className="text-gray-600 hover:text-gray-800">
+  //               &times;
+  //             </button>
+  //           </div>
+  //           <div className="p-4 overflow-auto max-h-[75vh]">
+  //             <p className="mb-4"><strong>Customer Name:</strong> {formData.customer_name}</p>
+  //             <p className="mb-4"><strong>Phone Number:</strong> {formData.phone}</p>
+  //             <p className="mb-4"><strong>Date & Time:</strong> {formData.dateTime}</p>
+  //             <table className="w-full border-collapse border border-gray-300">
+  //               <thead>
+  //                 <tr className="bg-gray-100">
+  //                   <th className="border border-gray-300 px-4 py-2">Product Name</th>
+  //                   <th className="border border-gray-300 px-4 py-2">Batch No</th>
+  //                   <th className="border border-gray-300 px-4 py-2">Expiry Date</th>
+  //                   <th className="border border-gray-300 px-4 py-2">MRP</th>
+  //                   <th className="border border-gray-300 px-4 py-2">GST</th>
+  //                   <th className="border border-gray-300 px-4 py-2">Quantity</th>
+  //                   <th className="border border-gray-300 px-4 py-2">Selling Price</th>
+  //                   <th className="border border-gray-300 px-4 py-2">Amount</th>
+  //                 </tr>
+  //               </thead>
+  //               <tbody>
+  //                 {products.map((product, index) => (
+  //                   <tr key={index}>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.product_name}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.product_batch_no}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">
+  //                       {product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.mrp}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.gst}%</td>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.quantity}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td>
+  //                     <td className="border border-gray-300 px-4 py-2">
+  //                       {/* {calculateAmount(product.product_quantity, product.sellingPrice)} */}
+  //                       {product.amount}
+  //                     </td>
+  //                   </tr>
+  //                 ))}
+  //                  <tr className="bg-gray-200 font-bold">
+  //     <td className="border border-gray-300 px-4 py-2 text-right" colSpan="7">Total Amount:</td>
+  //     <td className="border border-gray-300 px-4 py-2">
+  //       {products.reduce((total, product) => total + (product.amount || 0), 0)}
+  //     </td>
+  //   </tr>
+  //               </tbody>
+
+  //             </table>
+  //           </div>
+  //           <div className="p-4 border-t flex justify-end gap-4">
+  //             <div className="flex items-center gap-2">
+  //               <label className="text-gray-700 font-medium">Payment Method:</label>
+  //               <select
+  //                 value={paymentMethod}
+  //                 onChange={(e) => setPaymentMethod(e.target.value)}
+  //                 className="border rounded px-2 py-1">
+  //                 <option value="Cash">Cash</option>
+  //                 <option value="UPI">UPI</option>
+  //               </select>
+  //             </div>
+  //             {/* Checkbox for Payment Status */}
+  //             <div className="flex items-center gap-2">
+  //               <input
+  //                 type="checkbox"
+  //                 id="paidCheckbox"
+  //                 checked={isPaid}
+  //                 onChange={() => setIsPaid(!isPaid)}
+  //                 className="w-4 h-4"
+  //               />
+  //               <label htmlFor="paidCheckbox" className="text-gray-700 font-medium">
+  //                 Paid
+  //               </label>
+  //             </div>
+  //             <button
+  //               onClick={() => setModalOpen(false)}
+  //               className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+  //               Edit
+  //             </button>
+  //             <button
+  //               onClick={handleConfirm}
+  //               className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+  //               Confirm
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     )}
+  //   </div>);
+
   return (
-    <div className="max-w-screen-lg mx-auto mr-4">
+    <div className="max-w-screen-lg mx-auto px-4">
       <h1 className="text-3xl font-bold mb-6 text-center">Pharmacy Invoice</h1>
       {/* Customer Details */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
@@ -202,7 +423,6 @@ const Billing = () => {
             disabled={isInputDisabled}
             required
           />
-          
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Date & Time</label>
@@ -239,60 +459,52 @@ const Billing = () => {
           ))}
         </ul>
       )}
-      <div>
-        <div className="max-h-64 overflow-y-auto border border-gray-300 mt-8">
-          <table className="w-full border-gray-300">
-            <thead>
-              <tr className="bg-gray-00">
-                <th className="border border-gray-300 px-2 py-1">Product Name</th>
-                <th className="border border-gray-300 px-2 py-1">Batch No</th>
-                <th className="border border-gray-300 px-2 py-1">Expiry Date</th>
-                <th className="border border-gray-300 px-2 py-1">MRP</th>
-                <th className="border border-gray-300 px-2 py-1">GST</th>
-                <th className="border border-gray-300 px-2 py-1">Quantity</th>
-                <th className="border border-gray-300 px-2 py-1">Amount</th>
-                <th className="border border-gray-300 px-2 py-1">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Array.isArray(products) &&
-                products.map((product, index) => (
-                  <tr key={index} className="text-sm">
-                    <td className="border border-gray-300 px-2 py-1">{product.product_name}</td>
-                    <td className="border border-gray-300 px-2 py-1">{product.product_batch_no}</td>
-                    <td className="border border-gray-300 px-2 py-1">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
-                    </td>
-                    <td className="border border-gray-300 px-2 py-1">{product.mrp}</td>
-                    <td className="border border-gray-300 px-2 py-1">{product.gst}%</td>
-                    <td className="border border-gray-300 px-2 py-1">
-                      <input
-                        type="number"
-                        min="1"
-                        value={product.product_quantity}
-                        onChange={(e) => handleQuantityChange(index, e.target.value)}
-                        className="w-12 border border-gray-300 px-2 py-1 rounded [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                      />
-                    </td>
-                    {/* <td className="border border-gray-300 px-4 py-2">{product.sellingPrice}</td> */}
-                    <td className="border border-gray-300 px-4 py-2">
-                      {/* {calculateAmount(product.product_quantity, product.sellingPrice)} */}
-                      {product.amount}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                      <button
-                        onClick={() => handleRemoveProduct(index)}
-                        className="text-red-500 hover:underline">
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="max-h-64 overflow-y-auto border border-gray-300 mt-8">
+        <table className="w-full border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 px-2 py-1">Product Name</th>
+              <th className="border border-gray-300 px-2 py-1">Batch No</th>
+              <th className="border border-gray-300 px-2 py-1">Expiry Date</th>
+              <th className="border border-gray-300 px-2 py-1">MRP</th>
+              <th className="border border-gray-300 px-2 py-1">GST</th>
+              <th className="border border-gray-300 px-2 py-1">Quantity</th>
+              <th className="border border-gray-300 px-2 py-1">Amount</th>
+              <th className="border border-gray-300 px-2 py-1">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.isArray(products) &&
+              products.map((product, index) => (
+                <tr key={index} className="text-sm">
+                  <td className="border border-gray-300 px-2 py-1">{product.product_name}</td>
+                  <td className="border border-gray-300 px-2 py-1">{product.product_batch_no}</td>
+                  <td className="border border-gray-300 px-2 py-1">{product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}</td>
+                  <td className="border border-gray-300 px-2 py-1">{product.mrp}</td>
+                  <td className="border border-gray-300 px-2 py-1">{product.gst}%</td>
+                  <td className="border border-gray-300 px-2 py-1">
+                    <input
+                      type="number"
+                      min="1"
+                      value={product.product_quantity}
+                      onChange={(e) => handleQuantityChange(index, e.target.value)}
+                      className="w-12 border border-gray-300 px-2 py-1 rounded"
+                    />
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">{product.amount}</td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    <button
+                      onClick={() => handleRemoveProduct(index)}
+                      className="text-red-500 hover:underline"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </div>
-
-      {/* Preview and Submit */}
       <div className="mt-2 text-right">
         <button
           onClick={handlePreview}
@@ -394,6 +606,8 @@ const Billing = () => {
           </div>
         </div>
       )}
-    </div>);
+    </div>
+  );
+  
 };
 export default Billing;
