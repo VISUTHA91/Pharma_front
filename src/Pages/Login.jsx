@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MdEmail } from "react-icons/md";
 import { FaUnlock, FaUserAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import loginbg from '../assets/Image/loginbgg.jpg';
+import loginbg from '../assets/Image/bg.jpg';
 import * as apiCalls from '../Api/apiservices';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from 'react-toastify';
@@ -25,7 +25,6 @@ function Login() {
   };
   const login = async (e) => {
     e.preventDefault();
-    
     try {
       const { email, password } = logindata;
       let data;

@@ -228,6 +228,7 @@ onClick={() => setShowOptions(!showOptions)}>
   <table className="w-full border-collapse border border-gray-300">
     <thead>
       <tr className="bg-gray-200">
+        <th className="border border-gray-300 px-2 py-2">Date</th>
         <th className="border border-gray-300 px-2 py-2">Product Name</th>
         <th className="border border-gray-300 px-2 py-2">Category Name</th>
         {/* <th className="border border-gray-300 px-4 py-2">Price</th> */}
@@ -239,6 +240,7 @@ onClick={() => setShowOptions(!showOptions)}>
     {Array.isArray(soldProducts) && soldProducts.length > 0 ? (
       soldProducts.map((item, index) => (
         <tr key={index} className="hover:bg-gray-100 text-sm">
+          <td className="border border-gray-300 px-2 py-2">{item.invoice_created_at ? item.invoice_created_at.split("T")[0] : "N/A"}</td>
           <td className="border border-gray-300 px-2 py-2">{item.product_name}</td>
           <td className="border border-gray-300 px-2 py-2">{item.category_name}</td>
           {/* <td className="border border-gray-300 px-4 py-2">{item.final_price}</td> */}

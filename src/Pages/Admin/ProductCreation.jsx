@@ -255,6 +255,7 @@ function ProductCreation() {
       toast.error("Error Uploading");
     }
   };
+  
   const handleClick = () => {
     document.getElementById("fileInput").click();
   };

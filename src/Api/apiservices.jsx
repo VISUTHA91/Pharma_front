@@ -21,6 +21,7 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
 //  axiosInstance.interceptors.response.use(
 //   async (response) => {
 //     try {
@@ -43,7 +44,6 @@ axiosInstance.interceptors.request.use(
 //     return Promise.reject(error);
 //   }
 // );
-
 
 axiosInstance.interceptors.response.use(
   async (response) => {
@@ -74,7 +74,6 @@ const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
-
 export const register = async (formData) => {
   // const token = getAuthToken();
   // if (!token) throw new Error("Authentication token not found");
@@ -83,8 +82,7 @@ export const register = async (formData) => {
   const response = await axiosInstance.post(`${API_BASE_URL}staff/register`, formData);
   return response;
 };
-  
-  
+   
   // AdminLogin.......
   export const adminlogin = async (logindata) => {
     try {
@@ -144,12 +142,15 @@ export const register = async (formData) => {
       throw error;
     }
   };
-  export const getCategorywithoutpagination = async (page, limit) => {
+  export const  getCategorywithoutpagination = async (page, limit) => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category`,{
         params: { page, limit } });
+        console.log("ISWARYA",response.data.length)
         // console.log("Api Category pagination",response)
       return response;
+
+      
     } catch (error) {
       // console.error("Error fetching categories:", error);
       throw error;
@@ -202,10 +203,10 @@ export const register = async (formData) => {
   export const getCategoryById = async (categoryId) => {
     console.log("For View",categoryId);
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/id_category/${categoryId}`
+      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/category_product/${categoryId}`
       );
       console.log("Category View:", response.data);
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error("Error deleting category:", error.response ? error.response.data : error);
       throw error.response ? error.response.data : error;
@@ -349,7 +350,6 @@ export const register = async (formData) => {
     }
   };
 
-
   export const createsupplierinvoice = async (invoiceData) => {
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}supplier_invoice/invoices`, invoiceData);
@@ -368,7 +368,6 @@ export const register = async (formData) => {
       throw error;
     }
   };
-
 
   export const fetchSupplierInvoiceList = async (supplierId) => {
     try {
@@ -392,8 +391,6 @@ export const register = async (formData) => {
     }
   };
 
-  
-
   export const fetchProductsByInvoice = async (invoiceNo) => {
     console.log("INVOICE ID BEFORE API SEND",invoiceNo)
     try {
@@ -405,7 +402,6 @@ export const register = async (formData) => {
       throw error;
     }
   };
-
 
   export const createInvoice = async (invoiceData) => {
     try {
@@ -437,8 +433,7 @@ export const register = async (formData) => {
       throw error;
     }
   };
-
-  
+ 
   export const getBinList = async () => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}products/list-soft-deleted`);
@@ -459,7 +454,6 @@ export const register = async (formData) => {
     }
   };
   
-
   export const deleteproduct = async (categoryId) => {
     console.log("Deleting the Product ID:",categoryId)
     try {
@@ -489,9 +483,6 @@ export const register = async (formData) => {
       }
     },
   };
-  
-
-
 
   export const productpermanentdelete = async (categoryId) => {
     console.log("Deleting the Product ID:",categoryId)
@@ -504,7 +495,6 @@ export const register = async (formData) => {
     }
   };
 
-    
   export const getpharmacydetails = async () => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}shop/getAll/`);
@@ -912,8 +902,6 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
   }
 };
 
-  
-  
   export const getIncomeReport = async (interval) => {
     try {
       const response = await axiosInstance.get(`${API_BASE_URL}report/income-report`, {
@@ -926,7 +914,6 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
       throw error;
     }
   };
-  
 
   export const fetchFilteredSalesData = async (start, end, filterType) => {
     try {

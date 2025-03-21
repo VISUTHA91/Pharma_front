@@ -97,12 +97,14 @@ function AdminCategory() {
     setSelectedCategory(category);
     setShowEditModal(true);
   };
+
   useEffect(() => {
     if (showEditModal && selectedCategory) {
       setCategoryName(selectedCategory.category_name);
       setCategory_description(selectedCategory.description);
     }
   }, [showEditModal]);
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     // console.log("Selected Category", selectedCategory);
@@ -122,6 +124,7 @@ function AdminCategory() {
       toast.error("Failed to Update Category !");
     }
   };
+
   const handleView = async (categoryId) => {
     try {
       const response = await getCategoryById(categoryId);
@@ -132,10 +135,12 @@ function AdminCategory() {
       toast.error("Error : ", error);
     }
   };
+
   const closeModal = () => {
     setShowModal(false);
     setSelectedCategory(null);
   };
+  console.log("CATEFFDVFDVFZzv",categories)
   return (
     <div className="m-2">
       <div className="flex justify-between items-center w-[96%]">
@@ -342,43 +347,42 @@ function AdminCategory() {
         </div>
       )}
       {/* View Modal */}
-      {showModal && viewCategory && (
+      {showModal && viewCategory && categories &&  (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white rounded-xl shadow-2xl w-2/3 max-w-4xl">
             {/* Modal Header */}
             <div className="flex justify-between items-center bg-cyan-700 text-white px-6 py-4 rounded-t-xl">
               <h2 className="text-2xl font-semibold">Product Details</h2>
             </div>
-            {/* Modal Content */}
             <div className="p-6 space-y-4 text-gray-800 ">
-              <div className="grid grid-cols-2 gap-4">
-                <p>
-                  <strong className="font-semibold"> Category Name :</strong> {viewCategory.category_name}
-                </p>
-                <p>
-                  <strong className="font-semibold">Category ID :</strong> {viewCategory.cat_auto_gen_id
-                  }
-                </p>
-                {viewCategory.products && viewCategory.products.length > 0 && (
+          
+                    {categories?.data && (
+          (() => {
+            const categoryDetails = categories?.data?.find(cat => cat.cat_auto_gen_id === viewCategory.cat_auto_gen_id);
+            return categoryDetails ? (
+              <>
+                <p><strong>Category Name:</strong> {categoryDetails.category_name}</p>
+                <p><strong>Category ID:</strong> {categoryDetails.cat_auto_gen_id}</p>
+                <p><strong>Created Date:</strong> {categoryDetails.created_at ? categoryDetails.created_at.split("T")[0] : "N/A"}</p>
+                <p><strong>Description:</strong></p>
+                <p className="bg-gray-100 p-3 rounded-md text-sm">{categoryDetails.description}</p>
+              </>
+            ) : (
+              <p className="text-red-500">Category details not found</p>
+            );
+          })()
+        )}
+             
+              {viewCategory.data && viewCategory.data.length > 0 && (
                   <div>
                     <strong className="font-semibold">Products:</strong>
                     <ul className="ml-16">
-                      {selectedCategory.products.map((product, index) => (
-                        <li key={index}>{product.product_name}</li>
+                      {viewCategory.data.map((product, index) => (
+                        <li key={index}>{product.product_name} - {product.product_quantity}</li>
                       ))}
                     </ul>
                   </div>
                 )}
-                <p>
-                  <strong className="font-semibold">Created Date :</strong> {viewCategory.created_at ? viewCategory.created_at.split("T")[0] : "N/A"}
-                </p>
-              </div>
-              <div>
-                <p>
-                  <strong className="font-semibold">Description :</strong>
-                </p>
-                <p className="bg-gray-100 p-3 rounded-md text-sm">{viewCategory.description}</p>
-              </div>
             </div>
             <div className="flex justify-end items-center px-6 py-4 bg-gray-100 rounded-b-xl">
               <button
@@ -397,3 +401,26 @@ function AdminCategory() {
   )
 }
 export default AdminCategory
+
+  {/* {categories && categories.map((category, index) => (
+              <div className="grid grid-cols-2 gap-4"   
+              key={category.id}
+              >
+                <p>
+                  <strong className="font-semibold"> Category Name :</strong> {category.category_name}
+                </p>
+                <p>
+                  <strong className="font-semibold">Category ID :</strong> {category.cat_auto_gen_id
+                  }
+                </p>
+                <p>
+                  <strong className="font-semibold">Created Date :</strong> {category.created_at ? category.created_at.split("T")[0] : "N/A"}
+                </p>
+                <div>
+                <p>
+                  <strong className="font-semibold">Description :</strong>
+                </p>
+                <p className="bg-gray-100 p-3 rounded-md text-sm">{category.description}</p>
+              </div>
+              </div>
+            ))} */}

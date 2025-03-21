@@ -72,26 +72,7 @@ useEffect(() => {
   };
 
 
-  //  const handleExport = async (format) => {
-  //   console.log("STARUSSSSSSSSSS",selectedStatus )
-  //   console.log("FormAT",format )
-  //   try {
-  //     if (format === "pdf" || selectedStatus) {
-  //       await downloadStockReportPDF({  status: typeof selectedStatus === "string" ? selectedStatus : String(selectedStatus),
-  //         downloadStockPDF: true });
-  //     } else if (format === "csv") {
-  //       await downloadStockReportCSV({ selectedStatus ,downloadStockCSV: true});
-  //     } else {
-  //       throw new Error("Invalid format specified");
-  //     }
-  //     toast.success("Download Successfully");
-  //   } catch (error) {
-  //     toast.error("Export failed");
-  //   }
-  //   setShowOptions(false);
-  // };
-
-
+ 
   return (
     <div className=" ">
       <h2 className="text-xl font-semibold">Stock Report</h2>
@@ -208,3 +189,23 @@ useEffect(() => {
 };
 
 export default StockReport;
+
+ //  const handleExport = async (format) => {
+  //   console.log("STARUSSSSSSSSSS",selectedStatus )
+  //   console.log("FormAT",format )
+  //   try {
+  //     if (format === "pdf" || selectedStatus) {
+  //       await downloadStockReportPDF({  status: typeof selectedStatus === "string" ? selectedStatus : String(selectedStatus),
+  //         downloadStockPDF: true });
+  //     } else if (format === "csv") {
+  //       await downloadStockReportCSV({ selectedStatus ,downloadStockCSV: true});
+  //     } else {
+  //       throw new Error("Invalid format specified");
+  //     }
+  //     toast.success("Download Successfully");
+  //   } catch (error) {
+  //     toast.error("Export failed");
+  //   }
+  //   setShowOptions(false);
+  // };
+

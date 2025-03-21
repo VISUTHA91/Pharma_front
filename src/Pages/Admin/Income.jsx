@@ -113,7 +113,7 @@ const IncomePage = () => {
           {/* <h2 className="text-white text-lg font-medium">{card.label}</h2> */}
           {card.label === "Expense" ? (
       <h2 className="text-white text-lg font-medium">
-        <Link to={'Expense'} className="hover:underline">{card.label}</Link>
+        <Link to={'Expense'} className="">{card.label}</Link>
       </h2>
     ) : (
       <h2 className="text-white text-lg font-medium">{card.label}</h2>

@@ -21,7 +21,6 @@ import SalesReport from './SalesReport';
 import BinTable from './BinTable';
 import { IoSettingsSharp } from "react-icons/io5";
 import { IoTrashBin } from "react-icons/io5";
-import { LuChartNoAxesCombined } from "react-icons/lu";
 import { FaSackDollar } from "react-icons/fa6";
 import { FaHospitalUser } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
@@ -34,6 +33,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { TbLogout } from "react-icons/tb";
 import { ImProfile } from "react-icons/im";
 import { toast } from 'react-toastify';
+import { LuChartNoAxesCombined } from "react-icons/lu";
 
 function AdminDashboard() {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,17 +56,7 @@ function AdminDashboard() {
   };
   const adminContent = (
     <ul className="space-y-1">
-       <li>
-        <NavLink to={'Settings'}
-          // onClick={() => setCurrentPage("Settings")}
-          className="flex items-center gap-4 w-full p-2   rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
-        >
-          {/* <IoSettingsSharp className="text-2xl" /> */}
-          <ImProfile  className="text-2xl"/>
-          Profile
-        </NavLink>
-      </li>
-      <li>
+        <li>
         <NavLink to={'/Dashboard'}
           // onClick={() => setCurrentPage("Maincontent")}
           className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
@@ -75,6 +65,7 @@ function AdminDashboard() {
           Dashboard
         </NavLink>
       </li>
+
       <li>
         <NavLink
         to={'Registration'}
@@ -85,6 +76,20 @@ function AdminDashboard() {
           Staff
         </NavLink>
       </li>
+
+       {/* Suppliers */}
+       <li>
+        <NavLink to={'Supplier'}
+          // onClick={() => setCurrentPage("Suppliers")}
+          className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
+        >
+          {/* <FaFirstOrder  /> */}
+          <FaHospitalUser className="text-2xl" />
+
+          Supplier
+        </NavLink>
+      </li>
+
       {/* Category */}
       <li>
         <NavLink
@@ -98,6 +103,7 @@ function AdminDashboard() {
           Category
         </NavLink>
       </li>
+
       {/* Product List */}
       <li>
         <NavLink to={'ProductCreation'}
@@ -108,30 +114,19 @@ function AdminDashboard() {
           Products
         </NavLink>
       </li>
-      {/* Orders */}
-      <li>
-        <NavLink to={'Supplier'}
-          // onClick={() => setCurrentPage("Suppliers")}
+
+       {/* Billing */}
+       <li>
+        <NavLink to={'Billing'}
+          // onClick={() => setCurrentPage("Billing")}
           className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
         >
-          {/* <FaFirstOrder  /> */}
-          <FaHospitalUser className="text-2xl" />
-
-          Supplier
+          <RiBillFill className="text-2xl" />
+          Billing
         </NavLink>
       </li>
-      {/* Customers */}
-      <li>
-        <NavLink to={'ReturnPage'}
-          // onClick={() => setCurrentPage("Return")}
-          className="flex items-center gap-4 w-full p-2 rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
-        >
-          {/* <HiOutlineUserGroup className="text-2xl" /> */}
-          <TbLogout2 className="text-2xl" />
 
-          Return
-        </NavLink>
-      </li>
+      {/* Finance */}
       <li>
         <div
             onMouseEnter={() =>  setIsOpen(true)}
@@ -171,16 +166,11 @@ function AdminDashboard() {
           )}
         </div>
       </li>
-      {/* Create Product */}
-      <li>
-        <NavLink to={'Billing'}
-          // onClick={() => setCurrentPage("Billing")}
-          className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
-        >
-          <RiBillFill className="text-2xl" />
-          Billing
-        </NavLink>
-      </li>
+
+     
+
+    
+
       <li>
         <div className="relative">
   <button
@@ -212,6 +202,26 @@ function AdminDashboard() {
 </div>
 
       </li>
+
+        {/* Return */}
+        <li>
+        <NavLink to={'ReturnPage'}
+          // onClick={() => setCurrentPage("Return")}
+          className="flex items-center gap-4 w-full p-2 rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
+        >
+          {/* <HiOutlineUserGroup className="text-2xl" /> */}
+          <TbLogout2 className="text-2xl" />
+
+          Return
+        </NavLink>
+      </li>
+
+
+
+   
+
+    
+
       <li>
         <NavLink to={'BinTable'}
           // onClick={() => setCurrentPage("Bin")}
@@ -224,6 +234,18 @@ function AdminDashboard() {
           Bin
         </NavLink>
       </li>
+
+      <li>
+        <NavLink to={'Settings'}
+          // onClick={() => setCurrentPage("Settings")}
+          className="flex items-center gap-4 w-full p-2   rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
+        >
+          {/* <IoSettingsSharp className="text-2xl" /> */}
+          <ImProfile  className="text-2xl"/>
+          Profile
+        </NavLink>
+      </li>
+      
       <li>
                 <button
                   onClick={handleLogout}
@@ -232,7 +254,7 @@ function AdminDashboard() {
                   <TbLogout className='text-2xl' />
                   <span className="hidden lg:block">LogOut</span>
                 </button>
-      </li>
+      </li>     
     </ul>
   );
 
@@ -296,8 +318,6 @@ function AdminDashboard() {
   const Data = JSON.parse(localStorage.getItem("logindata"));
   console.log("............",Data);
   
-
-
   return (
     <div className="flex h-screen w-[100%]">
       <div className="bg-[#027483] text-white shadow-[-2px_6px_16px_17px_rgba(0,_0,_0,_0.2)]h-screen ">
@@ -316,3 +336,14 @@ function AdminDashboard() {
   )
 }
 export default AdminDashboard
+
+   {/* Billing */}
+//    <li>
+//    <NavLink to={'Billing'}
+//      // onClick={() => setCurrentPage("Billing")}
+//      className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
+//    >
+//      <RiBillFill className="text-2xl" />
+//      Billing
+//    </NavLink>
+//  </li>
