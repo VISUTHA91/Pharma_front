@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState , useRef, useEffect} from 'react'
 import MainContent from './MainContent';
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { TbLayoutDashboard } from "react-icons/tb";
@@ -41,11 +41,26 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [details, setDetails] = useState([]);
+  const dropdownRef = useRef(null);
+
   const navigate = useNavigate();
   const handleMenuClick = (option) => {
     console.log(option); // Handle navigation or functionality for each option here
     setIsOpen(false); // Close the dropdown after selection
   };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("logindata")
@@ -73,7 +88,7 @@ function AdminDashboard() {
           className="flex items-center gap-4 w-full p-2  rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
         >
           <FaUser className="text-2xl" />
-          Staff
+          Staff / User
         </NavLink>
       </li>
 
@@ -86,7 +101,7 @@ function AdminDashboard() {
           {/* <FaFirstOrder  /> */}
           <FaHospitalUser className="text-2xl" />
 
-          Supplier
+          Supplier / Vendor
         </NavLink>
       </li>
 
@@ -139,7 +154,7 @@ function AdminDashboard() {
             Finance <IoIosArrowDropdown className='text-xl ml-20' />
 
           {isOpen && (
-            <div className="absolute left-0 mt-40 text-black w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
+            <div className="absolute left-48 mt-40 text-black w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
               <NavLink  to={'Income'}
                 // onClick={() => setCurrentPage("Income")}
                 onClick={() => setIsOpen(false)}
@@ -171,7 +186,7 @@ function AdminDashboard() {
 
     
 
-      <li>
+      <li ref={dropdownRef}>
         <div className="relative">
   <button
     onClick={() => setShowDropdown(!showDropdown)}
@@ -180,13 +195,12 @@ function AdminDashboard() {
     {/* <GrProductHunt className="text-2xl" /> */}
     <LuChartNoAxesCombined  className='text-2xl'/>
 
-    Report <IoIosArrowDropdown className='text-xl ml-20' />
+    Reports <IoIosArrowDropdown className='text-xl ml-20' />
   </button>
   {showDropdown && (
     <div className="absolute top-12 left-0 w-full text-black bg-white border border-gray-200 rounded-lg shadow-md">
       <NavLink to={'SalesReport'}
         onClick={() => setShowDropdown(false)}
-
         className="block w-full text-left px-4 py-2 hover:bg-blue-100 hover:text-blue-800 transition duration-200"
       >
         Sales Report
@@ -231,7 +245,7 @@ function AdminDashboard() {
           <IoTrashBin className="text-2xl" />
 
           {/* <GrProductHunt className="text-2xl" /> */}
-          Bin
+          Recycle Bin
         </NavLink>
       </li>
 
