@@ -293,7 +293,7 @@ const ReturnPage = () => {
           <tbody>
             {returns.map((item, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-2 ">{item.invoice_number}</td>
+                <td className="px-4 py-2 ">{item.invoice_id}</td>
                 <td className="px-4 py-2 ">{item.product_name}</td>
                 <td className="px-4 py-2 ">{item.quantity}</td>
                 <td className="px-4 py-2 ">{item.return_reason}</td>

@@ -2,8 +2,12 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { BASEURL } from "../utils/envExport";
 
-export const API_BASE_URL = BASEURL;
 
+// export const API_BASE_URL = "http://localhost:3002"
+export const API_BASE_URL = "https://meds.evvisolutions.com"
+// export const API_BASE_URL = VITE_BASE_URL;
+
+ 
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -23,28 +27,6 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-//  axiosInstance.interceptors.response.use(
-//   async (response) => {
-//     try {
-//       if (response.data?.statusCode === 700 || response.status === 500) {
-//         // Remove the auth token from local storage
-//         // localStorage.removeItem('authToken');
-//         // localStorage.removeItem('auth-token')
-//         // localStorage.removeItem('userData');
-//         alert("Session expired. Please log in again.");
-//         window.location.href = "/Signin";
-//       }
-//     } catch (error) {
-//       console.error("Error handling token expiration:", error);
-//     }
-//     return response;
-//   },
-//   (error) => {
-//     console.error("API Error:", error.response || error.message);
-//     alert(error.response.data.message || error.message);
-//     return Promise.reject(error);
-//   }
-// );
 
 axiosInstance.interceptors.response.use(
   async (response) => {
@@ -66,8 +48,6 @@ axiosInstance.interceptors.response.use(
       window.location.href = "/Signin";
     }
     console.error("API Error:", error.response || error.message);
-    // toast.error(error.response || error.message)
-    // alert(error.response?.data?.message || error.message);
     return Promise.reject(error);
   }
 );
@@ -75,19 +55,15 @@ const getAuthToken = () => {
   return localStorage.getItem('authToken');
 };
 
-export const register = async (formData) => {
-  // const token = getAuthToken();
-  // if (!token) throw new Error("Authentication token not found");
-  // console.log("API",formData)
-  
-  const response = await axiosInstance.post(`${API_BASE_URL}staff/register`, formData);
+export const register = async (formData) => {  
+  const response = await axiosInstance.post(`${API_BASE_URL}/api/staff/register`, formData);
   return response;
 };
    
   // AdminLogin.......
   export const adminlogin = async (logindata) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}admin/login`,logindata);
+      const response = await axiosInstance.post(`${API_BASE_URL}/admin/login`,logindata);
       console.log("Login data",response);
       return response.data;
     } catch (error) {
@@ -99,7 +75,7 @@ export const register = async (formData) => {
   export const stafflogin = async (Data) => {
     console.log("Staff Login",Data)
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}staff/login`, Data);
+      const response = await axiosInstance.post(`${API_BASE_URL}/staff/login`, Data);
       console.log("Staff Login",response);
       return response.data; 
     } catch (error) {
@@ -108,13 +84,13 @@ export const register = async (formData) => {
   };
   export const updateStaff = async (id, formData) => {
     console.log("API...........",formData);
-    const response = await axiosInstance.put(`${API_BASE_URL}staff/user/${id}`, formData);
+    const response = await axiosInstance.put(`${API_BASE_URL}/staff/user/${id}`, formData);
     return response.data;
   };
   export const getStaffList = async (page, limit) => {
     console.log("Api Data:",limit);
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}staff/getstaff`,{
+      const response = await axiosInstance.get(`${API_BASE_URL}/staff/getstaff`,{
         params: { page, limit } });
       return response.data;
     } catch (error) {
@@ -124,7 +100,7 @@ export const register = async (formData) => {
   };
   export const deleteStaff = async (staffId) => {
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}staff/user/${staffId}`);
+      const response = await axiosInstance.delete(`${API_BASE_URL}/staff/user/${staffId}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting staff:", error);
@@ -133,7 +109,7 @@ export const register = async (formData) => {
   };
   export const getCategory = async (page,limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category_pagination`,{
+      const response = await axiosInstance.get(`${API_BASE_URL}/pro_category/all_category_pagination`,{
         params: { page, limit } }
       );
         console.log("Api Category",response)
@@ -145,7 +121,7 @@ export const register = async (formData) => {
   };
   export const  getCategorywithoutpagination = async (page, limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/all_category`,{
+      const response = await axiosInstance.get(`${API_BASE_URL}/pro_category/all_category`,{
         params: { page, limit } });
         console.log("ISWARYA",response.data.length)
         // console.log("Api Category pagination",response)
@@ -160,7 +136,7 @@ export const register = async (formData) => {
 
   export const categoryListBySupplierId = async (supplierId) => {
     try {
-      const response  = await axiosInstance.get(`${API_BASE_URL}products/sup_cat_pro/${supplierId}`);
+      const response  = await axiosInstance.get(`${API_BASE_URL}/products/sup_cat_pro/${supplierId}`);
       console.log("API Category List", response.data); // Indicate success
       return response;
     } catch (error) {
@@ -170,7 +146,7 @@ export const register = async (formData) => {
   };
   export const createCategory = async (categoryData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}pro_category/insert_category`, categoryData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/pro_category/insert_category`, categoryData);
       return response.data;
     } catch (error) {
       console.error("Error creating category:", error);
@@ -183,7 +159,7 @@ export const register = async (formData) => {
       return;
     }
     try {
-      const response = await axiosInstance.put(`${API_BASE_URL}pro_category/update_category/${categoryId}`, updatedData);
+      const response = await axiosInstance.put(`${API_BASE_URL}/pro_category/update_category/${categoryId}`, updatedData);
       return response.data;
     } catch (error) {
       throw error.response ? error.response.data : error;
@@ -192,7 +168,7 @@ export const register = async (formData) => {
   export const deleteCategory = async (categoryId) => {
     console.log("mmmmm",categoryId);
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}pro_category/del_category/${categoryId}`
+      const response = await axiosInstance.delete(`${API_BASE_URL}/pro_category/del_category/${categoryId}`
       );
       console.log("Category Deleted:", response.data);
       return response.data;
@@ -204,7 +180,7 @@ export const register = async (formData) => {
   export const getCategoryById = async (categoryId) => {
     console.log("For View",categoryId);
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}pro_category/category_product/${categoryId}`
+      const response = await axiosInstance.get(`${API_BASE_URL}/pro_category/category_product/${categoryId}`
       );
       console.log("Category View:", response.data);
       return response.data.data;
@@ -216,7 +192,7 @@ export const register = async (formData) => {
 
   export const fetchProducts = async (page,limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/Allpro_pagination`,{
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/Allpro_pagination`,{
         params: { page, limit } 
       });
       // console.log("Fetched Products:", response.data); // Debugging
@@ -228,7 +204,7 @@ export const register = async (formData) => {
   };
   export const fetchProductsforreport = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/Allpro_list`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/Allpro_list`);
       // console.log("Fetched Products:", response.data); // Debugging
       return response.data;
     } catch (error) {
@@ -238,7 +214,7 @@ export const register = async (formData) => {
   };
   export const fetchProductbyID = async (productId) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/proByid/${productId}`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/proByid/${productId}`);
       console.log("FETCH API BY ID",response.data)
       return response.data;
     } catch (error) {
@@ -248,7 +224,7 @@ export const register = async (formData) => {
   };
   export const productlistByID = async (categoryId) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/proByid/${categoryId}`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/proByid/${categoryId}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching product details:", error);
@@ -258,7 +234,7 @@ export const register = async (formData) => {
 
   export const createProduct = async (productData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}products/inproduct`, productData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/products/inproduct`, productData);
       return response.data;
     } catch (error) {
       // console.error("Error creating product:", error.response.data.message);
@@ -270,7 +246,7 @@ export const register = async (formData) => {
   export const uploadParsedData = async (formData) => {
     console.log("API Submitting file");
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}products/import`, formData, {
+      const response = await axiosInstance.post(`${API_BASE_URL}/products/import`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // This is important for file uploads
         },
@@ -285,7 +261,7 @@ export const register = async (formData) => {
   export const updateProduct = async (productId, productData) => {
     console.log("Edited Product Id",productId)
     try {
-      const response = await axiosInstance.put(`${API_BASE_URL}products/productput/${productId}`, productData);
+      const response = await axiosInstance.put(`${API_BASE_URL}/products/productput/${productId}`, productData);
       return response.data;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -294,7 +270,7 @@ export const register = async (formData) => {
   };
   export const fetchSupplierpagination = async (page,limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}supplier/sup_all_pagination`,{ params: { page, limit } });
+      const response = await axiosInstance.get(`${API_BASE_URL}/supplier/sup_all_pagination`,{ params: { page, limit } });
       // console.log("Fetched Suppliers:", response.data); // Debugging
       return response.data;
     } catch (error) {
@@ -304,7 +280,7 @@ export const register = async (formData) => {
   };
   export const fetchSuppliers = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}supplier/sup_all`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/supplier/sup_all`);
       console.log("Api Suplier List",response)
       return response.data;
     } catch (error) {
@@ -314,7 +290,7 @@ export const register = async (formData) => {
   };
   export const supplierById = async (supplierId) => {
     try {
-      const response  = await axiosInstance.get(`${API_BASE_URL}supplier/sup_id/${supplierId}`);
+      const response  = await axiosInstance.get(`${API_BASE_URL}/supplier/sup_id/${supplierId}`);
       console.log("API", response.data); // Indicate success
       return response;
     } catch (error) {
@@ -325,7 +301,7 @@ export const register = async (formData) => {
 
   export const updateSupplier = async (supplierId, supplierData) => {
     try {
-      const response = await axiosInstance.put(`${API_BASE_URL}supplier/sup_update/${supplierId}`, supplierData);
+      const response = await axiosInstance.put(`${API_BASE_URL}/supplier/sup_update/${supplierId}`, supplierData);
       return response.data;
     } catch (error) {
       console.error("Error updating supplier:", error);
@@ -334,7 +310,7 @@ export const register = async (formData) => {
   };
   export const createSupplier = async (supplierData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}supplier/sup_insert`, supplierData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/supplier/sup_insert`, supplierData);
       return response.data;
     } catch (error) {
       console.error("Error creating supplier:", error);
@@ -343,7 +319,7 @@ export const register = async (formData) => {
   };
   export const deleteSupplier = async (supplierId) => {
     try {
-      await axiosInstance.delete(`${API_BASE_URL}supplier/sup_del/${supplierId}`);
+      await axiosInstance.delete(`${API_BASE_URL}/supplier/sup_del/${supplierId}`);
       return true; // Indicate success
     } catch (error) {
       console.error("Error deleting supplier:", error);
@@ -353,7 +329,7 @@ export const register = async (formData) => {
 
   export const createsupplierinvoice = async (invoiceData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}supplier_invoice/invoices`, invoiceData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/supplier_invoice/invoices`, invoiceData);
       return response.data;
     } catch (error) {
       console.error("Error creating Invoice:", error);
@@ -362,7 +338,7 @@ export const register = async (formData) => {
   };
   export const createSupplierPayment = async (paymentData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}supplier_invoice/payments`,paymentData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/supplier_invoice/payments`,paymentData);
       return response.data;
     } catch (error) {
       console.error("Error creating Invoice:", error);
@@ -372,7 +348,7 @@ export const register = async (formData) => {
 
   export const fetchSupplierInvoiceList = async (supplierId) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}supplier_invoice/${supplierId}/invoices`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/supplier_invoice/${supplierId}/invoices`);
       console.log("Supplier at API",response.data);
       return response.data;
     } catch (error) {
@@ -383,7 +359,7 @@ export const register = async (formData) => {
 
   export const fetchInvoices = async (page,limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}invoice/invoiceall_pagination`,{ params: { page, limit } });
+      const response = await axiosInstance.get(`${API_BASE_URL}/invoice/invoiceall_pagination`,{ params: { page, limit } });
       console.log("Api Invoice",response)
       return response.data;
     } catch (error) {
@@ -395,7 +371,7 @@ export const register = async (formData) => {
   export const fetchProductsByInvoice = async (invoiceNo) => {
     console.log("INVOICE ID BEFORE API SEND",invoiceNo)
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}invoice/invoice/${invoiceNo}`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/invoice/invoice/${invoiceNo}`);
       console.log("FetchProductsByInvoice",response);
       return response.data;
     } catch (error) {
@@ -406,7 +382,7 @@ export const register = async (formData) => {
 
   export const createInvoice = async (invoiceData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}invoice/invoicesin`, invoiceData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/invoice/invoicesin`, invoiceData);
       return response.data;
     } catch (error) {
       console.error("Error creating Invoice:", error);
@@ -416,7 +392,7 @@ export const register = async (formData) => {
 
   export const fetchExpense = async (page,limit) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}expense/pagination_expence`,{ params: { page, limit } });
+      const response = await axiosInstance.get(`${API_BASE_URL}/expense/pagination_expence`,{ params: { page, limit } });
       console.log("Api Expense",response)
       return response;
     } catch (error) {
@@ -427,7 +403,7 @@ export const register = async (formData) => {
 
   export const addExpense = async (expenseData) => {
     try {
-      const response = await axiosInstance.post(`${API_BASE_URL}expense/expensesinsert`, expenseData);
+      const response = await axiosInstance.post(`${API_BASE_URL}/expense/expensesinsert`, expenseData);
       return response.data;
     } catch (error) {
       console.error("Error adding expense:", error);
@@ -437,7 +413,7 @@ export const register = async (formData) => {
  
   export const getBinList = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/list-soft-deleted`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/list-soft-deleted`);
       console.log("Api Bin",response);
       return response.data;
     } catch (error) {
@@ -447,7 +423,7 @@ export const register = async (formData) => {
   }; 
   export const restoreProduct = async (productId) => {
     try {
-      const response = await axiosInstance.put(`${API_BASE_URL}products/restore/${productId}`);
+      const response = await axiosInstance.put(`${API_BASE_URL}/products/restore/${productId}`);
       return response.data;
     } catch (error) {
       console.error("Error restoring product:", error.response?.data || error.message);
@@ -458,7 +434,7 @@ export const register = async (formData) => {
   export const deleteproduct = async (categoryId) => {
     console.log("Deleting the Product ID:",categoryId)
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}products/soft-delete/${categoryId}`);
+      const response = await axiosInstance.delete(`${API_BASE_URL}/products/soft-delete/${categoryId}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting product:", error.response?.data || error.message);
@@ -473,7 +449,7 @@ export const register = async (formData) => {
         throw new Error("Search term is required.");
       }
       try {
-        const response = await axiosInstance.get(`${API_BASE_URL}products/searchProducts?`, {
+        const response = await axiosInstance.get(`${API_BASE_URL}/products/searchProducts?`, {
           params: {searchTerm },
         });
         console.log("Search API Page",response);
@@ -488,7 +464,7 @@ export const register = async (formData) => {
   export const productpermanentdelete = async (categoryId) => {
     console.log("Deleting the Product ID:",categoryId)
     try {
-      const response = await axiosInstance.delete(`${API_BASE_URL}products/permanent-delete/${categoryId}`);
+      const response = await axiosInstance.delete(`${API_BASE_URL}/products/permanent-delete/${categoryId}`);
       return response.data;
     } catch (error) {
       console.error("Error deleting product:", error.response?.data || error.message);
@@ -498,7 +474,7 @@ export const register = async (formData) => {
 
   export const getpharmacydetails = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}shop/getAll/`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/shop/getAll/`);
       console.log("Api Shop Details",response)
       return response.data;
     } catch (error) {
@@ -510,7 +486,7 @@ export const register = async (formData) => {
   export const updatePharmacyDetails = async (shopId, updatedData) => {
     console.log("Shop",updatedData)
     try {
-      const response = await axiosInstance.put(`${API_BASE_URL}shop/update/${shopId}`, updatedData);
+      const response = await axiosInstance.put(`${API_BASE_URL}/shop/update/${shopId}`, updatedData);
       return response.data;
     } catch (error) {
       console.error("Error updating product:", error);
@@ -549,7 +525,7 @@ export const register = async (formData) => {
       console.log("Fetching today's sales for:", formattedDate);
   
       // Make API request with startDate and endDate as today
-      const response = await axiosInstance.get(`${API_BASE_URL}report/sales-report/weekly`, {
+      const response = await axiosInstance.get(`${API_BASE_URL}/report/sales-report/weekly`, {
         params: {
           startDate: formattedDate,
           endDate: formattedDate,
@@ -580,7 +556,7 @@ export const register = async (formData) => {
       console.log("Fetching weekly sales from:", formattedStartDate, "to", formattedEndDate);
   
       // Make API request with query parameters
-      const response = await axiosInstance.get(`${API_BASE_URL}report/sales-report/weekly`, {
+      const response = await axiosInstance.get(`${API_BASE_URL}/report/sales-report/weekly`, {
         params: {
           startDate: formattedStartDate,
           endDate: formattedEndDate,
@@ -596,7 +572,7 @@ export const register = async (formData) => {
   };
   export const getMonthlySales = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}report/sales-report/monthly`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/report/sales-report/monthly`);
       console.log("Monthly Details",response)
       return response.data;
     } catch (error) {
@@ -606,7 +582,7 @@ export const register = async (formData) => {
   }; 
   export const getYearlySales = async () => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}report/sales-report/yearly`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/report/sales-report/yearly`);
       console.log("Yearly Details",response)
       return response.data;
     } catch (error) {
@@ -617,7 +593,7 @@ export const register = async (formData) => {
 
   export const searchProducts = async (query) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}products/filter_pro?search=${query}`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/products/filter_pro?search=${query}`);
       return response.data;
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -626,7 +602,7 @@ export const register = async (formData) => {
   };
   export const getMostSoldItems = async (period) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}invoice/most_sold_medicines?period=${period}`);
+      const response = await axiosInstance.get(`${API_BASE_URL}/invoice/most_sold_medicines?period=${period}`);
       // console.log("Most Sold Items in API", response.data);
       return response.data; // Assuming API returns { data: [...] }
     } catch (error) {
@@ -637,7 +613,7 @@ export const register = async (formData) => {
 
   export const getAllSoldProducts = async ({ startDate, endDate, period, productName, categoryName }) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}invoice/most_sold_details`,
+      const response = await axiosInstance.get(`${API_BASE_URL}/invoice/most_sold_details`,
          {
         params: { startDate, endDate, period, productName, categoryName },
       });
@@ -752,7 +728,7 @@ export const downloadSalesReportCSV = async () => {
   const endpoint = "invoice/sales-report/csv";
   try {
     console.log("📤 Requesting CSV sales report...");
-    const response = await axiosInstance.get(`${API_BASE_URL}${endpoint}`, {
+    const response = await axiosInstance.get(`${API_BASE_URL}/${endpoint}`, {
       responseType: "blob", // Ensures binary data is received
       headers: {
         Accept: "text/csv", // Correct MIME type
@@ -784,7 +760,7 @@ export const downloadSalesReportPDF = async () => {
   try {
     console.log("📤 Requesting PDF sales report...");
 
-    const response = await axiosInstance.get(`${API_BASE_URL}invoice/sales-report/pdf`, {
+    const response = await axiosInstance.get(`${API_BASE_URL}/invoice/sales-report/pdf`, {
       responseType: "blob", 
       // responseType: "arraybuffer",
       // Ensures binary data is received
@@ -826,7 +802,7 @@ console.log("📤 API Call Params:", status, downloadStockPDF);
 
   try {
     console.log("📤 Requesting PDF Stock report...");
-    const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockPDF`, {
+    const response = await axiosInstance.get(`${API_BASE_URL}/products/downloadStockPDF`, {
       params: { 
         status : status,  // Ensure proper URL encoding
         downloadStockPDF: true              // Always set this as true
@@ -866,7 +842,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
   console.log("📤 API Call Params:", status, downloadStockCSV);
   try {
     console.log("📤 Requesting CSV stock report...");
-    const response = await axiosInstance.get(`${API_BASE_URL}products/downloadStockCSV`, {
+    const response = await axiosInstance.get(`${API_BASE_URL}/products/downloadStockCSV`, {
       params: { 
         status : status,  // Ensure proper URL encoding
         downloadStockCSV: true              // Always set this as true
@@ -905,7 +881,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
 
   export const getIncomeReport = async (interval) => {
     try {
-      const response = await axiosInstance.get(`${API_BASE_URL}report/income-report`, {
+      const response = await axiosInstance.get(`${API_BASE_URL}/report/income-report`, {
         params: { interval } // Passing interval as a query parameter
       });
       console.log("API Response:", response.data);
@@ -935,7 +911,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
   export const printDocument = async (invoiceId) => {
     console.log("Printing invoice with ID:", invoiceId);
     try {
-        const response = await axiosInstance.get(`${API_BASE_URL}invoice/invoicebyid/pdfdownload/${invoiceId}`, {
+        const response = await axiosInstance.get(`${API_BASE_URL}/invoice/invoicebyid/pdfdownload/${invoiceId}`, {
             responseType: "blob", // Ensure response is treated as binary
         });
         const blob = new Blob([response.data], { type: "application/pdf" });
@@ -953,7 +929,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
 
 export const returnCustomerproducts = async (page,limit) => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}return/getAll_rejectedInvoices`,{ params: { page, limit } });
+    const response = await axiosInstance.get(`${API_BASE_URL}/return/getAll_rejectedInvoices`,{ params: { page, limit } });
     console.log("Api Return",response)
     return response.data;
   } catch (error) {
@@ -965,7 +941,7 @@ export const returnCustomerproducts = async (page,limit) => {
 //  create return Request
 export const submitReturnRequest = async (returnData) => {
   try {
-    const response = await axiosInstance.post(`${API_BASE_URL}return/return_products`, returnData);
+    const response = await axiosInstance.post(`${API_BASE_URL}/return/return_products`, returnData);
     return response; // Axios automatically parses JSON
   } catch (error) {
     toast.error("Error submitting return:", error.response?.data || error.response.message);
@@ -976,7 +952,7 @@ export const submitReturnRequest = async (returnData) => {
 
 export const getTotalSalesAmount = async () => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}invoice/invoice_total_amount`);
+    const response = await axiosInstance.get(`${API_BASE_URL}/invoice/invoice_total_amount`);
     console.log("Total Sales Amount",response.data)
     return response.data;
   } catch (error) {
@@ -986,7 +962,7 @@ export const getTotalSalesAmount = async () => {
 };
 export const getTotalProductCount = async () => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}products/product_totalcount`);
+    const response = await axiosInstance.get(`${API_BASE_URL}/products/product_totalcount`);
     console.log("Total Products",response.data)
     return response.data;
   } catch (error) {
@@ -996,7 +972,7 @@ export const getTotalProductCount = async () => {
 };
 export const getTotalCustomerCount = async () => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}customer/cus_total_count`);
+    const response = await axiosInstance.get(`${API_BASE_URL}/customer/cus_total_count`);
     console.log("Total Customer Count",response.data)
     return response.data;
   } catch (error) {
@@ -1006,7 +982,7 @@ export const getTotalCustomerCount = async () => {
 };
 export const getAllProductsStockSearch = async ({ status , search}) => {
   try {
-    const response = await axiosInstance.get(`${API_BASE_URL}products/stock_list_product`, {
+    const response = await axiosInstance.get(`${API_BASE_URL}/products/stock_list_product`, {
       params: { status , search},
     });
     return response.data;

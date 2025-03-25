@@ -241,13 +241,9 @@ const handleGstChange = (e) => {
           <span className="text-gray-800">{details.phoneNumber}</span>
         </div> */}
         <div className="flex items-start">
-          <span className="font-semibold text-gray-700 w-48">Government Registered:</span>
-          <span>
-            {details.isGovtRegistered ? (
-              <span className="text-green-600 font-bold">Registered</span>
-            ) : (
-              <span className="text-red-600 font-bold">Not Registered</span>
-            )}
+          <span className="font-semibold text-gray-700 w-48">Govt Registered Number:</span>
+          <span className="text-gray-800">14785123698
+           
           </span>
         </div>
       </div>
