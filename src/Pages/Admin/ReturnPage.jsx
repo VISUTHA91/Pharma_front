@@ -17,8 +17,11 @@ const ReturnPage = () => {
   useEffect(() => {
     const fetchReturnProducts = async () => {
       const response = await returnCustomerproducts( currentPage,limit);  
-      console.log("Page data",response.data);
+      console.log("Page data",response);
       setReturns(response.data);
+      setCurrentPage(response.currentPage)
+      setLimit(response.limit)
+      setTotalPages(response.totalPages)
     };
     fetchReturnProducts();
   }, [currentPage]);
@@ -304,7 +307,7 @@ const ReturnPage = () => {
       </div>
 
 {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 h-scree overflow-y-scroll">
           <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Add New Return</h2>
             <form onSubmit={handleFormSubmit}>
@@ -315,6 +318,11 @@ const ReturnPage = () => {
                   name="invoiceNo"
                   value={formData.invoiceNo}
                   onChange={handleInvoiceChange}
+                  onInput={(e) => {
+                    if (e.target.value.startsWith(" ")) {
+                      e.target.value = e.target.value.trimStart();
+                    }
+                  }}
                   className="w-full border border-gray-300 px-3 py-2 rounded"
                   required
                 />
