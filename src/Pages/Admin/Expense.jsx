@@ -41,9 +41,18 @@ const Expense = () => {
 
 
   
+  // const handleInputCategoryChange = (e) => {
+  //   const { name, value } = e.target;
+  //   if (/^[A-Za-z]*$/.test(value)) {
+  //     setFormData({ ...formData, [name]: value });
+  //   }
+  // };
   const handleInputCategoryChange = (e) => {
     const { name, value } = e.target;
-    if (/^[A-Za-z]*$/.test(value)) {
+  
+    // Regular expression to allow only alphabets and numbers
+    // Ensures the first character is NOT a special character
+    if (/^[A-Za-z0-9][A-Za-z0-9\s]*$/.test(value) || value === "") {
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -142,7 +151,12 @@ const Expense = () => {
                   type="number"
                   name="amount"
                   value={formData.amount}
-                  onChange={handleInputChange}
+                  // onChange={handleInputChange}
+                  onChange={(e) => {
+                    if (e.target.value.length <= 8) {
+                      handleInputChange(e);
+                    }
+                  }}
                   className="border border-gray-300 rounded w-full px-3 py-2"
                   onKeyDown={(e) => {
                     if (e.key === "0" && e.target.value.length === 0) {
@@ -150,6 +164,7 @@ const Expense = () => {
                     }
                   }}
                   required
+                  // maxLength={5}
                 />
               </div>
               <div className="mb-4">
@@ -159,6 +174,8 @@ const Expense = () => {
                   name="date"
                   value={formData.date}
                   onChange={handleDateInputChange}
+                  max={new Date().toISOString().split("T")[0]} // Restricts selection to today or past dates
+
                   className="border border-gray-300 rounded w-full px-3 py-2"
                   required
                 />

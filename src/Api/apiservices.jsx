@@ -379,10 +379,12 @@ export const register = async (formData) => {
       console.log("FetchProductsByInvoice",response);
       return response.data;
     } catch (error) {
-      console.error("Error fetching product details:", error);
+      console.error("Error fetching product details:", error.response.data.message);
+      // toast.error(error.response.data.message)
       throw error;
     }
   };
+
 
   export const createInvoice = async (invoiceData) => {
     try {
@@ -943,9 +945,12 @@ export const submitReturnRequest = async (returnData) => {
     const response = await axiosInstance.post(`${API_BASE_URL}/return/return_products`, returnData);
     return response; // Axios automatically parses JSON
   } catch (error) {
-    toast.error("Error submitting return:", error.response?.data || error.response.message);
+    // toast.error("Error submitting return:",response.message);
     // toast.error(error.response.message)
-    throw error;
+    // toast.error("Error submitting return:", error.message);
+// toast.error(error.response.data.message);
+throw error; // Rethrow the error for further handling if needed
+// console.error("Error in Return:", error.response.data.message);
   }
 };
 

@@ -5,14 +5,17 @@ import { fetchProductsByInvoice } from '../../Api/apiservices';
 import PaginationComponent from '../../Components/PaginationComponent';
 import { submitReturnRequest } from '../../Api/apiservices';
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const ReturnPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // const [returns, setReturns] = useState([])
   const [invoiceData, setInvoiceData] = useState([]);
       const [totalPages, setTotalPages] = useState(0); // Track total pages
       const [limit, setLimit] = useState(0); // Track total pages 
       const [currentPage, setCurrentPage] = useState(1); // Track current page
+      const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchReturnProducts = async () => {
@@ -221,8 +224,30 @@ const ReturnPage = () => {
       setProducts([]);
     }
   };
-  // console.log("ID................",invoiceId)
 
+  
+//   const handleInvoiceChange = (e) => {
+//     const invoiceNo = e.target.value;
+//     setFormData({ ...formData, invoiceNo });
+// };
+
+// const validateInvoiceNo = async () => {
+//     const invoiceNo = formData.invoiceNo.trim();
+//     if (invoiceNo !== "") {
+//         try {
+//             const data = await fetchProductsByInvoice(invoiceNo);
+//             setProducts(data.data.products);
+//             console.log("Return invoice Id", data.data);
+//             setInvoiveId(data.data.invoice_id);
+//         } catch (error) {
+//             console.error("Error fetching invoice data:", error);
+//         }
+//     } else {
+//         setProducts([]);
+//     }
+// };
+
+  
   const handleProductSelect = (productId, productName) => {
     // Check if already selected
     if (selectedProducts.some((p) => p.productId === productId)) return;
@@ -242,7 +267,8 @@ const ReturnPage = () => {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (selectedProducts.length === 0) {
-      console.error("No products selected for return");
+      // console.error("No products selected for return");
+      // toast.error("Invalid Invoice number");
       return;
     }
     const returnData = {
@@ -253,18 +279,19 @@ const ReturnPage = () => {
         return_reason: product.reason,
       })),
     };
-
-    console.log("RETURNS",returnData)
     try {
       await submitReturnRequest(returnData);
       setReturns([...returns, ...selectedProducts]);
-
-      // Reset form
       setFormData({ invoiceNo: "" });
       setSelectedProducts([]);
       setIsModalOpen(false);
-    } catch (error) {
-      // toast.error("Error submitting return:", error);
+      toast.success("Return request submitted successfully!");
+      setTimeout(() => {
+        navigate(0); 
+      }, 1500);
+        } catch (error) {
+      console.error("Error...................:", error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -278,7 +305,13 @@ const ReturnPage = () => {
               setCurrentPage={setCurrentPage}/>
       <button
         className="bg-[#027483] text-white px-4 py-2 rounded hover:bg-cyan-800"
-        onClick={() => setIsModalOpen(true)}
+        // onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          setFormData({ invoiceNo:""}); // Reset form fields
+           setProducts([]); // Clear previous products
+    setSelectedProducts([]);
+          setIsModalOpen(true);
+        }}
       >
         Add New Return
       </button>
@@ -307,8 +340,8 @@ const ReturnPage = () => {
       </div>
 
 {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 h-scree overflow-y-scroll">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md  h-[50%] overflow-y-scroll">
             <h2 className="text-xl font-bold mb-4">Add New Return</h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
@@ -327,8 +360,6 @@ const ReturnPage = () => {
                   required
                 />
               </div>
-
-              {/* {products.length > 0 && ( */}
               {Array.isArray(products) && products.length > 0 && (
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Select Product</label>
@@ -340,7 +371,7 @@ const ReturnPage = () => {
                     }}
                     className="w-full border border-gray-300 px-3 py-2 rounded"
                   >
-                    <option>Select a Product</option>
+                    {/* <option>Select a Product</option> */}
                     {products.map((product) => (
                       <option key={product.product_id} value={product.product_id}>
                         {product.product_name}
@@ -350,7 +381,6 @@ const ReturnPage = () => {
                 </div>
               )}
 
-              {/* Display selected products with quantity & reason inputs */}
               {selectedProducts.length > 0 &&
                 selectedProducts.map((product, index) => (
                   <div key={product.productId} className="border p-3 mb-2 rounded">
@@ -362,7 +392,7 @@ const ReturnPage = () => {
                       onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
                       onKeyDown={(e) => {
                         if (e.key === "0" && e.target.value.length === 0) {
-                          e.preventDefault(); // Prevents "0" as the first digit
+                          e.preventDefault(); 
                         }
                       }}
                       className="w-full border border-gray-300 px-3 py-2 rounded"
