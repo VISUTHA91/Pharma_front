@@ -56,13 +56,27 @@ const Expense = () => {
     }
   };
 
+  const handleDateInputChange = (e) => {
+    let { name, value } = e.target;
+  
+    const formattedDate = new Date(value).toISOString().split("T")[0];
+    value = formattedDate;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
  const handleFormSubmit = async (e) => {
+  e.preventDefault(); // Prevents the page from reloading
     try {
       const newExpense = { ...formData, id: expenses.length + 1 ,date: formattedDate };
+      console.log(newExpense);
       const savedExpense = await addExpense(newExpense); // API call
       setExpenses((prevExpenses) => [...prevExpenses, savedExpense]); // Update state with API response
       setFormData({ category: "", amount: "", date: "", description: "" });
       setModalOpen(false);
+        toast.success(" Created Successfully!");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1500);
     } catch (error) {
       console.error("Failed to add expense:", error);
     }
@@ -130,16 +144,21 @@ const Expense = () => {
                   value={formData.amount}
                   onChange={handleInputChange}
                   className="border border-gray-300 rounded w-full px-3 py-2"
+                  onKeyDown={(e) => {
+                    if (e.key === "0" && e.target.value.length === 0) {
+                      e.preventDefault(); // Prevent typing "0" as the first character
+                    }
+                  }}
                   required
                 />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-2">Date</label>
                 <input
-                  type="text"
+                  type="date"
                   name="date"
                   value={formData.date}
-                  onChange={handleInputChange}
+                  onChange={handleDateInputChange}
                   className="border border-gray-300 rounded w-full px-3 py-2"
                   required
                 />

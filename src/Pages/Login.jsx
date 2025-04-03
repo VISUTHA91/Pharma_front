@@ -23,39 +23,43 @@ function Login() {
   const handleRoleChange = (e) => {
     setRole(e.target.value);
   };
+ 
   const login = async (e) => {
     e.preventDefault();
     try {
       const { email, password } = logindata;
+      console.log("Role", role);
       let data;
-      // Call API based on role but don't send the role in the payload
+  
       if (role === "admin") {
         data = await apiCalls.adminlogin({ email, password });
-        console.log("Page Data",data.status);
-        if (data.status) { 
-          toast.success(data.message);
-          navigate("/Dashboard");
-        } else {
-          toast.error("Login Faiild " + data.message);
-        }
       } else if (role === "staff") {
         data = await apiCalls.stafflogin({ email, password });
-        if (data.status) { 
-          toast.success(data.message);
-          navigate("/Dashboard");
-        } else {
-          toast.error("Login Failed");
-        }
       } else {
         throw new Error("Please select a role");
       }
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("logindata", JSON.stringify({ email: data.user.email, id: data.user.id , role: data.user.role }));
+  
+      if (data.status) {
+        // Add role verification here
+        if (data.user.role !== role) {
+          toast.error('Please Select the Correct role.');
+          return;
+        }
+        // Proceed if role matches
+        toast.success(data.message);
+        localStorage.setItem("authToken", data.token);
+        localStorage.setItem("logindata", JSON.stringify({ email: data.user.email, id: data.user.id, role: data.user.role }));
+        navigate("/Dashboard");
+      } else {
+        toast.error("Login Failed: " + (data.message || "Invalid credentials"));
+      }
+  
     } catch (error) {
       console.error("Login failed:", error.message || error);
-      toast.error(error.message ||"Login Failed" );
+      toast.error(error.message || "Login Failed");
     }
   };
+  
 
   return (
     <div className="flex h-screen items-center justify-center bg-cover bg-center"
@@ -303,3 +307,69 @@ export default Login;
 //             className="rounded-lg object-fit h-44 w-34 bg-gray-20"
 //           />
 //         </div> */}
+
+ // const login = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const { email, password } = logindata;
+  //     console.log("Role", role);
+  //     let data;
+  //     // Call API based on role but don't send the role in the payload
+  //     if (role == "Admin") {
+  //       data = await apiCalls.adminlogin({ email, password });
+  //       console.log("Page Data",data.status);
+  //       if (data.status) { 
+  //         toast.success(data.message);
+  //         navigate("/Dashboard");
+  //       } else {
+  //         toast.error("Login Faiild :" + data.message);
+  //       }
+  //     } else if (role == "Staff") {
+  //       data = await apiCalls.stafflogin({ email, password });
+  //       if (data.status) { 
+  //         toast.success(data.message);
+  //         navigate("/Dashboard");
+  //       } else {
+  //         toast.error("Login Failed");
+  //       }
+  //     } else {
+  //       throw new Error("Please select a role");
+  //     }
+  //     localStorage.setItem("authToken", data.token);
+  //     localStorage.setItem("logindata", JSON.stringify({ email: data.user.email, id: data.user.id , role: data.user.role }));
+  //   } catch (error) {
+  //     console.error("Login failed:", error.message || error);
+  //     // toast.error(error.message ||"Login Failed" );
+  //   }
+  // };
+
+  // const login = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const { email, password } = logindata;
+  //     console.log("Role", role);
+  //     let data;
+  
+  //     if (role === "Admin") {
+  //       data = await apiCalls.adminlogin({ email, password });
+  //     } else if (role === "Staff") {
+  //       data = await apiCalls.stafflogin({ email, password });
+  //     } else {
+  //       throw new Error("Please select a role");
+  //     }
+  
+  //     if (data.status) {
+  //       toast.success(data.message);
+  //       // Store token and user data first
+  //       localStorage.setItem("authToken", data.token);
+  //       localStorage.setItem("logindata", JSON.stringify({ email: data.user.email, id: data.user.id, role: data.user.role }));
+  //       navigate("/Dashboard");
+  //     } else {
+  //       toast.error("Login Failed: " + (data.message || "Invalid credentials"));
+  //     }
+  
+  //   } catch (error) {
+  //     console.error("Login failed:", error.message || error);
+  //     toast.error(error.message || "Login Failed");
+  //   }
+  // };

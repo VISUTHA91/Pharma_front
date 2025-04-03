@@ -8,8 +8,6 @@ import loginbg from '../../assets/Image/Loginbg.jpg'
 import { FaUserAlt } from "react-icons/fa";
 
 
-
-
 function Adminlogin() {
     const [logindata, setLogindata] = useState({
         role:" ",
@@ -39,14 +37,12 @@ function Adminlogin() {
         } catch (error) {
           console.error("Login failed:", error.message || error);
           alert(data.message)
-          navigate("/Signup")
+          navigate("/Login")
         }
       };
 
   return (
       <>
-
-
 {/* <div className="flex  items-center justify-center bg-gradient-to-bl from-[#86efac] via-[#fcd34d] to-[#f9a8d4]"> */}
 {/* <div className="flex h-screen items-center justify-center bg-gradient-to-b from-sky-400 to-sky-200"> */}
 {/* <div className="flex h-screen items-center justify-center bg-gradient-to-r from-orange-300 to-rose-300"> */}
@@ -75,7 +71,6 @@ function Adminlogin() {
   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
     {/* <MdOutlineAssignmentInd className="text-gray-400" /> */}
     <FaUserAlt  className="text-gray-400"/>
-
   </span>
   <select
     name="role"

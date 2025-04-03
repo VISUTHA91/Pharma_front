@@ -293,7 +293,7 @@ const ReturnPage = () => {
           <tbody>
             {returns.map((item, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-2 ">{item.invoice_id}</td>
+                <td className="px-4 py-2 ">{item.invoice_number}</td>
                 <td className="px-4 py-2 ">{item.product_name}</td>
                 <td className="px-4 py-2 ">{item.quantity}</td>
                 <td className="px-4 py-2 ">{item.return_reason}</td>
@@ -332,7 +332,7 @@ const ReturnPage = () => {
                     }}
                     className="w-full border border-gray-300 px-3 py-2 rounded"
                   >
-                    <option value="">Select a Product</option>
+                    <option>Select a Product</option>
                     {products.map((product) => (
                       <option key={product.product_id} value={product.product_id}>
                         {product.product_name}
@@ -352,6 +352,11 @@ const ReturnPage = () => {
                       type="number"
                       value={product.quantity}
                       onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "0" && e.target.value.length === 0) {
+                          e.preventDefault(); // Prevents "0" as the first digit
+                        }
+                      }}
                       className="w-full border border-gray-300 px-3 py-2 rounded"
                       required
                     />

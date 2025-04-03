@@ -129,10 +129,13 @@ const SupplierDetails = ({ selectedSupplier }) => {
       await createSupplierPayment(paymentForm);
       setIsPaymentModalOpen(false);
       // fetchSupplierDetails(selectedSupplier.id); // Refresh data
-
+      toast.success("Payment saved successfully!");
+      setTimeout(() => {
+        navigate(0);
+      }, 1500);
       fetchSupplierInvoiceList(selectedSupplier.id); // Refresh data
     } catch (error) {
-      // toast.error("Error saving payment:", error);
+      toast.error("Error saving payment:", error);
     }
           window.location.reload();
 
@@ -244,23 +247,34 @@ const SupplierDetails = ({ selectedSupplier }) => {
       </table>
       </div>
       {/* Invoice Modal */}
-      <Modal isOpen={isInvoiceModalOpen} onRequestClose={() => setIsInvoiceModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-2">
-        <div className="flex justify-between items-center mb-4">
-                   <h2 className="text-lg font-bold mb-4">Create Invoice</h2>
+      <Modal isOpen={isInvoiceModalOpen} onRequestClose={() => setIsInvoiceModalOpen(false)} className="p-5 bg-white rounded shadow-lg min-w-[50%] max-w-md mx-auto mt-2">
+        <div className="flex justify-between items-center mb-1">
+                   <h2 className="text-lg font-bold">Create Supplier Invoice</h2>
                    <button 
       onClick={() => setIsInvoiceModalOpen(false)} 
       className="text-gray-500 hover:text-gray-700 text-xl font-bold"
     >
       &times;
     </button>
-        </div>
- 
-        <form onSubmit={handleInvoiceSubmit} className="space-y-3">
-          <input type="text" name="supplierId" value={invoiceForm.supplierId} readOnly className="w-full border p-2 rounded" />
-          <input type="text" name="supplierBillNo" placeholder="Bill No" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
-          <input type="text" name="description" placeholder="Description" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
-          <input type="number" name="totalAmount" placeholder="Total Bill Amount" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
-          <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
+        </div> 
+        <form onSubmit={handleInvoiceSubmit} className="space-y-2">
+          <lable>Supplier Id</lable>
+          <input type="text" name="supplierId" value={invoiceForm.supplierId} readOnly className="w-full border p-2 rounded"/>
+          <input type="text" name="supplierBillNo" placeholder="Bill No" onChange={handleInvoiceChange} 
+          onInput={(e) => (e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+          className="w-full border p-2 rounded" required maxLength={15}/>
+          <input type="text" name="description" placeholder="Description" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required   onInput={(e) => {
+    if (e.target.value.length === 1 && /[^a-zA-Z0-9]/.test(e.target.value)) {
+      e.target.value = ""; // Clear the input if first character is special
+    }
+  }} />
+          <input type="number" name="totalAmount" placeholder="Total Bill Amount" onChange={handleInvoiceChange} className="w-full border p-2 rounded"
+           onInput={(e) => {
+            if (e.target.value.startsWith("0")) {
+              e.target.value = ""; // Clear input if first character is "0"
+            }
+          }} required />
+          <label htmlFor="dueDate" className="block text-gray-700 font-sm">
     Invoice Date
   </label>
           <input type="date" name="invoiceDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required  placeholder="CurrentDate"/>
@@ -281,7 +295,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
     InvoiceDate
   </label>
 </div> */}
-  <label htmlFor="dueDate" className="block text-gray-700 font-medium mb-1">
+  <label htmlFor="dueDate" className="block text-gray-700 font-sm mb-1">
     Due Date
   </label>
           <input type="date" name="dueDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required />
@@ -293,7 +307,7 @@ const SupplierDetails = ({ selectedSupplier }) => {
       <div className="flex justify-between items-center mb-4">
       <h2 className="text-lg font-bold mb-4">Enter Payment Details</h2>
         <button 
-      onClick={() => setIsInvoiceModalOpen(false)} 
+      onClick={() => setIsPaymentModalOpen(false)} 
       className="text-gray-500 hover:text-gray-700 text-xl font-bold"
     >
       &times;

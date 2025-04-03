@@ -10,6 +10,12 @@ import PaginationComponent from "../../Components/PaginationComponent";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaUnlock, FaUserAlt } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { MdRemoveRedEye } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+
+
+
 
 
 
@@ -23,6 +29,7 @@ const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showconfirmPassword, setShowconfirmPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [ showModal , setShowModal] = useState(false);
 
 
   const [formData, setFormData] = useState({
@@ -38,12 +45,21 @@ const Registration = () => {
   const [editIndex, setEditIndex] = useState(null);
   const [error, setError] = useState();
   const [passwordError, setPasswordError] = useState("");
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [passwords, setPasswords] = useState({
+      newPassword: "",
+      confirmPassword: "",
+    });
+    // const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
 
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
     if (!isModalVisible) {
       // resetForm();
+      // window.location.reload();
     }
   };
 
@@ -68,9 +84,7 @@ const Registration = () => {
         setLimit(data.limit);
         setTotalPages(data.totalPages);
         setCurrentPage(data.currentPage)
-        // console.log("page",data.currentPage)
-        setStaffList(data); // Update the staff list state
-        // console.log(",.,,,.,.,",data)
+        setStaffList(data);
         setLoading(false); // Set loading to false after data is fetched
       } catch (error) {
         setError('Failed to load staff data'); // Handle any errors
@@ -80,40 +94,32 @@ const Registration = () => {
     fetchStaffList(); // Call the fetch function
   }, [currentPage]);
 
-
-
   const handlenumberChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  // const handlenameChange = (e) => {
-  //   const { name, value } = e.target;
-  //   // Allow alphabets and alphabets with numbers, but not only numbers
-  //   if (/^(?!\d+$)[A-Za-z0-9]*$/.test(value)) {
-  //   setFormData((prev) => ({ ...prev, [name]: value }));
-  //   }
-  // };
+
   const handlenameChange = (e) => {
     const { name, value } = e.target;
     // Allow alphabets, numbers, and spaces, but prevent input with only spaces
-    if (/^(?!\s*$)(?!\d+$)[A-Za-z0-9 ]*$/.test(value)) {
+    if (value === "" || /^(?!\s*$)(?!\d+$)[A-Za-z0-9 ]*$/.test(value)) {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+
   const handleemailChange = (e) => {
     const { name, value } = e.target;
-  
+
     // Update input value while typing
     setFormData((prev) => ({ ...prev, [name]: value }));
-  
+
     // Email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  
+
     // Show an error message if the email format is incorrect
     if (value && !emailPattern.test(value)) {
       setEmailError("Invalid email format");
@@ -121,6 +127,23 @@ const Registration = () => {
       setEmailError("");
     }
   };
+
+  const [addressError, setAddressError] = useState("");
+  const addressRegex = /^[A-Za-z0-9]+(?:[ ,.\-/][A-Za-z0-9]+)*$/;
+  const handleAddressChange = (e) => {
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, address_details: value }));
+    if (value.trim() === "") {
+      setAddressError("Address is required");
+    } else if (!addressRegex.test(value.trim())) {
+      setAddressError(
+        "Invalid address: Only letters, numbers, commas, dots, hyphens, and slashes are allowed (no consecutive special characters)"
+      );
+    } else {
+      setAddressError("");
+    }
+  };
+
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -141,66 +164,131 @@ const Registration = () => {
     }
   };
 
-  
-
-
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
+  //   // if (formData.password !== formData.confirm_password) {
+  //   //   toast.error("Password and Confirm Password do not match!");
+  //   //   return;
+  //   // }
   //   console.log("Form submitted:", formData);
   //   try {
   //     if (editIndex !== null) {
   //       const updatedStaff = await updateStaff(formData.id, formData);
-  //       // console.log("Staff updated successfully", updatedStaff);
-  //       if (response.status === 400) {
-  //         // console.log("Staff updated successfully", response.data);
-  //         alert(response.message);
+  //       if (updatedStaff.status === 400) { // Use updatedStaff, not response
+  //         alert(updatedStaff.message);
+  //         toast.success(updatedStaff.message);
+  //         window.location.reload();
   //       }
   //     } else {
   //       const response = await register(formData);
   //       if (response.status === 201) {
-  //         // console.log("New staff added successfully", response.data);
-  //         localStorage.setItem("authToken", response.data.token); // Storing token if needed
-  //         // window.location.reload();
+  //         localStorage.setItem("authToken", response.data.token);
   //       }
   //     }
   //   } catch (error) {
   //     console.error("Error while submitting staff data:", error);
+  //     toast.error("Error while submitting staff data:", error);
+  //     if (error.response?.status === 401) {
+  //       toast.info("Session expired. Please log in again!");
+  //       localStorage.removeItem("authToken");
+  //       window.location.reload();
+  //     } else {
+  //       toast.error(error.response?.data?.message || "An error occurred");
+  //     }
   //   }
   //   toggleModal();
   // };
 
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (formData.password !== formData.confirm_password) {
+  //     toast.error("Password and Confirm Password do not match!");
+  //     return;
+  //   }
+
+  //   console.log("Form submitted:", formData);
+  //   try {
+  //     if (editIndex !== null) {
+  //       const updatedStaff = await updateStaff(formData.id, formData);
+  //       if (updatedStaff.status === 200) { 
+  //         toast.success(updatedStaff.message || "Staff updated successfully!");
+  //         toggleModal();
+  //         window.location.reload();
+  //       } else if (updatedStaff.status === 400) {
+  //         alert(updatedStaff.message);
+  //         toast.error(updatedStaff.message);
+  //       }
+  //     } else {
+  //       const response = await register(formData);
+  //       if (response.status === 201) {
+  //         toast.success("Staff registered successfully!");
+  //         // localStorage.setItem("authToken", response.data.token);
+  //         toggleModal();
+  //         window.location.reload();
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error while submitting staff data:", error);
+  //     if (error.response?.status === 401) {
+  //       toast.info("Session expired. Please log in again!");
+  //       localStorage.removeItem("authToken");
+  //       window.location.reload();
+  //     } else {
+  //       toast.error(error.response?.data?.message || "An error occurred");
+  //     }
+  //   }
+  // };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    if (formData.password !== formData.confirm_password) {
+      toast.error("Password and Confirm Password do not match!");
+      return;
+    }
     try {
       if (editIndex !== null) {
         const updatedStaff = await updateStaff(formData.id, formData);
-        if (updatedStaff.status === 400) { // Use updatedStaff, not response
-          alert(updatedStaff.message);
+        console.log("Update response:", updatedStaff);
+        if (updatedStaff.status === 200 || updatedStaff.status === 201) {
+          toast.success("Staff updated successfully!");
+          toggleModal();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
           toast.success(updatedStaff.message);
-          window.location.reload();
+          toggleModal();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         }
       } else {
+        // Create staff
         const response = await register(formData);
+        console.log("Register response:", response);
         if (response.status === 201) {
-          localStorage.setItem("authToken", response.data.token);
+          toast.success("Staff registered successfully!");
+          setTimeout(() => {
+            toggleModal();
+            window.location.reload();
+          }, 1500);
+                } else {
+          toast.error("Registration failed");
         }
       }
     } catch (error) {
-      console.error("Error while submitting staff data:", error);
-      toast.error("Error while submitting staff data:",error);
+      console.error("Submit error:", error);
       if (error.response?.status === 401) {
         toast.info("Session expired. Please log in again!");
         localStorage.removeItem("authToken");
         window.location.reload();
-
       } else {
-        // alert(error.response?.data?.message || "An error occurred");
-        toast.error(error.response?.data?.message || "An error occurred");
+        toast.error(error.response?.data?.message || "An unexpected error occurred");
       }
     }
-    toggleModal();
   };
 
   const handleEdit = (staffId) => {
@@ -213,25 +301,57 @@ const Registration = () => {
     }
   };
 
+  const handleView = async (staffId) => {
+        console.log("View function function", staffList.users)
+    const viewStaff = staffList.users.find(staff => staff.id === staffId);
+    if (viewStaff) {
+      setShowModal(staffId);
+     };
+    }
+    const handleClose = () => {
+      setShowModal(null); // Close modal
+    };
+    const handleInputChange = (e) => {
+      setPasswords({ ...passwords, [e.target.name]: e.target.value });
+    };
+    const handlepasswordSubmit = () => {
+      if (passwords.newPassword !== passwords.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+      handleChangePassword(details.staff_id, passwords.newPassword);
+      setShowPasswordModal(false);
+      setPasswords({ newPassword: "", confirmPassword: "" });
+    };
+    const handleChangePassword = (staffId, newPassword) => {
+      // call API or handle password change logic here
+    };
+
   // const handleDelete = (id) => {
   //   setStaffList((prev) => prev.filter((_, i) => i !== id));
   // };
+
+  
+  
   const handleDelete = async (staffId) => {
     try {
       // Confirm before deleting
       if (window.confirm("Are you sure you want to delete this staff member?")) {
-        await deleteStaff(staffId); // Call API
-        setStaffList((prev) => prev.filter((staff) => staff.id !== staffId));
+        await deleteStaff(staffId);
         toast.success("Staff deleted successfully");
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       }
     } catch (error) {
       toast.error("Failed to delete staff:", error);
     }
   };
 
+
+
   return (
-    <div className="  rounded-lg">
+    <div className="rounded-lg">
       {/* Add New Staff Button */}
       <div className="mb-4 flex justify-between items-center w-[96%]">
         <h3 className="text-2xl font-semibold text-gray-700">Staff List</h3>
@@ -246,45 +366,6 @@ const Registration = () => {
           Add New Staff
         </button>
       </div>
-
-      {/* <table className="min-w-full border border-gray-300 shadow-sm rounded-lg overflow-hidden">
-  <thead className="bg-[#019493] text-white ">
-    <tr>
-      <th className="px-6 py-3 text-left text-sm font-medium">Name</th>
-      <th className="px-6 py-3 text-left text-sm font-medium">Email</th>
-      <th className="px-6 py-3 text-left text-sm font-medium">Contact No</th>
-      <th className="px-6 py-3 text-left text-sm font-medium">Role</th>
-      <th className="px-6 py-3 text-left text-sm font-medium">Actions</th>
-    </tr>
-  </thead>
-  <tbody className="divide-y divide-gray-200">
-    {staffList.users && staffList.users.map((staff, id) => (
-      <tr
-        key={staff.id}
-        className="hover:bg-gray-50 transition-colors duration-200"
-      >
-        <td className="px-6 py-4 text-sm text-gray-700">{staff.username}</td>
-        <td className="px-6 py-4 text-sm text-gray-700">{staff.email}</td>
-        <td className="px-6 py-4 text-sm text-gray-700">{staff.contact_number}</td>
-        <td className="px-6 py-4 text-sm text-gray-700">{staff.role}</td>
-        <td className="px-6 py-4 space-x-2">
-          <button
-            onClick={() => handleEdit(staff.id)}
-            className="bg-yellow-500 text-white px-3 py-2 text-sm rounded-lg hover:bg-yellow-600 shadow-sm"
-          >
-            Edit
-          </button>
-          <button
-            onClick={() => handleDelete(staff.id)}
-            className="bg-red-500 text-white px-3 py-2 text-sm rounded-lg hover:bg-red-600 shadow-sm"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table> */}
       <div className="overflow-x-auto">
         <table className="table-fixed w-[96%] bg-white rounded-lg shadow-md text-left">
           <thead className="bg-[#027483] text-white">
@@ -305,12 +386,18 @@ const Registration = () => {
                   className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"
                     } hover:bg-gray-200 h-[90%] overflow-auto scrollbar-hidden`}
                 >
-                  <td className="py-2 px-4">{index + 1}</td>
-                  <td className="py-2 px-4 truncate">{staff.username}</td>
-                  <td className="py-2 px-4 truncate">{staff.email}</td>
-                  <td className="py-2 px-4">{staff.contact_number}</td>
-                  <td className="py-2 px-4">{staff.role}</td>
-                  <td className="py-2 px-4 flex space-x-2">
+                  <td className="py-1 px-4">{index + 1}</td>
+                  <td className="py-1 px-4 truncate">{staff.username}</td>
+                  <td className="py-1 px-4 truncate">{staff.email}</td>
+                  <td className="py-1 px-4">{staff.contact_number}</td>
+                  <td className="py-1 px-4">{staff.role}</td>
+                  <td className="py-1 px-4 flex space-x-2">
+                    <button
+                      className="text-cyan-700"
+                    onClick={() => handleView(staff.id)}
+                    >
+                      <MdRemoveRedEye size={20} />
+                    </button>
                     <button
                       className="text-cyan-700"
                       onClick={() => handleEdit(staff.id)}
@@ -323,14 +410,18 @@ const Registration = () => {
                     >
                       <MdDeleteForever size={20} />
                     </button>
+                    <button
+                      className="text-cyan-700 text-xs"
+                      onClick={() => setShowPasswordModal(true)}
+                      >
+                      Reset Password
+                    </button>
                   </td>
                 </tr>
               ))}
           </tbody>
         </table>
       </div>
-
-
       {/* Modal */}
       {isModalVisible && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -340,7 +431,6 @@ const Registration = () => {
             </h2>
             <form onSubmit={handleSubmit} className="space-y-2">
               <div className="flex flex-wrap gap-4">
-
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -348,7 +438,6 @@ const Registration = () => {
                   >
                     Name
                   </label>
-
                   <input
                     type="text"
                     name="username"
@@ -359,7 +448,6 @@ const Registration = () => {
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                   />
                 </div>
-
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -380,7 +468,6 @@ const Registration = () => {
                     onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
                   />
                 </div>
-
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -388,7 +475,6 @@ const Registration = () => {
                   >
                     Email
                   </label>
-
                   <input
                     type="email"
                     name="email"
@@ -399,11 +485,8 @@ const Registration = () => {
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                   />
                   {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
-
                 </div>
-
                 <div className="relative">
-
                   <div className="mb-4 relative">
                     <label
                       className="block text-gray-700 text-sm font-bold mb-2"
@@ -411,17 +494,16 @@ const Registration = () => {
                     >
                       Password
                     </label>
-
                     <input
-        type={showPassword ? "text" : "password"}
-        name="password"
-        value={formData.password}
-        onChange={handlePasswordChange}
-        placeholder="Password"
-        required
-        className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700 pr-10"
-      />
-         
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handlePasswordChange}
+                      placeholder="Password"
+                      required
+                      disabled={editIndex !== null}
+                      className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700 pr-10"
+                    />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
@@ -430,13 +512,11 @@ const Registration = () => {
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                     {passwordError && (
-                  <p className="text-red-500 text-sm mt-1 w-full flex absolute">{passwordError}</p>
-      )}
+                      <p className="text-red-500 text-sm mt-1 w-full flex absolute">{passwordError}</p>
+                    )}
                   </div>
                 </div>
-
                 <div className="relative">
-
                   <div className="mb-4">
                     <label
                       className="block text-gray-700 text-sm font-bold mb-2"
@@ -444,13 +524,13 @@ const Registration = () => {
                     >
                       Confirm Password
                     </label>
-
                     <input
                       type={showconfirmPassword ? "text" : "password"}
                       name="confirm_password"
                       value={formData.confirm_password}
                       onChange={handlePasswordChange}
                       required
+                      disabled={editIndex !== null}
                       placeholder="ConfirmPassword"
                       className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                     />
@@ -459,11 +539,10 @@ const Registration = () => {
                       onClick={() => setShowconfirmPassword(!showconfirmPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400"
                     >
-                      {showconfirmPassword ?  <FaEye />:<FaEyeSlash />}
+                      {showconfirmPassword ? <FaEye /> : <FaEyeSlash />}
                     </button>
                   </div>
                 </div>
-
                 <div className="mb-4">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2"
@@ -516,17 +595,21 @@ const Registration = () => {
                   <textarea
                     name="address_details"
                     value={formData.address_details}
-                    onChange={handleChange}
+                    onChange={handleAddressChange}
                     placeholder="Address"
                     required
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                   />
+                  {addressError && <p className="text-red-500 text-sm mt-1">{addressError}</p>}
                 </div>
               </div>
               <div className="flex justify-end space-x-4 mt-4">
                 <button
                   type="button"
-                  onClick={toggleModal}
+                  onClick={() => {
+                    toggleModal();
+                    window.location.reload();
+                  }}
                   className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                 >
                   Cancel
@@ -542,6 +625,88 @@ const Registration = () => {
           </div>
         </div>
       )}
+
+{showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-5 rounded-lg shadow-lg w-96">
+            <h2 className="text-lg font-bold">Staff Details</h2>
+            {staffList.users.map(
+              (staff) =>
+                staff.id === showModal && (
+                  <div key={staff.id}>
+                    <p><strong>Name:</strong> {staff.username}</p>
+                    <p><strong>Email:</strong> {staff.email}</p>
+                    <p><strong>Contact Number:</strong> {staff.contact_number}</p>
+                    <p><strong>ID Proof:</strong> {staff.user_id_proof}</p>
+                    <p><strong>Addess:</strong> {staff.address_details}</p>
+                  </div>
+                )
+            )}
+            <button
+              className="mt-3 bg-cyan-700 text-white px-4 py-2 rounded"
+              onClick={handleClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      {showPasswordModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                <div className="bg-white w-[90%] max-w-md p-6 rounded-lg shadow-lg relative">
+                  <button
+                    className="absolute top-3 right-3 text-gray-600 hover:text-red-500"
+                    onClick={() => setShowPasswordModal(false)}
+                  >
+                    <IoMdClose size={24} />
+                  </button>
+      
+                  <h2 className="text-xl font-bold mb-4">Change Password</h2>
+                  <div className="mb-4 relative">
+        <label className="block font-semibold text-gray-700">New Password:</label>
+        <input
+          type={showPassword ? "text" : "password"} // Toggle type
+          name="newPassword"
+          value={passwords.newPassword}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+          className="absolute right-3 top-10 text-gray-600"
+        >
+          {showPassword ? <MdVisibilityOff size={24} /> : <MdVisibility size={24} />}
+        </button>
+      </div>
+      <div className="mb-4 relative">
+        <label className="block font-semibold text-gray-700">Confirm Password:</label>
+        <input
+          type={showConfirmPassword ? "text" : "password"} // Toggle type
+          name="confirmPassword"
+          value={passwords.confirmPassword}
+          onChange={handleInputChange}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)} // Toggle visibility
+          className="absolute right-3 top-10 text-gray-600"
+        >
+          {showConfirmPassword ? <MdVisibilityOff size={24} /> : <MdVisibility size={24} />}
+        </button>
+      </div>
+                  <button
+                    onClick={handlepasswordSubmit}
+                    className="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition duration-300 w-full"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            )}
     </div>
   );
 };

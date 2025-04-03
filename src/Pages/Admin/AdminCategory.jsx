@@ -10,9 +10,14 @@ import { deleteCategory } from '../../Api/apiservices';
 import * as XLSX from "xlsx";
 import PaginationComponent from '../../Components/PaginationComponent';
 import { FaSearch } from "react-icons/fa";
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import { MdRemoveRedEye } from "react-icons/md";
 import { getCategoryById } from '../../Api/apiservices';
+import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import { confirmToast } from 'react-confirm-toast';
+
 
 function AdminCategory() {
   const [categories, setCategories] = useState([]);
@@ -27,6 +32,8 @@ function AdminCategory() {
   const [totalPages, setTotalPages] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [viewCategory, setViewCategory] = useState(false);
+  const navigate = useNavigate();
+
 
 
   useEffect(() => {
@@ -55,17 +62,19 @@ function AdminCategory() {
       console.log("Description:", description);
       const newCategory = {
         category_name: categoryName,
-        description: description, // Include description if needed
+        description: description,
       };
-      const response = await createCategory(newCategory); // API call
-      setCategories((prev) => [...prev, response]); // Update UI with API response
+      const response = await createCategory(newCategory); 
+      setCategories((prev) => [...prev, response]); 
       setCategoryName("");
       setDescription("");
-      setShowCreateForm(false); // Close form
+      setShowCreateForm(false);
       toast.success("Category created successfully:", response);
+      setTimeout(() => {
+        navigate(0);
+      }, 2500);
       window.location.reload();
     } catch (error) {
-      // console.error("Error creating category:", error);
       toast.error("Error Creating Category : ", error)
     }
   };
@@ -76,23 +85,152 @@ function AdminCategory() {
       onSearch(query);
     }
   };
+
+  // const handleDelete = async (categoryId) => {
+  //   const isConfirmed = window.confirm("Are you sure you want to delete this category?");
+  //   if (!isConfirmed) return;
+  //   try {
+  //     await deleteCategory(categoryId);
+  //     setCategories(categories.filter(category => category.id !== categoryId));
+  //     toast.success("Category Deleted Sucessfully!");
+  //     setTimeout(() => {
+  //       navigate(0); 
+  //     }, 1500);
+  //   } catch (error) {
+  //     toast.error("Error : ", error);
+  //   }
+  // };
+
+
+
+  // const handleDelete = async (categoryId) => {
+  //   confirmToast({
+  //     message: 'Are you sure you want to delete this category?',
+  //     onConfirm: async () => {
+  //       try {
+  //         await deleteCategory(categoryId);
+  //         setCategories((categories) =>
+  //           categories.filter((category) => category.id !== categoryId)
+  //         );
+  //         toast.success('Category Deleted Successfully!');
+  //         setTimeout(() => {
+  //           navigate(0);
+  //         }, 1500);
+  //       } catch (error) {
+  //         toast.error(`Error: ${error.message}`);
+  //       }
+  //     },
+  //     onCancel: () => {
+  //       toast.info('Deletion cancelled.');
+  //     },
+  //     confirmText: 'Yes',
+  //     cancelText: 'No',
+  //   });
+  // };
+
+  // const handleDelete = async (categoryId) => {
+  //   const confirmDeletion = () => {
+  //     deleteCategory(categoryId)
+  //       .then(() => {
+  //         setCategories((categories) =>
+  //           categories.filter((category) => category.id !== categoryId)
+  //         );
+  //         toast.success('Category Deleted Successfully!');
+  //         setTimeout(() => {
+  //           navigate(0);
+  //         }, 1500);
+  //       })
+  //       .catch((error) => {
+  //         toast.error(`Error: ${error.message}`);
+  //       });
+  //   };
+  
+  //   const CancelButton = ({ closeToast }) => (
+  //     <button
+  //       onClick={closeToast}
+  //       className="bg-gray-500 text-white px-3 py-1 rounded"
+  //     >
+  //       No
+  //     </button>
+  //   );
+
+  //   toast.warn(
+  //     <div>
+  //       <p>Are you sure you want to delete this category?</p>
+  //       <div className="flex gap-2 mt-2">
+  //         <button
+  //           onClick={() => {
+  //             confirmDeletion();
+  //             toast.dismiss();
+  //           }}
+  //           className="bg-red-500 text-white px-3 py-1 rounded"
+  //         >
+  //           Yes
+  //         </button>
+  //         <CancelButton />
+  //       </div>
+  //     </div>,
+  //     {
+  //       autoClose: false,
+  //       closeOnClick: false,
+  //       closeButton: false,
+  //     }
+  //   );
+  // };
+  
+  
   const handleDelete = async (categoryId) => {
-    const isConfirmed = window.confirm("Are you sure you want to delete this category?");
-    if (!isConfirmed) return;
-    try {
-      await deleteCategory(categoryId);
-      toast.success("Category Deleted Sucessfully!");
-      setCategories(categories.filter(category => category.id !== categoryId));
-      window.location.reload();
-    } catch (error) {
-      // console.error("Error deleting category:", error);
-      // alert("Failed to delete category!");
-      toast.error("Error : ", error);
-    }
+    const confirmDeletion = async () => {
+      try {
+        await deleteCategory(categoryId);
+        setCategories((categories) =>
+          categories.filter((category) => category.id !== categoryId)
+        );
+        toast.success('Category Deleted Successfully!');
+        setTimeout(() => {
+          navigate(0);
+        }, 1500);
+      } catch (error) {
+        toast.error(`Error: ${error.message}`);
+      }
+    };
+  
+    const ConfirmToast = ({ closeToast }) => (
+      <div>
+        <p>Are you sure you want to delete this category?</p>
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <button
+            onClick={() => {
+              confirmDeletion();
+              closeToast();
+            }}
+            style={{ backgroundColor: '#d9534f', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+          >
+            Yes
+          </button>
+          <button
+            onClick={closeToast}
+            style={{ backgroundColor: '#5bc0de', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+          >
+            No
+          </button>
+        </div>
+      </div>
+    );
+  
+    toast.warn(<ConfirmToast />, {
+      autoClose: false,
+      closeOnClick: false,
+      closeButton: false,
+    });
   };
+
+
+
+
   const handleOpenEditModal = (category) => {
     if (!category) return;
-    setCategoryName(category.category_name || ""); // Ensure correct key
+    setCategoryName(category.category_name ||""); 
     setCategory_description(category.description || "");
     setSelectedCategory(category);
     setShowEditModal(true);
@@ -107,24 +245,21 @@ function AdminCategory() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Selected Category", selectedCategory);
     try {
       const updatedData = {
-        category_name: categoryName, // Ensure correct key
+        category_name: categoryName,
         description: category_description
       };
-      // console.log("Final Data Sent to API:", updatedData); 
       await updateCategory(selectedCategory.id, updatedData);
-      toast.success("Category Updated Sucessfully !");
       setShowEditModal(false);
-      window.location.reload();
+      toast.success("Category Updated Sucessfully !");
+      setTimeout(() => {
+        navigate(0); 
+      }, 1500);
     } catch (error) {
-      console.error("Error updating category:", error);
-      // alert("Failed to update category!");
       toast.error("Failed to Update Category !");
     }
   };
-
   const handleView = async (categoryId) => {
     try {
       const response = await getCategoryById(categoryId);
@@ -135,12 +270,12 @@ function AdminCategory() {
       toast.error("Error : ", error);
     }
   };
-
   const closeModal = () => {
     setShowModal(false);
     setSelectedCategory(null);
   };
-  console.log("CATEFFDVFDVFZzv",categories)
+  console.log("Categories.....",categories);
+
   return (
     <div className="m-2">
       <div className="flex justify-between items-center w-[96%]">
@@ -169,12 +304,7 @@ function AdminCategory() {
           >
             <FcPlus size={28} title="Add New Category" />
           </button>
-          {/* <span className="absolute bottom-full mb-1 hidden group-hover:block text-sm bg-gray-800 text-white py-1 px-2 rounded shadow-lg">
-          Add Customer
-        </span> */}
         </div>
-        {/* </Tooltip> */}
-
       </div>
       <table className="table-fixed w-[96%] bg-white  justify-center rounded-lg shadow-md text-left mb-1 mt-1 ">
         <thead className="bg-[#027483] text-white">
@@ -233,11 +363,14 @@ function AdminCategory() {
                 value={categoryName}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (/^(?!\d+$)[a-zA-Z0-9\s]*$/.test(value)) {
+                  if (value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
                     setCategoryName(value);
                   }
                 }}
                 className="mt-2 p-2 border rounded w-full"
+                maxLength={25}
+                placeholder='Name(25 characters Only)'
+                required
               />
               <div className="mb-4">
                 <label
@@ -250,20 +383,27 @@ function AdminCategory() {
                   type="text"
                   id="category_description"
                   value={category_description}
+                  placeholder='Description(250 characters Only)'
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^(?!\d+$)[a-zA-Z0-9\s]*$/.test(value)) {
+                    if (value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
                       setCategory_description(value);
                     }
                   }}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 text-top focus:outline-none focus:shadow-outline"
                   required
+                  maxLength={250}
                 />
               </div>
               <div className="flex justify-between">
                 <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
+                type="button"
+                onClick={() => {
+                  setShowEditModal(false);
+                  setTimeout(() => {
+                    navigate(0);
+                  }, 100); 
+                }}
                   className="bg-gray-400 text-white  mt-4  px-4 py-2 rounded"
                 >
                   Cancel
@@ -286,7 +426,6 @@ function AdminCategory() {
             <h1 className="text-center text-2xl mb-2 bg-[#019493] text-white rounded-lg p-2">
               Create Category
             </h1>
-
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -298,13 +437,13 @@ function AdminCategory() {
                   value={categoryName}
                   onChange={(e) => {
                     const value = e.target.value;
-                    // Ensure at least one alphabet is present while allowing numbers and spaces
-                    if (/^(?=.*[A-Za-z])[A-Za-z0-9\s]*$/.test(value)) {
+                    if ( value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
                       setCategoryName(value);
                     }
                   }}
                   className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   required
+                  maxLength={25}
                 /> </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -316,20 +455,26 @@ function AdminCategory() {
                   value={description}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if (/^(?=.*[A-Za-z])[A-Za-z0-9\s]*$/.test(value)) {
-                      // if (/^(?!\d+$)[a-zA-Z0-9]*$/.test(value)) {
+                    if (value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
                       setDescription(value);
                     }
                   }}
                   className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   required
+                  maxLength={250}
                 />
               </div>
 
               <div className="flex justify-between">
                 <button
                   type="button"
-                  onClick={() => setShowCreateForm(false)}
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setTimeout(() => {
+                      // window.location.reload();
+                      navigate(0); // Soft refresh of the current page
+                    }, 100); // Small delay to ensure state updates before reload
+                  }}
                   className="bg-gray-400 text-white font-bold py-2 px-4 rounded"
                 >
                   Cancel

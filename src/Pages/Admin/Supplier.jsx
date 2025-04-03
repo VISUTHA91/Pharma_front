@@ -32,6 +32,9 @@ function Supplier() {
     status: "Active",
   });
   const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const [errors, setErrors] = useState([]);
+  const [emailError, setEmailError] = useState("");
+
   const navigate = useNavigate();
 
    
@@ -61,7 +64,52 @@ function Supplier() {
       ...prev,
       [name]: value,
     }));
+    if (name === "email") {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(value)) {
+        setEmailError("Please enter a valid email address.");
+      } else {
+        setEmailError("");
+      }
+    }
   };
+
+  const handleGSTChange = (e) => {
+    const { name, value } = e.target;
+    const formattedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+    setFormData({ ...formData, [name]: formattedValue });
+
+    let errorMessage = "";
+
+    if (name === "supplier_gst_number") {
+      if (formattedValue.length === 0) {
+        errorMessage = "";
+      } else if (formattedValue.length === 1 && !/^[0-9]$/.test(formattedValue[0])) {
+        errorMessage = "First character must be a number (State Code)";
+      } else if (formattedValue.length === 2 && !/^[0-9]{2}$/.test(formattedValue)) {
+        errorMessage = "First two characters must be numbers (State Code)";
+      } else if (formattedValue.length === 3 && !/^[0-9]{2}[A-Z]$/.test(formattedValue)) {
+        errorMessage = "Third character must be an alphabet (A-Z)";
+      } else if (formattedValue.length >= 4 && formattedValue.length <= 8 && !/^[0-9]{2}[A-Z]{2,7}$/.test(formattedValue)) {
+        errorMessage = "Characters 4 to 8 must be alphabets (A-Z)";
+      } else if (formattedValue.length >= 9 && formattedValue.length <= 12 && !/^[0-9]{2}[A-Z]{5}[0-9]{1,4}$/.test(formattedValue)) {
+        errorMessage = "Characters 9 to 12 must be numbers (0-9)";
+      } else if (formattedValue.length === 13 && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]$/.test(formattedValue)) {
+        errorMessage = "Character 13 must be an alphabet (A-Z)";
+      } else if (formattedValue.length === 14 && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]$/.test(formattedValue)) {
+        errorMessage = "Character 14 must be alphanumeric (1-9 or A-Z)";
+      } else if (formattedValue.length === 15 && !/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z$/.test(formattedValue)) {
+        errorMessage = "Character 15 must be 'Z'";
+      } else if (formattedValue.length === 16) {
+        errorMessage = "GST number must be exactly 15 characters long";
+      } else {
+        errorMessage = "";
+      }
+      setErrors({ ...errors, supplier_gst_number: errorMessage });
+    }
+  };
+  
   const handleFormnameChange = (e) => {
     const { name, value } = e.target;
     // Allow alphabets and alphanumeric values but NOT only numbers
@@ -120,23 +168,27 @@ function Supplier() {
       if (selectedSupplier) {
         // Update existing supplier via API
         await updateSupplier(selectedSupplier.supplier_id, formData);
-  
         // Update local state after API call
         const updatedSuppliers = suppliers.map((sup) =>
           sup.supplier_id === selectedSupplier.supplier_id ? { ...sup, ...formData } : sup
         );
         setSuppliers(updatedSuppliers);
-        window.location.reload();
+        // toast.success("Supplier Updated successfully!");
+        // window.location.reload();
+        setTimeout(() => {
+          navigate(0);
+        }, 1500);
+        // window.location.reload();
       } else {
         // Create a new supplier via API
         const response = await createSupplier(formData);
-  
         // Update local state with new supplier from API response
         setSuppliers([...suppliers, response]);
       }
-  
-      toast.success("Supplier saved successfully!");
-      window.location.reload();
+      toast.success("Supplier Updated successfully!");
+      setTimeout(() => {
+        navigate(0);
+      }, 1500);
 
       setFormData({
         supplier_name: "",
@@ -156,20 +208,48 @@ function Supplier() {
 
   // Handle Delete action
   const handleDelete = async (supplierId) => {
-    console.log("supplierId in function",supplierId)
-    if (window.confirm("Are you sure you want to delete this supplier?")) {
+    const confirmDeletion = async () => {
+    // if (window.confirm("Are you sure you want to delete this supplier?")) {
       try {
         await deleteSupplier(supplierId);
         const updatedSuppliers = suppliers.filter((sup) => sup.supplier_id !== supplierId);
         setSuppliers(updatedSuppliers);
         toast.success("Supplier deleted successfully!");
         window.location.reload();
-
       } catch (error) {
         toast.error("Failed to delete supplier. Please try again.");
       }
     }
-  };
+    const ConfirmToast = ({ closeToast }) => (
+          <div>
+            <p>Are you sure you want to delete this category?</p>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button
+                onClick={() => {
+                  confirmDeletion();
+                  closeToast();
+                }}
+                style={{ backgroundColor: '#d9534f', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+              >
+                Yes
+              </button>
+              <button
+                onClick={closeToast}
+                style={{ backgroundColor: '#5bc0de', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        );
+        toast.warn(<ConfirmToast />, {
+          autoClose: false,
+          closeOnClick: false,
+          closeButton: false,
+        });
+      };
+
+
   const handleView = (supplier_id) => {
     console.log("Selected Supplier:", supplier_id);  // Debugging
     if (!suppliers || !supplier_id) {
@@ -226,7 +306,6 @@ function Supplier() {
                     <td className="px-2 py-1">{supplier.supplier_gst_number}</td>
                     <td className="px-2 py-1">{supplier.status}</td>
                     <td className="px-2 py-1 flex gap-2">
-                    {/* <td className="p-2">{supplier.address}</td> */}
                     <NavLink
                      to={`./${supplier.supplier_id}`}
                         className="text-cyan-700 "
@@ -299,7 +378,9 @@ function Supplier() {
               value={formData.company_name}
               onChange={handleFormnameChange}
               required
+              maxLength={25}
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+              placeholder='Name(Max 25 characters)'
             />
           </div>
           <div>
@@ -326,8 +407,11 @@ function Supplier() {
               value={formData.email}
               onChange={handleFormChange}
               required
-              className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+              className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${
+                emailError ? "border-red-500" : ""
+              }`}
             />
+            {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -350,10 +434,16 @@ function Supplier() {
               type="text"
               name="supplier_gst_number"
               value={formData.supplier_gst_number}
-              onChange={handleFormChange}
+              onChange={handleGSTChange}
               required
-              className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
+              maxLength={15} // Ensures only 15 characters can be entered
+              className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 ${
+                errors.supplier_gst_number ? "border-red-500" : ""
+              }`}
             />
+             {errors.supplier_gst_number && (
+        <p className="text-red-500 text-sm mt-1">{errors.supplier_gst_number}</p>
+      )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -367,6 +457,7 @@ function Supplier() {
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
             >
               <option value="Active">Active</option>
+              <option value="InActive">InActive</option>
             </select>
           </div>
         </div>

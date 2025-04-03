@@ -4,11 +4,12 @@ import { BASEURL } from "../utils/envExport";
 
 
 // export const API_BASE_URL = "http://localhost:3002"
-export const API_BASE_URL = "https://meds.evvisolutions.com"
+export const API_BASE_URL = "http://192.168.20.5:3002"
+// export const API_BASE_URL = "https://meds.evvisolutions.com"
+// export const API_BASE_URL = "https://pharma.evvisolutions.com"
 // export const API_BASE_URL = VITE_BASE_URL;
 
  
-
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -32,7 +33,7 @@ axiosInstance.interceptors.response.use(
   async (response) => {
     try {
       if (response.data?.statusCode === 700 || response.status === 500 || response.status === 401) {
-        alert("Session expired. Please log in again.");
+        // alert("Session expired. Please log in again.");
         localStorage.removeItem("authToken"); // Clear the token
         // window.location.href = "/Signin"; // Redirect to login page
       }
@@ -42,11 +43,12 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      alert("Session expired. Please log in again.");
-      localStorage.removeItem("authToken");
-      window.location.href = "/Signin";
-    }
+    // if (error.response?.status === 401) {
+    //   // alert("Session expired. Please log in again.");
+    //   // toast.error("Session expired. Please log in again.");
+    //   // localStorage.removeItem("authToken");
+    //   // window.location.href = "/Login";
+    // }
     console.error("API Error:", error.response || error.message);
     return Promise.reject(error);
   }
@@ -56,7 +58,7 @@ const getAuthToken = () => {
 };
 
 export const register = async (formData) => {  
-  const response = await axiosInstance.post(`${API_BASE_URL}/api/staff/register`, formData);
+  const response = await axiosInstance.post(`${API_BASE_URL}/staff/register`, formData);
   return response;
 };
    
@@ -73,7 +75,7 @@ export const register = async (formData) => {
 
   // StaffLogin.......
   export const stafflogin = async (Data) => {
-    console.log("Staff Login",Data)
+    console.log("Staff Login Data",Data);
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}/staff/login`, Data);
       console.log("Staff Login",response);
@@ -166,7 +168,7 @@ export const register = async (formData) => {
     }
   };
   export const deleteCategory = async (categoryId) => {
-    console.log("mmmmm",categoryId);
+    // console.log("mmmmm",categoryId);
     try {
       const response = await axiosInstance.delete(`${API_BASE_URL}/pro_category/del_category/${categoryId}`
       );
@@ -237,14 +239,12 @@ export const register = async (formData) => {
       const response = await axiosInstance.post(`${API_BASE_URL}/products/inproduct`, productData);
       return response.data;
     } catch (error) {
-      // console.error("Error creating product:", error.response.data.message);
       toast.error(error.response.data.message)
       throw error;
     }
   };
 
   export const uploadParsedData = async (formData) => {
-    console.log("API Submitting file");
     try {
       const response = await axiosInstance.post(`${API_BASE_URL}/products/import`, formData, {
         headers: {
@@ -253,7 +253,11 @@ export const register = async (formData) => {
       });
       return response.data;
     } catch (error) {
-      console.error("Error uploading data:", error);
+      if(error.status === 500){
+      toast.error("Error in File Format(Only CSV File) ");
+      }else if (error.status === 400){  
+      toast.error("Error in Uploading File Data");
+      }
       throw error;
     }
   };
@@ -796,34 +800,28 @@ export const downloadSalesReportPDF = async () => {
   }
 };
 
-export const downloadStockReportPDF = async ( status , downloadStockPDF) => {
-
-console.log("📤 API Call Params:", status, downloadStockPDF);
-
+export const downloadStockReportPDF = async (status , downloadStockPDF) => {
+  console.log("📤 API Call Params:", status, downloadStockPDF);
   try {
     console.log("📤 Requesting PDF Stock report...");
     const response = await axiosInstance.get(`${API_BASE_URL}/products/downloadStockPDF`, {
       params: { 
-        status : status,  // Ensure proper URL encoding
-        downloadStockPDF: true              // Always set this as true
+        status : status,  
+        downloadStockPDF: true
     },
       responseType: "blob", 
-      headers: {
-        Accept: "application/pdf", // Requesting a PDF file
-      }, paramsSerializer: (params) => {
+      headers: { Accept: "application/pdf" },
+       paramsSerializer: (params) => {
         return Object.entries(params)
             .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
             .join("&");
-    }
-});
-    // Check if response data is a valid Blob (PDF content)
+    }});
+  console.log("Response..................",response);
     if (!response.data || response.data.size === 0) {
       console.error("❌ Received empty or invalid PDF file.");
       return;
     }
-    // Create a URL for the received Blob
     const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));
-    // Create a temporary anchor element to trigger download
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", "invoice-stock-report.pdf");
@@ -837,6 +835,7 @@ console.log("📤 API Call Params:", status, downloadStockPDF);
     alert("Failed to download the stock report. Please try again.");
   }
 };
+
 
 export const downloadStockReportCSV = async (status , downloadStockCSV) => {
   console.log("📤 API Call Params:", status, downloadStockCSV);
@@ -862,7 +861,6 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
       console.error("❌ Unexpected file type received:", response.headers["content-type"]);
       return;
     }
-
     // Create URL and trigger download
     const url = window.URL.createObjectURL(new Blob([response.data], { type: "text/csv" }));
     const link = document.createElement("a");
@@ -871,7 +869,6 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
     console.log("🎉 CSV file download triggered successfully!");
   } catch (error) {
     console.error("❌ Error exporting CSV report:", error);
@@ -917,6 +914,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
         const blob = new Blob([response.data], { type: "application/pdf" });
         const url = window.URL.createObjectURL(blob);
         window.open(url, "_blank");
+        console.log("Print request successful!",url);
     } catch (error) {
         console.error("Print failed", error);
         // Log server response if available
@@ -926,6 +924,7 @@ export const downloadStockReportCSV = async (status , downloadStockCSV) => {
         }
     }
 };
+
 
 export const returnCustomerproducts = async (page,limit) => {
   try {
@@ -987,7 +986,7 @@ export const getAllProductsStockSearch = async ({ status , search}) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error fetching products:", error);
+    toast.error("No Product Found");
     throw new Error(error.response?.data?.message || "Failed to fetch products");
   }
 };

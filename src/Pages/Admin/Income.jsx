@@ -168,12 +168,12 @@ const IncomePage = () => {
        <div className="mt-0 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Income List</h2>
-        <button
+        {/* <button
     // onClick={handleGSTReport}
     className="bg-green-500 text-white px-6 py-1 rounded hover:bg-green-600"
   >
     GST Report
-  </button>
+  </button> */}
         <PaginationComponent
           totalPages={totalPages}
           currentPage={currentPage}

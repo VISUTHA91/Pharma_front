@@ -308,13 +308,13 @@ function AdminDashboard() {
         </NavLink>
       </li>
       <li>
-        <NavLink to={'Income'}
+        <NavLink to={'StockReport'}
           // onClick={() => setCurrentPage("Sales & Report")}
           className="flex items-center gap-4 w-full p-2   rounded-lg hover:bg-blue-100 hover:text-blue-800 transition duration-200"
         >
           {/* <HiOutlineUserGroup className="text-2xl" /> */}
           <TbLogout2 className="text-2xl" />
-          Sales  & Report
+          Stock Report
         </NavLink>
       </li>
       <li>

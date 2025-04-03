@@ -59,12 +59,12 @@ useEffect(() => {
     try {
       if (format === "pdf") {
       await downloadStockReportPDF(selectedStatus , {downloadStockPDF: true});
+      toast.success("Download Successfully");
       } else if (format === "csv") {
         await downloadStockReportCSV(selectedStatus , {downloadStockCSV: true});
       } else {
         throw new Error("Invalid format specified");
       }
-      toast.success("Download Successfully");
     } catch (error) {
       toast.error("Export failed");
     }
