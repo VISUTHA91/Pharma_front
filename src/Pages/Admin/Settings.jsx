@@ -24,7 +24,7 @@ const Settings = () => {
       const [showPassword, setShowPassword] = useState(false);
 
 
-  const [details, setDetails] = useState({ owner_GST_number: "" ,pincode: "" });
+  const [details, setDetails] = useState({ owner_GST_number: "", pincode: ""});
   const [gstError, setGstError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [subject, setSubject] = useState('');
@@ -111,17 +111,47 @@ const Settings = () => {
   }
 };
 const [pinError, setPinError] = useState("");
+
+// const handlePinChange = (e) => {
+//   const value = e.target.value;
+//   if (value.length <= 6) {
+//     setDetails((prev) => ({ ...prev, pincode: value }));
+//     if (value && !/^[1-9][0-9]{5}$/.test(value)) {
+//       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
+//     } else {
+//       setPinError("");
+//     }
+//   }
+// };
+
+// const handlePinChange = (e) => {
+//   const value = e.target.value;
+//   // Allow only numbers and max length of 6
+//   if (/^\d*$/.test(value) && value.length <= 6) {
+//     setDetails((prev) => ({ ...prev, pincode: value }));
+//     // Validate if it's a proper 6-digit PIN starting with 1-9
+//     if (value.length === 6 && !/^[1-9][0-9]{5}$/.test(value)) {
+//       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
+//     } else {
+//       setPinError("");
+//     }
+//   }
+// };
+
+
 const handlePinChange = (e) => {
   const value = e.target.value;
-  if (value.length <= 6) {
+  if (/^\d*$/.test(value)) {
     setDetails((prev) => ({ ...prev, pincode: value }));
-    if (value && !/^[1-9][0-9]{5}$/.test(value)) {
+    if (value.length === 6 && !/^[1-9][0-9]{5}$/.test(value)) {
       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
     } else {
       setPinError("");
     }
   }
 };
+
+
 
 const [addressError, setAddressError] = useState("");
 const addressRegex = /^[A-Za-z0-9]+(?:[ ,.\-/][A-Za-z0-9]+)*$/;

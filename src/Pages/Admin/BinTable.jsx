@@ -36,6 +36,7 @@ const BinTable = () => {
     try {
       await restoreProduct(id);
       console.log(`Product with ID ${id} restored successfully!`);
+      toast.success('Restored successfully!');
       
       // Remove restored product from the binData state
       setBinData((prevData) => prevData.filter((item) => item.id !== id));

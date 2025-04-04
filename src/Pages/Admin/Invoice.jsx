@@ -1,8 +1,8 @@
-import React, { useState,useRef } from "react";
+import React, { useState, useRef } from "react";
 import { MdRemoveRedEye } from "react-icons/md";
 import { BiSolidPrinter } from "react-icons/bi";
 import { useEffect } from "react";
-import {fetchInvoices, printDocument} from '../../Api/apiservices';
+import { fetchInvoices, printDocument } from '../../Api/apiservices';
 import PaginationComponent from "../../Components/PaginationComponent";
 // import { useReactToPrint } from "react-to-print";
 // import { printDocument } from "../../Api/apiservices";
@@ -14,32 +14,32 @@ const Invoice = () => {
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemsPerPage] = useState(10);
-    const [loading,setLoading] = useState([]);
-    const [error , setError] = useState([]);
+    const [loading, setLoading] = useState([]);
+    const [error, setError] = useState([]);
     const [totalPages, setTotalPages] = useState(0); // Track total pages
     const [limit, setLimit] = useState(0); // Track total pages 
     const [currentPage, setCurrentPage] = useState(1); // Track current page
 
     useEffect(() => {
         const invoicelist = async () => {
-          try {
-            const data = await fetchInvoices(currentPage, limit);
-            console.log("Invoice list",data);
-            setLimit(data.limit);
-            console.log("Limit",data.limit);
-            setTotalPages(data.total_page);
-            setCurrentPage(data.page)
-            setInvoices(data.data);
-          } catch (err) {
-            setError("Failed to fetch invoices");
-            toast.error("Failed To Fetch Invoices");
-          } finally {
-            setLoading(false);
-          }
+            try {
+                const data = await fetchInvoices(currentPage, limit);
+                console.log("Invoice list", data);
+                setLimit(data.limit);
+                console.log("Limit", data.limit);
+                setTotalPages(data.total_page);
+                setCurrentPage(data.page)
+                setInvoices(data.data);
+            } catch (err) {
+                setError("Failed to fetch invoices");
+                toast.error("Failed To Fetch Invoices");
+            } finally {
+                setLoading(false);
+            }
         };
-    
+
         invoicelist();
-      }, [currentPage]);
+    }, [currentPage]);
 
     const [invoices, setInvoices] = useState([]);
     const invoiceRef = useRef();
@@ -51,25 +51,25 @@ const Invoice = () => {
         setIsModalOpen(false);
         setSelectedInvoice(null);
     };
-    const handlePrint = async(selectedInvoiceId) => {
+    const handlePrint = async (selectedInvoiceId) => {
         console.log("Print");
-        const print =  await printDocument(selectedInvoiceId);        
+        const print = await printDocument(selectedInvoiceId);
     };
     return (
         <div className="overflow-hidden w-full p-4">
             <div className="flex justify-between items-center ">
-            <h1 className="text-2xl font-bold mb-2">Invoice List</h1>
-            <PaginationComponent
-              totalPages={totalPages}
-              currentPage={currentPage}
-              setCurrentPage={setCurrentPage}/>
-              {/* <button
+                <h1 className="text-2xl font-bold mb-2">Invoice List</h1>
+                <PaginationComponent
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage} />
+                {/* <button
         className="bg-[#027483] text-white px-2 py-1 rounded mb-1"
         // onClick={() => setIsInvoiceModalOpen(true)}
         >
         Export
       </button> */}
-              
+
             </div>
             <table className="w-full  border-gray-300 text-left mt-4">
                 <thead>
@@ -89,7 +89,10 @@ const Invoice = () => {
                         <tr key={invoice.id} className="">
                             <td className="border border-gray-300 px-2 py-1">{index + 1}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.invoice_number}</td>
-                            <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td>
+                            {/* <td className="border border-gray-300 px-2 py-1">{invoice.invoice_created_at.split("T")[0]}</td> */}
+                            <td className="border border-gray-300 px-2 py-1">
+                                {new Date(invoice.invoice_created_at).toLocaleDateString("en-GB")}
+                            </td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.totalGST}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.total_price}</td>
                             <td className="border border-gray-300 px-2 py-1">{invoice.payment_status}</td>
@@ -126,27 +129,33 @@ const Invoice = () => {
                         </div>
                         <div>
                             <p><strong>Invoice No:</strong> {selectedInvoice.invoice_number}</p>
-                            <p><strong>Date:</strong> {selectedInvoice.invoice_created_at.split("T")[0]}</p>
+                            {/* <p><strong>Date:</strong> {selectedInvoice.invoice_created_at.split("T")[0]}</p> */}
+                            <p>
+                                <strong>Date:</strong>{" "}
+                                {new Date(selectedInvoice.invoice_created_at)
+                                    .toLocaleDateString("en-GB")
+                                    .replace(/ /g, "/")}
+                            </p>
                             <p><strong>Name:</strong> {selectedInvoice.customer_name}</p>
                             <p><strong>Amount:</strong> {selectedInvoice.finalPriceWithGST}</p>
-                            <p><strong>Status:</strong> {selectedInvoice.payment_status}</p>
+                            {/* <p><strong>Status:</strong> {selectedInvoice.payment_status}</p> */}
                             {selectedInvoice.products && selectedInvoice.products.length > 0 && (
-                  <div>
-                    <strong className="font-semibold">Products:</strong>
-                    <ul className="ml-16">
-                      {selectedInvoice.products.map((product, index) => (
-                        <li key={index}>{product.product_name} - {product.quantity}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                            
+                                <div>
+                                    <strong className="font-semibold">Products:</strong>
+                                    <ul className="ml-16">
+                                        {selectedInvoice.products.map((product, index) => (
+                                            <li key={index}>{product.product_name} - {product.quantity}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
                             <p><strong>GST:</strong> {selectedInvoice.totalGST}</p>
                             <p><strong>Payment Status:</strong> {selectedInvoice.payment_status}</p>
                             <p><strong>Payment Method:</strong> {selectedInvoice.payment_method}</p>
                         </div>
                     </div>
-                </div>    
+                </div>
             )}
         </div>
     );

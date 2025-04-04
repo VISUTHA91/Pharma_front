@@ -439,6 +439,7 @@ function ProductCreation() {
               <th className="py-2 px-4">Brand Name</th>
               <th className="py-2 px-4 truncate">Category</th>
               <th className="py-2 px-4">Quantity</th>
+              <th className="py-2 px-4">Status</th>
               <th className="py-2 px-4">Exp.Date</th>
               <th className="py-2 px-4">Actions</th>
             </tr>
@@ -455,6 +456,7 @@ function ProductCreation() {
                 <td className="py-2 px-4">{product.brand_name}</td>
                 <td className="py-2 px-4  truncate">{product.product_category}</td>
                 <td className="py-2 px-4">{product.product_quantity}</td>
+                <td className="py-2 px-4">{product.stock_status}</td>
                 <td className="py-2 px-4">
                   {product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
                 </td>

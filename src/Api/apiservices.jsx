@@ -5,6 +5,7 @@ import { BASEURL } from "../utils/envExport";
 
 // export const API_BASE_URL = "http://localhost:3002"
 export const API_BASE_URL = "http://192.168.20.5:3002"
+// export const API_BASE_URL = "http://192.168.117.150:3002"
 // export const API_BASE_URL = "https://meds.evvisolutions.com"
 // export const API_BASE_URL = "https://pharma.evvisolutions.com"
 // export const API_BASE_URL = VITE_BASE_URL;
@@ -50,6 +51,7 @@ axiosInstance.interceptors.response.use(
     //   // window.location.href = "/Login";
     // }
     console.error("API Error:", error.response || error.message);
+    // toast.error(error.response || " Please try again.");
     return Promise.reject(error);
   }
 );
