@@ -23,6 +23,7 @@ import StockReport from './Pages/Admin/StockReport'
 import MainContent from './Pages/Admin/MainContent'
 import styled from 'styled-components'
 import SupplierDetails from './Pages/Admin/SupplierDetails'
+import CreateShop from '../src/Pages/Admin/CreateShop';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -46,6 +47,7 @@ function App() {
           <Route element={<RootLayout />} >
             <Route index element={<Home />} />
             <Route path='/Home' element={<Home/>} />
+            <Route path='CreateShop' element={<CreateShop/>} />
             </Route>
             <Route path="/Dashboard" element={<AdminDashboard />}>
         <Route index element={<MainContent />} />
@@ -64,6 +66,10 @@ function App() {
       <Route path='BinTable' element = {<BinTable /> } />
       <Route path='Settings' element = {<Settings /> } />
       <Route path='Supplier/:supplierId' element={<SupplierDetails />} />
+      {/* <Route path='CreateShop' element={<CreateShop />} /> */}
+
+
+
       </Route>
     </Routes>
   </BrowserRouter>

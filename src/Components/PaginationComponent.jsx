@@ -2,10 +2,12 @@ import { GrNext, GrPrevious } from "react-icons/gr";
 
 /* eslint-disable react/prop-types */
 const PaginationComponent = ({ totalPages, currentPage, setCurrentPage }) => {
+
   const renderPaginationItems = () => {
     const items = [];
     const startPage = Math.max(currentPage - 2, 1);
     const endPage = Math.min(currentPage + 2, totalPages);
+      console.log(".........",totalPages)
 
     // Add the first page and ellipsis if needed
     if (startPage > 1) {
@@ -100,11 +102,13 @@ const PaginationComponent = ({ totalPages, currentPage, setCurrentPage }) => {
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             className={`px-4 py-2 rounded-lg inline-flex items-center gap-2 ${
-              currentPage === totalPages
+              // currentPage === totalPages
+               totalPages === 0
                 ? " text-gray-500 cursor-not-allowed"
                 : "text-black hover:bg-slate-300/50"
             }`}
-            disabled={currentPage === totalPages}
+            // disabled={currentPage === totalPages}
+            disabled = {totalPages === 0} 
           >
             Next <GrNext />
           </button>

@@ -69,11 +69,10 @@ function AdminCategory() {
       setCategoryName("");
       setDescription("");
       setShowCreateForm(false);
-      toast.success("Category created successfully:", response);
+      toast.success("Category Created successfully:", response);
       setTimeout(() => {
         navigate(0);
       }, 2500);
-      window.location.reload();
     } catch (error) {
       toast.error("Error Creating Category : ", error)
     }
@@ -197,7 +196,7 @@ function AdminCategory() {
   
     const ConfirmToast = ({ closeToast }) => (
       <div>
-        <p>Are you sure you want to delete this category?</p>
+        <p>Are you sure you want to Delete this Category?</p>
         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
           <button
             onClick={() => {
@@ -279,7 +278,7 @@ function AdminCategory() {
   return (
     <div className="m-2">
       <div className="flex justify-between items-center w-[96%]">
-        <h1 className="text-xl font-bold ml-2">Category Details</h1>
+        <h1 className="text-xl font-bold ml-2">Category List</h1>
         <div className="flex items-center">
           {/* <input
                     type="text"
@@ -316,7 +315,8 @@ function AdminCategory() {
           </tr>
         </thead>
         <tbody>
-          {categories && categories.map((category, index) => (
+          { categories && categories.length > 0 ? (
+           categories.map((category, index) => (
             <tr
               key={category.id}
               className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"} hover:bg-gray-200`}
@@ -344,7 +344,11 @@ function AdminCategory() {
                 </button>
               </td>
             </tr>
-          ))}
+          ))) :(<tr>
+            <td colSpan="4" className="text-center py-4 text-gray-500">
+              No data found.
+            </td>
+          </tr>)}
         </tbody>
       </table>
       {showEditModal && (
@@ -361,14 +365,16 @@ function AdminCategory() {
               <input
                 type="text"
                 value={categoryName}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
-                    setCategoryName(value);
-                  }
-                }}
+                 onChange={(e) => {
+                    const value = e.target.value;
+                    const regex = /^(?=.*[A-Za-z])[A-Za-z0-9][A-Za-z0-9\s.&-]{0,23}$/;
+                    if (value === "" || regex.test(value)) {
+                      setCategoryName(value);
+                    }
+                  }}
                 className="mt-2 p-2 border rounded w-full"
-                maxLength={25}
+                maxLength={50}
+                minLength={3}
                 placeholder='Name(25 characters Only)'
                 required
               />
@@ -437,13 +443,16 @@ function AdminCategory() {
                   value={categoryName}
                   onChange={(e) => {
                     const value = e.target.value;
-                    if ( value === "" || /^(?=.*[A-Za-z])[A-Za-z0-9](?:[A-Za-z0-9\s.-]*[A-Za-z0-9.]?)?$/.test(value)) {
+                    const regex = /^(?=.*[A-Za-z])[A-Za-z0-9][A-Za-z0-9\s.&-]{0,23}$/;
+                    if (value === "" || regex.test(value)) {
                       setCategoryName(value);
                     }
                   }}
+                  placeholder='Name(50 characters Only)'                  
                   className="shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline"
                   required
-                  maxLength={25}
+                  maxLength={50}
+                  minLength={3}
                 /> </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2">

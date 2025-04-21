@@ -14,11 +14,6 @@ import { MdRemoveRedEye } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 
-
-
-
-
-
 const Registration = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [staffList, setStaffList] = useState([]);
@@ -52,10 +47,8 @@ const Registration = () => {
     });
     // const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
 
-
-  const toggleModal = () => {
+    const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
     if (!isModalVisible) {
       // resetForm();
@@ -94,10 +87,29 @@ const Registration = () => {
     fetchStaffList(); // Call the fetch function
   }, [currentPage]);
 
+  // const handlenumberChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prev) => ({ ...prev, [name]: value }));
+  // };
   const handlenumberChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let { name, value } = e.target;
+  
+    // Remove non-digit characters
+    value = value.replace(/[^0-9]/g, '');
+  
+    // Limit to 10 digits
+    if (value.length > 10) return;
+  
+    // Check if all digits are the same (e.g., 0000000000)
+    const allSameDigits = /^([0-9])\1{9}$/.test(value); // 10 repeated digits
+  
+    if (!allSameDigits) {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
+  
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -260,6 +272,7 @@ const Registration = () => {
           }, 1500);
         } else {
           toast.success(updatedStaff.message);
+          console.log("Update response:", updatedStaff,message);
           toggleModal();
           setTimeout(() => {
             window.location.reload();
@@ -314,41 +327,67 @@ const Registration = () => {
     const handleInputChange = (e) => {
       setPasswords({ ...passwords, [e.target.name]: e.target.value });
     };
-    const handlepasswordSubmit = () => {
+    const handlepasswordSubmit = async(e) => {
       if (passwords.newPassword !== passwords.confirmPassword) {
-        alert("Passwords do not match!");
+        toast.error("Passwords do not match!");
         return;
       }
-      handleChangePassword(details.staff_id, passwords.newPassword);
-      setShowPasswordModal(false);
-      setPasswords({ newPassword: "", confirmPassword: "" });
+      try {
+        const updatedStaff = await updateStaffPassword(details.staff_id, passwords.newPassword,passwords.confirmPassword);
+        setShowPasswordModal(false);
+        setPasswords({ newPassword: "", confirmPassword: "" });
+      }catch (error) {
     };
-    const handleChangePassword = (staffId, newPassword) => {
-      // call API or handle password change logic here
-    };
+  }
 
-  // const handleDelete = (id) => {
-  //   setStaffList((prev) => prev.filter((_, i) => i !== id));
-  // };
 
-  
+    // const handleChangePassword = (staffId, newPassword) => {
+
+    // };
   
   const handleDelete = async (staffId) => {
+    const confirmDeletion = async () => {
     try {
-      // Confirm before deleting
-      if (window.confirm("Are you sure you want to delete this staff member?")) {
         await deleteStaff(staffId);
         toast.success("Staff deleted successfully");
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       }
-    } catch (error) {
+    catch (error) {
       toast.error("Failed to delete staff:", error);
     }
+  }
+    const ConfirmToast = ({ closeToast }) => (
+          <div>
+            <p>Are you sure you want to delete this Staff Details?</p>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <button
+                onClick={() => {
+                  confirmDeletion();
+                  closeToast();
+                }}
+                style={{ backgroundColor: '#d9534f', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+              >
+                Yes
+              </button>
+              <button
+                onClick={closeToast}
+                style={{ backgroundColor: '#5bc0de', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        );
+    
+        toast.warn(<ConfirmToast />, {
+          autoClose: false,
+          closeOnClick: false,
+          closeButton: false,
+        });
+
   };
-
-
 
   return (
     <div className="rounded-lg">
@@ -373,9 +412,9 @@ const Registration = () => {
               <th className="py-2 px-4 w-14">S.No</th>
               <th className="py-2 px-4 truncate">Name</th>
               <th className="py-2 px-4 truncate">Email</th>
-              <th className="py-2 px-4">Contact No</th>
-              <th className="py-2 px-4">Role</th>
-              <th className="py-2 px-4">Actions</th>
+              <th className="py-2 px-2">Contact No</th>
+              <th className="py-2 w-20">Role</th>
+              <th className="py-2 px-1">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -389,9 +428,9 @@ const Registration = () => {
                   <td className="py-1 px-4">{index + 1}</td>
                   <td className="py-1 px-4 truncate">{staff.username}</td>
                   <td className="py-1 px-4 truncate">{staff.email}</td>
-                  <td className="py-1 px-4">{staff.contact_number}</td>
-                  <td className="py-1 px-4">{staff.role}</td>
-                  <td className="py-1 px-4 flex space-x-2">
+                  <td className="py-1 px-2">{staff.contact_number}</td>
+                  <td className=" py-2">{staff.role}</td>
+                  <td className="py-1 px-2 flex space-x-2">
                     <button
                       className="text-cyan-700"
                     onClick={() => handleView(staff.id)}
@@ -444,8 +483,10 @@ const Registration = () => {
                     required
                     value={formData.username}
                     onChange={handlenameChange}
-                    placeholder="Name"
+                    placeholder="Name(3-20Characters) "
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
+                    maxLength={20}
+                    minLength={3}
                   />
                 </div>
                 <div className="mb-4">
@@ -463,9 +504,9 @@ const Registration = () => {
                     required
                     placeholder="Contact No"
                     className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
-                    pattern="[0-9]{10}"
+                    // pattern="[0-9]{10}"
                     maxLength="10" // Ensures only numbers are allowed
-                    onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
+                    // onInput={(e) => e.target.value = e.target.value.replace(/[^0-9]/g, '')}
                   />
                 </div>
                 <div className="mb-4">
@@ -502,17 +543,18 @@ const Registration = () => {
                       placeholder="Password"
                       required
                       disabled={editIndex !== null}
-                      className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700 pr-10"
+                      className="flex-1 min-w-[200px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-700"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400"
+                      
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
                     {passwordError && (
-                      <p className="text-red-500 text-sm mt-1 w-full flex absolute">{passwordError}</p>
+                      <p className="text-red-500 text-sm w-full flex absolute">{passwordError}</p>
                     )}
                   </div>
                 </div>
@@ -539,7 +581,7 @@ const Registration = () => {
                       onClick={() => setShowconfirmPassword(!showconfirmPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400"
                     >
-                      {showconfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                      {showconfirmPassword ? <FaEyeSlash /> : <FaEye /> }
                     </button>
                   </div>
                 </div>

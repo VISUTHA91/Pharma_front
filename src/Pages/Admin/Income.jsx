@@ -105,12 +105,11 @@ const IncomePage = () => {
     ].map((card, index) => (
       <div
         key={index}
-        className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-2 transform hover:scale-105 transition duration-300 overflow-hidden`}
-        onClick={() => openModal(card.type)} // Open specific modal
+        className={`bg-gradient-to-r ${card.bgColor} shadow-lg rounded-lg p-6 flex items-center gap-2 transform hover:scale-105 transition duration-300 overflow-hidden `}
+        onClick={() => openModal(card.type)} 
       >
-        <div className="text-white text-4xl">{card.icon}</div>
+        <div className="text-white text-4xl -ml-4">{card.icon}</div>
         <div>
-          {/* <h2 className="text-white text-lg font-medium">{card.label}</h2> */}
           {card.label === "Expense" ? (
       <h2 className="text-white text-lg font-medium">
         <Link to={'Expense'} className="">{card.label}</Link>
@@ -118,8 +117,8 @@ const IncomePage = () => {
     ) : (
       <h2 className="text-white text-lg font-medium">{card.label}</h2>
     )}
-          <div className="flex ">
-  <p className="text-white text-3xl font-bold flex-1 truncate">
+          <div className="flex">
+  <p className="text-white text-2xl font-bold flex-1 truncate ml-2">
     {showIncome ? `₹${(card.value ?? 0).toLocaleString()}` : "*****"}
   </p>
 </div>
@@ -168,12 +167,12 @@ const IncomePage = () => {
        <div className="mt-0 h-[62vh] shadow-lg rounded-lg p-6 h-1/2 overflow-auto scrollbar-hidden">
        <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold text-gray-800 mb-1">Income List</h2>
-        {/* <button
+        <button
     // onClick={handleGSTReport}
     className="bg-green-500 text-white px-6 py-1 rounded hover:bg-green-600"
   >
     GST Report
-  </button> */}
+  </button>
         <PaginationComponent
           totalPages={totalPages}
           currentPage={currentPage}
@@ -192,7 +191,8 @@ const IncomePage = () => {
             {invoices.map((invoice, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-4 py-2 border border-gray-300">{invoice.invoice_number}</td>
-                  <td className="px-4 py-2 border border-gray-300">{invoice.invoice_created_at.split("T")[0]}</td>
+                  <td className="px-4 py-2 border border-gray-300">  {new Date(invoice.invoice_created_at).toLocaleDateString('en-GB')}
+                  </td>
                   <td className="px-4 py-2 border border-gray-300">₹{invoice.finalPriceWithGST}</td>
                 </tr>
               ))}

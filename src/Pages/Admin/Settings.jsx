@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { IoMdClose } from "react-icons/io";
 import { LuPhoneCall } from "react-icons/lu";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
+import { IoMailOpenOutline } from "react-icons/io5";
+
 
 
 
@@ -20,15 +22,16 @@ const Settings = () => {
     newPassword: "",
     confirmPassword: "",
   });
-      const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-      const [showPassword, setShowPassword] = useState(false);
-
-
-  const [details, setDetails] = useState({ owner_GST_number: "", pincode: ""});
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [
+    details, setDetails] = useState({ owner_GST_number: "", pincode: "", pharmacy_address: "", pharmacy_name: "", registrationNumber: "" });
   const [gstError, setGstError] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
+  // const [showCreateForm, setShowCreateForm] = useState(false);
+  
 
   const handleInputChange = (e) => {
     setPasswords({ ...passwords, [e.target.name]: e.target.value });
@@ -46,6 +49,7 @@ const Settings = () => {
   const handleChangePassword = (shopId, newPassword) => {
     // call API or handle password change logic here
   };
+  
    useEffect(() => {
       const pharmacyDetails = async () => {
         try {
@@ -60,6 +64,7 @@ const Settings = () => {
       };
       pharmacyDetails();
     }, []); 
+    
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,7 +78,8 @@ const Settings = () => {
         owner_GST_number: details.owner_GST_number,
         pharmacy_address: details.pharmacy_address,
         pincode: details.pincode,
-        isGovtRegistered: details.isGovtRegistered
+        isGovtRegistered: details.isGovtRegistered,
+        registrationNumber : details.registrationNumber,
       };
       console.log("asdsdads",details.shop_id)
       console.log("updated",updatedData)
@@ -87,11 +93,21 @@ const Settings = () => {
     }
   };  
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDetails({ ...details, [name]: value });
+    setDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
-
+  const handlenameChange = (e) => {
+    const { name, value } = e.target;
+    // Just prevent leading spaces if you want, or allow everything
+    setDetails((prev) => ({ ...prev, [name]: value }));
+  };
+  
+  
   const handleEdit = () => {
     if (Object.keys(details).length === 0) {
       alert("No details available to edit.");
@@ -110,48 +126,25 @@ const Settings = () => {
     setGstError("");
   }
 };
+
 const [pinError, setPinError] = useState("");
-
-// const handlePinChange = (e) => {
-//   const value = e.target.value;
-//   if (value.length <= 6) {
-//     setDetails((prev) => ({ ...prev, pincode: value }));
-//     if (value && !/^[1-9][0-9]{5}$/.test(value)) {
-//       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
-//     } else {
-//       setPinError("");
-//     }
-//   }
-// };
-
-// const handlePinChange = (e) => {
-//   const value = e.target.value;
-//   // Allow only numbers and max length of 6
-//   if (/^\d*$/.test(value) && value.length <= 6) {
-//     setDetails((prev) => ({ ...prev, pincode: value }));
-//     // Validate if it's a proper 6-digit PIN starting with 1-9
-//     if (value.length === 6 && !/^[1-9][0-9]{5}$/.test(value)) {
-//       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
-//     } else {
-//       setPinError("");
-//     }
-//   }
-// };
 
 
 const handlePinChange = (e) => {
-  const value = e.target.value;
-  if (/^\d*$/.test(value)) {
-    setDetails((prev) => ({ ...prev, pincode: value }));
+  let value = e.target.value;
+
+  // Ensure only digits are allowed
+  if (/^\d*$/.test(value)) {  
+    setDetails((prev) => ({ ...prev, pincode: value })); 
+
+    // Validation for 6-digit PIN
     if (value.length === 6 && !/^[1-9][0-9]{5}$/.test(value)) {
       setPinError("Please enter a valid 6-digit PIN starting with 1-9");
     } else {
-      setPinError("");
+      setPinError(""); // Clear error if valid
     }
   }
 };
-
-
 
 const [addressError, setAddressError] = useState("");
 const addressRegex = /^[A-Za-z0-9]+(?:[ ,.\-/][A-Za-z0-9]+)*$/;
@@ -173,7 +166,7 @@ const handleFormSubmit = (e) => {
   e.preventDefault();
   console.log('Subject:', subject);
   console.log('Description:', description);
-  alert('Form submitted successfully!');
+  toast.success('Form submitted successfully!');
   setSubject('');
   setDescription('');
   setShowForm(false);
@@ -191,8 +184,16 @@ const handleFormSubmit = (e) => {
           type="text"
           name="pharmacy_name"
           value={details.pharmacy_name || ""}
-          onChange={handleChange}
+          onChange={handlenameChange}
+          onBlur={(e) => {
+            const value = e.target.value;
+            const isValid = /^[A-Za-z][A-Za-z0-9 ]{2,24}$/.test(value);
+            // if (!isValid) {
+            //   toast.error("Shop name must start with a letter, be 3–25 characters long, and contain only letters, numbers, and spaces.");
+            // }
+          }}          
           maxLength={25}
+          minLength={3}
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Enter shop name (max 25 Characters)"
           required
@@ -201,7 +202,7 @@ const handleFormSubmit = (e) => {
 
       {/* GST Number */}
       <div>
-  <label className="block font-semibold text-gray-700">GST Number:</label>
+  <label className="block font-semibold text-gray-700">GST Number:(Optional)</label>
   <input
     type="text"
     name="owner_GST_number"
@@ -241,26 +242,39 @@ const handleFormSubmit = (e) => {
 
       {/* PIN */}
       <div>
-        <label className="block font-semibold text-gray-700 ">PIN:</label>
-        <input
-    type="text"
-    name="pincode"
-    value={details.pincode || ""}
-    onChange={handlePinChange}
-    maxLength={6}
-    required
-    className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-  />
-    {pinError && <p className="text-red-500 text-sm mt-1">{pinError}</p>}
-      </div>   
+  <label className="block font-semibold text-gray-700 ">PIN:</label>
+  <input
+  type="text"
+  name="pincode"
+  value={details.pincode || ""}
+  onChange={handlePinChange}
+  onKeyDown={(e) => {
+    if (!/[\d]/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) {
+      e.preventDefault();
+    }
+  }}
+  onPaste={(e) => {
+    const paste = e.clipboardData.getData("text");
+    if (!/^\d{6}$/.test(paste)) {
+      e.preventDefault(); 
+    }
+  }}
+  maxLength={6}
+  required
+  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+
+  {pinError && <p className="text-red-500 text-sm mt-1">{pinError}</p>}
+</div>
+
 <div>
-  <label className="block font-semibold text-gray-700">Government Registration Number:</label>
+  <label className="block font-semibold text-gray-700">Government Registration Number:(Optional)</label>
   <input
     type="text"
     name="registrationNumber"
     value={details.registrationNumber || ""}
     onChange={handleChange}
-    required
+    // required
     placeholder="Enter Registration Number"
     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
   />
@@ -307,13 +321,12 @@ const handleFormSubmit = (e) => {
         </div>
         <div className="flex items-start">
           <span className="font-semibold text-gray-700 w-48">Govt Registered Number:</span>
-          <span className="text-gray-800">14785123698
-          </span>
+          <span className="text-gray-800">{details.registrationNumber}</span>
         </div>
       </div>
       )}
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-end space-x-6">
+      <div className="mt-8 flex justify-end space-x-6 mb-8">
         <button
           onClick={() => setShowPasswordModal(true)}
           className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition duration-300"
@@ -384,63 +397,72 @@ const handleFormSubmit = (e) => {
         </div>
       )}
 
-   <div className="flex items-center gap-4 bg-blue-50 p-4 rounded-md shadow-md">
-        {/* <AiOutlineMail className="text-blue-600 text-2xl" /> */}
-        <LuPhoneCall className="text-blue-600 text-2xl" />
-
+   <div className="flex items-center gap-4 bg-blue-50 p-4 rounded-md shadow-md mt-2">
+        <IoMailOpenOutline className="text-blue-600 text-2xl" />
         <div>
-          {/* <h2 className="text-lg font-semibold">For Queries</h2> */}
-          {/* <div className='flex gap-2'> */}
-          {!showForm ? (
-          <button 
-          onClick={() => setShowForm(true)}
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-300 w-full" >Contact us</button>
-          ):(
-          <form
-            onSubmit={handleFormSubmit}
-            className="bg-white shadow-md rounded-lg p-6 mt-4"
+        {!showForm ? (
+  <button 
+    onClick={() => setShowForm(true)}
+    className="bg-blue-500 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-600 transition duration-300 w-full"
+  >
+    Contact us
+  </button>
+) : (
+  // Modal Container
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white shadow-md rounded-lg p-6 w-96 relative">
+      <button
+        onClick={() => setShowForm(false)}
+        className="absolute top-2 right-3 text-gray-600 hover:text-gray-900 text-xl"
+      >
+        &times;
+      </button>
+      
+      <h2 className="text-lg font-semibold mb-4">Contact Us</h2>
+      
+      <form onSubmit={handleFormSubmit} className="space-y-4">
+        <div>
+          <label className="block text-gray-700 mb-2">Subject</label>
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-gray-700 mb-2">Description</label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition duration-300"
           >
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Subject</label>
-              <input
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border px-3 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                rows="4"
-                required
-              ></textarea>
-            </div>
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="bg-green-500 text-white px-6 py-2 rounded-lg shadow hover:bg-green-600 transition duration-300"
-              >
-                Submit
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg shadow hover:bg-gray-600 transition duration-300"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        )}
-          {/* <a href="mailto:pharmasupport@evvisolutions.com" className="text-blue-500 hover:underline">
-            pharmasupport@evvisolutions.com
-          </a> */}
-          {/* </div> */}
+            Submit
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowForm(false)}
+            className="bg-gray-500 text-white px-6 py-2 rounded-lg shadow hover:bg-gray-600 transition duration-300"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
         </div>
       </div>
 </div>

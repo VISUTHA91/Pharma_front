@@ -212,9 +212,10 @@ const ReturnPage = () => {
     invoiceNo: "",
   });
 
-  const handleInvoiceChange = async (e) => {
-    const invoiceNo = e.target.value;
-    setFormData({ invoiceNo });
+  const handleInvoiceChange = async (invoiceNo) => {
+    // const invoiceNo = e.target.value;
+    // setFormData({ invoiceNo });
+    setFormData({ ...formData, invoiceNo }); // Ensure state updates correctly
     if (invoiceNo.trim() !== "") {
       const data = await fetchProductsByInvoice(invoiceNo);
       setProducts(data.data.products);
@@ -250,8 +251,8 @@ const ReturnPage = () => {
   
   const handleProductSelect = (productId, productName) => {
     // Check if already selected
+    console.log(".............", productId , productName)
     if (selectedProducts.some((p) => p.productId === productId)) return;
-
     setSelectedProducts([
       ...selectedProducts,
       { productId, productName, quantity: "", reason: "" },
@@ -263,6 +264,7 @@ const ReturnPage = () => {
     updatedProducts[index][field] = value;
     setSelectedProducts(updatedProducts);
   };
+
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -294,10 +296,11 @@ const ReturnPage = () => {
       toast.error(error.response.data.message);
     }
   };
+  
 
   return (
-    <div className="p-6 w-[96%]">
-      <div className='flex justify-between'>
+    <div className=" pt-2 pl-2 h-screen">
+      <div className='flex justify-between '>
       <h1 className="text-2xl font-bold mb-4">Return Page</h1>
       <PaginationComponent
               totalPages={totalPages}
@@ -305,7 +308,6 @@ const ReturnPage = () => {
               setCurrentPage={setCurrentPage}/>
       <button
         className="bg-[#027483] text-white px-4 py-2 rounded hover:bg-cyan-800"
-        // onClick={() => setIsModalOpen(true)}
         onClick={() => {
           setFormData({ invoiceNo:""}); // Reset form fields
            setProducts([]); // Clear previous products
@@ -316,7 +318,7 @@ const ReturnPage = () => {
         Add New Return
       </button>
       </div>
-      <div className="">
+      <div className=" h-[90vh] overflow-y-scroll scrollbar-hide">
         <table className="min-w-full bg-white border border-gray-200 rounded bg-white rounded-lg shadow-md text-left">
           <thead className="bg-[#027483] text-white">
             <tr className=" text-left">
@@ -339,26 +341,36 @@ const ReturnPage = () => {
         </table>
       </div>
 
-{isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded shadow-lg w-full max-w-md  h-[50%] overflow-y-scroll">
+          <div className="bg-white p-6 rounded shadow-lg w-[50vw] max-w-md  h-[70%] overflow-y-scroll">
             <h2 className="text-xl font-bold mb-4">Add New Return</h2>
             <form onSubmit={handleFormSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">Invoice No</label>
-                <input
-                  type="text"
-                  name="invoiceNo"
-                  value={formData.invoiceNo}
-                  onChange={handleInvoiceChange}
-                  onInput={(e) => {
-                    if (e.target.value.startsWith(" ")) {
-                      e.target.value = e.target.value.trimStart();
-                    }
-                  }}
-                  className="w-full border border-gray-300 px-3 py-2 rounded"
-                  required
-                />
+             
+                  <input
+                    type="text"
+                    name="invoiceNo"
+                    value={formData.invoiceNo}
+                    onChange={(e) => {
+                      setFormData({ ...formData, invoiceNo: e.target.value });
+                    }}
+                    onBlur={() => handleInvoiceChange(formData.invoiceNo)} 
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault(); 
+                        handleInvoiceChange(formData.invoiceNo);
+                      }
+                    }}
+                    onInput={(e) => {
+                      if (e.target.value.startsWith(" ")) {
+                        e.target.value = e.target.value.trimStart();
+                      }
+                    }}
+                    className="w-full border border-gray-300 px-3 py-2 rounded"
+                    required
+                  />
               </div>
               {Array.isArray(products) && products.length > 0 && (
                 <div className="mb-4">
@@ -371,22 +383,23 @@ const ReturnPage = () => {
                     }}
                     className="w-full border border-gray-300 px-3 py-2 rounded"
                   >
-                    {/* <option>Select a Product</option> */}
+                    <option>Select a Product</option>
                     {products.map((product) => (
                       <option key={product.product_id} value={product.product_id}>
-                        {product.product_name}
+                        {product.product_name} - {product.quantity}
                       </option>
                     ))}
                   </select>
                 </div>
               )}
 
+              {/* Modal */}
               {selectedProducts.length > 0 &&
                 selectedProducts.map((product, index) => (
                   <div key={product.productId} className="border p-3 mb-2 rounded">
                     <h4 className="font-semibold">{product.productName}</h4>
                     <label className="block text-sm font-medium mb-1">Quantity</label>
-                    <input
+                    {/* <input
                       type="number"
                       value={product.quantity}
                       onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
@@ -397,7 +410,30 @@ const ReturnPage = () => {
                       }}
                       className="w-full border border-gray-300 px-3 py-2 rounded"
                       required
-                    />
+                    /> */}
+                    <input
+  type="number"
+  min="1"
+  value={product.quantity}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value >= 0) {
+      handleInputChange(index, "quantity", value);
+    }
+  }}
+  onKeyDown={(e) => {
+    // prevent typing "-" or starting with "0"
+    if (
+      e.key === "-" || 
+      (e.key === "0" && e.target.value.length === 0)
+    ) {
+      e.preventDefault();
+    }
+  }}
+  className="w-full border border-gray-300 px-3 py-2 rounded"
+  required
+/>
+
                     <label className="block text-sm font-medium mb-1 mt-2">Reason</label>
                     <textarea
                       value={product.reason}
@@ -568,3 +604,18 @@ export default ReturnPage;
           </div>
         </div>
       )} */}
+
+
+         {/* <input
+                  type="text"
+                  name="invoiceNo"
+                  value={formData.invoiceNo}
+                  onChange={handleInvoiceChange}
+                  onInput={(e) => {
+                    if (e.target.value.startsWith(" ")) {
+                      e.target.value = e.target.value.trimStart();
+                    }
+                  }}
+                  className="w-full border border-gray-300 px-3 py-2 rounded"
+                  required
+                /> */}

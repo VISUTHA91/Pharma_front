@@ -137,7 +137,7 @@ const Invoice = () => {
                                     .replace(/ /g, "/")}
                             </p>
                             <p><strong>Name:</strong> {selectedInvoice.customer_name}</p>
-                            <p><strong>Amount:</strong> {selectedInvoice.finalPriceWithGST}</p>
+                            <p><strong>Amount:</strong> {selectedInvoice.total_price}</p>
                             {/* <p><strong>Status:</strong> {selectedInvoice.payment_status}</p> */}
                             {selectedInvoice.products && selectedInvoice.products.length > 0 && (
                                 <div>

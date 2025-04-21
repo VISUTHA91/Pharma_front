@@ -173,7 +173,7 @@ function Supplier() {
           sup.supplier_id === selectedSupplier.supplier_id ? { ...sup, ...formData } : sup
         );
         setSuppliers(updatedSuppliers);
-        // toast.success("Supplier Updated successfully!");
+        toast.success("Supplier Updated successfully!");
         // window.location.reload();
         setTimeout(() => {
           navigate(0);
@@ -185,7 +185,7 @@ function Supplier() {
         // Update local state with new supplier from API response
         setSuppliers([...suppliers, response]);
       }
-      toast.success("Supplier Updated successfully!");
+      toast.success("Supplier Created successfully!");
       setTimeout(() => {
         navigate(0);
       }, 1500);
@@ -222,7 +222,7 @@ function Supplier() {
     }
     const ConfirmToast = ({ closeToast }) => (
           <div>
-            <p>Are you sure you want to delete this category?</p>
+            <p>Are you sure you want to Delete this Supplier Details?</p>
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
               <button
                 onClick={() => {
@@ -381,6 +381,11 @@ function Supplier() {
               maxLength={25}
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
               placeholder='Name(Max 25 characters)'
+              onKeyDown={(e) => {
+                if (["+", "-"].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
           </div>
           <div>
@@ -456,8 +461,8 @@ function Supplier() {
               required
               className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"
             >
-              <option value="Active">Active</option>
-              <option value="InActive">InActive</option>
+              <option value="active">Active</option>
+              <option value="inactive">InActive</option>
             </select>
           </div>
         </div>

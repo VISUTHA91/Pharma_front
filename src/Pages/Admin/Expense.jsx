@@ -3,6 +3,9 @@ import { fetchExpense } from "../../Api/apiservices";
 import { addExpense } from "../../Api/apiservices";
 import PaginationComponent from "../../Components/PaginationComponent";
 import { toast } from "react-toastify";
+import { MdDeleteForever } from "react-icons/md";
+import { deleteexpense } from "../../Api/apiservices";
+
 
 
 const Expense = () => {
@@ -82,14 +85,60 @@ const Expense = () => {
       setExpenses((prevExpenses) => [...prevExpenses, savedExpense]); // Update state with API response
       setFormData({ category: "", amount: "", date: "", description: "" });
       setModalOpen(false);
-        toast.success(" Created Successfully!");
+        toast.success("Expense Created Successfully!");
               setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
               }, 1500);
     } catch (error) {
       console.error("Failed to add expense:", error);
     }
   };
+
+   const handleDelete = async (expenseId) => {
+     const confirmDeletion = async () => {
+       try {
+         await deleteexpense(expenseId);
+         toast.success("Deleted successfully!");
+         setExpenses((prevProducts) =>
+           prevProducts.filter((product) => product.id !== expenseId)
+         );
+       } catch (error) {
+        //  console.error("Failed to delete Product:", error);
+         toast.error("Failed to Delete");
+       }
+     };
+     const ConfirmToast = ({ closeToast }) => (
+       <div>
+         <p>Are you sure you want to delete this category?</p>
+         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+           <button
+             onClick={() => {
+               confirmDeletion();
+               closeToast();
+             }}
+             style={{ backgroundColor: '#d9534f', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+           >
+             Yes
+           </button>
+           <button
+             onClick={closeToast}
+             style={{ backgroundColor: '#5bc0de', color: '#fff', padding: '5px 10px', borderRadius: '5px' }}
+           >
+             No
+           </button>
+         </div>
+       </div>
+     );
+ 
+     toast.warn(<ConfirmToast />, {
+       autoClose: false,
+       closeOnClick: false,
+       closeButton: false,
+     });
+   };
+
+
+
 
   return (
     <div className="p-4 h-screen">
@@ -114,6 +163,7 @@ const Expense = () => {
             <th className="border border-gray-300 px-4 py-2">Amount</th>
             <th className="border border-gray-300 px-4 py-2">Date</th>
             <th className="border border-gray-300 px-4 py-2">Description</th>
+            <th className="border border-gray-300 px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -122,8 +172,17 @@ const Expense = () => {
               <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
               <td className="border border-gray-300 px-4 py-2">{expense.category}</td>
               <td className="border border-gray-300 px-4 py-2">{expense.amount}</td>
-              <td className="border border-gray-300 px-4 py-2">{expense.created_at?.split("T")[0]|| ""}</td>
+              <td className="border border-gray-300 px-4 py-2"> {expense.date
+    ? new Date(expense.date).toLocaleDateString('en-GB')
+    : ""}</td>
               <td className="border border-gray-300 px-4 py-2">{expense.description}</td>
+              <td className="border border-gray-300 px-4 py-2"><button
+                                  className="text-cyan-700 ml-2"
+                                  onClick={() => handleDelete(expense.id)}
+                                >
+                                  <MdDeleteForever size={20} />
+                                </button>
+                                </td>
             </tr>
           ))}
         </tbody>

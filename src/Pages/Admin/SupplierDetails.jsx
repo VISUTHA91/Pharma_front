@@ -134,11 +134,12 @@ const SupplierDetails = ({ selectedSupplier }) => {
     const { supplierBillNo } = invoiceForm;
     if (!/\d/.test(supplierBillNo)) {
         toast.info("Supplier Bill No must contain at least one number!"); // Replace with modal if needed
-        return; // Stop submission
+        return;
     }
     try {
       const response = await createsupplierinvoice(invoiceForm);
-      setIsInvoiceModalOpen(false);
+      setIsInvoiceModalOpen(true);
+      toast.success("Invoice created successfully!");
       setIsPaymentModalOpen(true);
       setPaymentForm({ ...paymentForm, invoiceId: response.invoiceId });
     } catch (error) {
@@ -182,12 +183,12 @@ const SupplierDetails = ({ selectedSupplier }) => {
             <div>
               <p><span className="font-medium">Email:</span> {supplierInfo?.email}</p>
               <p><span className="font-medium">Phone:</span> {supplierInfo?.phone_number}</p>
-              <p><span className="font-medium">GST:</span> {supplierInfo?.supplirt_gst_number}</p>
+              <p><span className="font-medium">GST:</span> {supplierInfo?.supplier_gst_number}</p>
             </div>
             <div>
               <p><span className="font-medium">Address:</span> {supplierInfo?.address},{supplierInfo?.postal_code}</p>
-              <p><span className="font-medium">City:</span> {supplierInfo?.city}</p>
-              <p><span className="font-medium">State:</span> {supplierInfo?.state}</p>
+              {/* <p><span className="font-medium">City:</span> {supplierInfo?.city}</p>
+              <p><span className="font-medium">State:</span> {supplierInfo?.state}</p> */}
             </div>
             <div>
               <h3 className="text-lg font-semibold ">Categories : </h3>
@@ -279,17 +280,28 @@ const SupplierDetails = ({ selectedSupplier }) => {
           </button>
         </div>
         <form onSubmit={handleInvoiceSubmit} className="space-y-2">
-          <lable>Supplier Id</lable>
-          <input type="text" name="supplierId" value={invoiceForm.supplierId} readOnly className="w-full border p-2 rounded" />
-
-          <input type="text" name="supplierBillNo" placeholder="Bill No" onChange={handleInvoiceChange}
+          <lable className="hidden">Supplier Id</lable>
+          <input type="text" name="supplierId" value={invoiceForm.supplierId} readOnly className="w-full border p-2 rounded hidden" />
+          <input type="text" name="supplierBillNo" placeholder="Bill No(max 10 char)" onChange={handleInvoiceChange}
             onInput={(e) => (e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-            className="w-full border p-2 rounded" required maxLength={15} />
-          <input type="text" name="description" placeholder="Description" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required onInput={(e) => {
+            className="w-full border p-2 rounded" required maxLength={10} />
+          <input type="text" 
+          name="Product Name"
+           onChange={handleInvoiceChange} 
+           className="w-full border p-2 rounded"
+           required 
+           maxLength={250} 
+           placeholder="Description (max 250 char)"
+          onInput={(e) => {
             if (e.target.value.length === 1 && /[^a-zA-Z0-9]/.test(e.target.value)) {
               e.target.value = "";
             }
-          }} />
+          }} 
+          onKeyDown={(e) => {
+            if (["+", "-"].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}/>
           <input type="number" name="totalAmount" placeholder="Total Bill Amount" onChange={handleInvoiceChange} className="w-full border p-2 rounded"
             onInput={(e) => {
               if (e.target.value.startsWith("0")) {
@@ -298,25 +310,43 @@ const SupplierDetails = ({ selectedSupplier }) => {
               if (e.target.value.length > 8) {
                 e.target.value = e.target.value.slice(0, 8); // Limit input to 8 digits
               }
-            }} required />
+            }} 
+            onKeyDown={(e) => {
+              if (["+", "-"].includes(e.key)) {
+                e.preventDefault();
+              }
+              if (e.key === "ArrowDown" && e.target.value <= 0) {
+                e.preventDefault();
+              }
+            }}
+            required />
           <label htmlFor="dueDate" className="block text-gray-700 font-sm">
             Invoice Date
           </label>
-          <input type="date" name="invoiceDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required placeholder="CurrentDate"   max={new Date().toISOString().split("T")[0]} />
+          <input type="date" name="invoiceDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required placeholder="CurrentDate" max={new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split("T")[0]}  
+           onKeyDown={(e) => e.preventDefault()} // Prevent typing/editing
+          />
           <label htmlFor="dueDate" className="block text-gray-700 font-sm mb-1">
             Due Date
           </label>
-          <input type="date" name="dueDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required   min={new Date().toISOString().split("T")[0]}
+          <input type="date" name="dueDate" onChange={handleInvoiceChange} className="w-full border p-2 rounded" required   min={new Date().toISOString().split("T")[0]} onKeyDown={(e) => e.preventDefault()} // Prevent typing/editing
+
           />
           <button type="submit" className="w-full bg-[#027483] text-white p-2 rounded">Submit</button>
         </form>
       </Modal>
       {/* Payment Modal */}
-      <Modal isOpen={isPaymentModalOpen} onRequestClose={() => setIsPaymentModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-10">
+      <Modal isOpen={isPaymentModalOpen} onRequestClose={() => setIsPaymentModalOpen(false)} className="p-5 bg-white rounded shadow-lg max-w-md mx-auto mt-10 mr-56">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold mb-4">Enter Payment Details</h2>
+          <h2 className="text-lg font-bold mb-4">Pending Payment Form</h2>
           <button
-            onClick={() => setIsPaymentModalOpen(false)}
+            // onClick={() => setIsPaymentModalOpen(false)
+            //   setIsInvoiceModalOpen(false)
+            // }
+            onClick={() => {
+              setIsPaymentModalOpen(false);
+              setIsInvoiceModalOpen(false);
+            }}
             className="text-gray-500 hover:text-gray-700 text-xl font-bold"
           >
             &times;
@@ -326,18 +356,29 @@ const SupplierDetails = ({ selectedSupplier }) => {
         <label htmlFor="paymentAmount" className="block text-gray-700 font-sm">
             Amount
           </label>
-          <input type="number" name="paymentAmount" placeholder="Amount" onChange={handlePaymentChange} className="w-full border p-2 rounded" onInput={(e) => {
+          <input type="number" name="paymentAmount" placeholder="Amount" onChange={handlePaymentChange} className="w-full border p-2 rounded" 
+          onInput={(e) => {
             if (e.target.value.startsWith("0")) {
               e.target.value = ""; // Clear input if first character is "0"
             }
             if (e.target.value.length > 8) {
               e.target.value = e.target.value.slice(0, 8); // Limit input to 8 digits
             }
-          }} required />
+          }}
+          onKeyDown={(e) => {
+            if (["+", "-"].includes(e.key)) {
+              e.preventDefault();
+            }
+           
+          }} 
+          min={1}
+          />
           <label htmlFor="paymentDate" className="block text-gray-700 font-sm">
             Payment Date
           </label>
-          <input type="date" name="paymentDate" onChange={handlePaymentChange} className="w-full border p-2 rounded" required />
+          <input type="date" name="paymentDate" onChange={handlePaymentChange} className="w-full border p-2 rounded" 
+          onKeyDown={(e) => e.preventDefault()} // Prevent typing/editing
+          />
           <button type="submit" className="w-full bg-[#027483] text-white p-2 rounded">Submit Payment</button>
         </form>
       </Modal>

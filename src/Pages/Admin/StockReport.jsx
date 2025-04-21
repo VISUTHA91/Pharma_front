@@ -165,7 +165,8 @@ useEffect(() => {
         <td className="p-2 border">{item.product_name}</td>
         <td className="p-2 border">{item.product_category}</td>
         <td className="p-2 border">{item.product_quantity} units</td>
-        <td className="p-2 border">{item.expiry_date ? item.expiry_date.split("T")[0] : "N/A"}
+        <td className="p-2 border">{item.expiry_date ? new Date(item.expiry_date).toLocaleDateString('en-GB')
+         : "N/A"}
         </td>
         <td 
   className={`p-2 border ${

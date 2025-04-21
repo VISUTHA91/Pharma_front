@@ -270,19 +270,36 @@ return (
          <div className="shadow-lg rounded-lg w-1/2">
           <h2 className="text-xl font-semibold text-gray-700"> Sale Amount </h2>
             <div style={{ width: "400px", height: "220px" }}>
-  <Pie data={barData} options={options} />
-</div>
+              <Pie data={barData} options={options} />
+            </div>
          </div> 
         {/* Pie Chart */}
         <div className="bg-white shadow-lg rounded-lg p-4 w-1/2 ">
           <h2 className="text-xl font-semibold  text-gray-700">Medicine Sold</h2>
-           {/* <Pie data={pieData} />  */}
            <div style={{ width: "400px", height: "220px" }}>
-  <Pie data={pieData} options={options} />
-</div>
-
+              <Pie data={pieData} options={options} />
+            </div>
         </div>
+        {/* <div className="flex flex-col lg:flex-row h-auto w-full gap-4"> */}
+  {/* Bar Chart */}
+  {/* <div className="shadow-lg rounded-lg p-4 w-full lg:w-1/2">
+    <h2 className="text-xl font-semibold text-gray-700">Sale Amount</h2>
+    <div className="w-full h-[220px]">
+      <Pie data={barData} options={options} />
+    </div>
+  </div> */}
+
+  {/* Pie Chart */}
+  {/* <div className="bg-white shadow-lg rounded-lg p-4 w-full lg:w-1/2">
+    <h2 className="text-xl font-semibold text-gray-700">Medicine Sold</h2>
+    <div className="w-full h-[220px]">
+      <Pie data={pieData} options={options} />
+    </div>
+  </div> */}
+{/* </div> */}
+
       </div>
+      
     </div>
   )
 }

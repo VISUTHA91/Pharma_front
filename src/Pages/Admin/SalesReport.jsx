@@ -240,12 +240,14 @@ onClick={() => setShowOptions(!showOptions)}>
     {Array.isArray(soldProducts) && soldProducts.length > 0 ? (
       soldProducts.map((item, index) => (
         <tr key={index} className="hover:bg-gray-100 text-sm">
-          <td className="border border-gray-300 px-2 py-2">{item.invoice_created_at ? item.invoice_created_at.split("T")[0] : "N/A"}</td>
+          <td className="border border-gray-300 px-2 py-2">{item.invoice_created_at
+    ? new Date(item.invoice_created_at).toLocaleDateString('en-GB')
+    : "N/A"}</td>
           <td className="border border-gray-300 px-2 py-2">{item.product_name}</td>
           <td className="border border-gray-300 px-2 py-2">{item.category_name}</td>
           {/* <td className="border border-gray-300 px-4 py-2">{item.final_price}</td> */}
           <td className="border border-gray-300 px-2 py-2 ">{item.quantity_sold}</td>
-          <td className="border border-gray-300 px-2 py-2">Rs. {item.final_price}</td>
+          <td className="border border-gray-300 px-2 py-2">Rs. {item.total_price}</td>
         </tr>
       ))
     ):(<>NO DATA AVILABLE</>)}

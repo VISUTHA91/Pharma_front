@@ -382,7 +382,7 @@ export const register = async (formData) => {
       return response.data;
     } catch (error) {
       console.error("Error fetching product details:", error.response.data.message);
-      // toast.error(error.response.data.message)
+      toast.error(error.response.data.message)
       throw error;
     }
   };
@@ -995,5 +995,26 @@ export const getAllProductsStockSearch = async ({ status , search}) => {
   } catch (error) {
     toast.error("No Product Found");
     throw new Error(error.response?.data?.message || "Failed to fetch products");
+  }
+};
+
+
+export const deleteexpense = async (expenseId) => {
+  console.log("Deleting the expense ID:",expenseId)
+  try {
+    const response = await axiosInstance.delete(`${API_BASE_URL}/expense/expensesdel/${expenseId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting product:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const createShopDetails = async (shopData) => {
+  console.log("Shop./././. Data",shopData);
+  try {
+    const response  = await axiosInstance.post(`${API_BASE_URL}/shop/insert`, shopData);
+    return response;
+  } catch (error) {
   }
 };

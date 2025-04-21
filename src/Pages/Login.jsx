@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef,useState , useEffect } from 'react';
 import { MdEmail } from "react-icons/md";
 import { FaUnlock, FaUserAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,10 @@ import loginbg from '../assets/Image/bg.jpg';
 import * as apiCalls from '../Api/apiservices';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from 'react-toastify';
+import { getpharmacydetails } from '../Api/apiservices'
+
+
+
 function Login() {
   const [logindata, setLogindata] = useState({
     email: "",
@@ -14,15 +18,36 @@ function Login() {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [details, setDetails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const handleChange = (e) => {
     setLogindata({
       ...logindata,
       [e.target.name]: e.target.value,
     });
   };
+  const emailInputRef = useRef(null);
   const handleRoleChange = (e) => {
     setRole(e.target.value);
   };
+   useEffect(() => {
+        const pharmacyDetails = async () => {
+          try {
+            const response = await getpharmacydetails();
+            setDetails(response.shops.length);
+            console.log("Shop length",response.shops.length)
+          } catch (err) {
+            setError("Failed to PharmacyDetails");
+          } finally {
+            setLoading(false);
+          }
+        };
+        pharmacyDetails();
+      }, []); 
+
+
+
  
   const login = async (e) => {
     e.preventDefault();
@@ -30,7 +55,6 @@ function Login() {
       const { email, password } = logindata;
       console.log("Role", role);
       let data;
-  
       if (role === "admin") {
         data = await apiCalls.adminlogin({ email, password });
       } else if (role === "staff") {
@@ -38,27 +62,38 @@ function Login() {
       } else {
         throw new Error("Please select a role");
       }
-  
       if (data.status) {
-        // Add role verification here
         if (data.user.role !== role) {
           toast.error('Please Select the Correct role.');
           return;
         }
-        // Proceed if role matches
-        toast.success(data.message);
         localStorage.setItem("authToken", data.token);
         localStorage.setItem("logindata", JSON.stringify({ email: data.user.email, id: data.user.id, role: data.user.role }));
-        navigate("/Dashboard");
-      } else {
-        toast.error("Login Failed: " + (data.message || "Invalid credentials"));
+        // navigate(data.user.role === "admin" ? "/Dashboard" : "/Dashboard/Billing");
+        if (data.user.role === "admin") {
+          if (details && details > 0) {
+            navigate("/Dashboard");
+            toast.success(data.message);
+          } else {
+            navigate("/CreateShop");
+          }
+        } else {
+          navigate("/Dashboard/Billing");
+          toast.success(data.message);
+        }
+          
+        } else {
+          toast.error("Login Failed: " + (data.message || "Invalid credentials"));
       }
-  
     } catch (error) {
       console.error("Login failed:", error.message || error);
       toast.error(error.message || "Login Failed");
     }
   };
+
+  useEffect(() => {
+    emailInputRef.current?.focus();
+  }, []);
   
 
   return (
@@ -73,6 +108,7 @@ function Login() {
               <FaUserAlt className="text-gray-400" />
             </span>
             <select
+              ref={emailInputRef}
               name="role"
               value={role}
               onChange={handleRoleChange}
@@ -90,6 +126,7 @@ function Login() {
               <MdEmail className="text-gray-400" />
             </span>
             <input
+              // ref={emailInputRef}
               type="email"
               name="email"
               value={logindata.email}

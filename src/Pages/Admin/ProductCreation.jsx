@@ -58,6 +58,7 @@ function ProductCreation() {
     stock_status: "Available",
   });
   // Product List
+
   useEffect(() => {
     const getProducts = async () => {
       try {
@@ -86,10 +87,18 @@ function ProductCreation() {
     }));
   };
 
+  // const handleFormnameChange = (e) => {
+  //   const { name, value } = e.target;
+  //   // Allow alphabets, numbers, and spaces, but not only numbers or only spaces
+  //   if (/^(?!\d+$)(?!\s+$)[A-Za-z0-9 ]*$/.test(value)) {
+  //     setFormData({ ...formData, [name]: value });
+  //   }
+  // };
   const handleFormnameChange = (e) => {
     const { name, value } = e.target;
-    // Allow alphabets, numbers, and spaces, but not only numbers or only spaces
-    if (/^(?!\d+$)(?!\s+$)[A-Za-z0-9 ]*$/.test(value)) {
+    const regex = /^[A-Za-z0-9][A-Za-z0-9@#%&*()_+\-=\[\]{}|\\:;"',.<>\/?!\s]{0,24}$/;
+  
+    if (value === "" || regex.test(value)) {
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -216,7 +225,7 @@ function ProductCreation() {
         toast.success("Product Updated Successfully!");
         // window.location.reload();
         setTimeout(() => {
-          navigate(0);
+          // navigate(0);
         }, 1500);
       } else {
         console.log("Product Data Before Sending API", formData)
@@ -290,7 +299,7 @@ function ProductCreation() {
         );
       } catch (error) {
         console.error("Failed to delete Product:", error);
-        toast.error("Failed to delete Product:");
+        toast.error("Failed to delete Product");
       }
     };
     const ConfirmToast = ({ closeToast }) => (
@@ -322,6 +331,11 @@ function ProductCreation() {
       closeButton: false,
     });
   };
+
+
+
+
+
 
 
   const [query, setQuery] = useState("");
@@ -378,7 +392,7 @@ function ProductCreation() {
 
   return (
     <div className="m-1">
-      <div className="  w-[95%]">
+      <div className="w-[95%]">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Product List</h1>
           <div className="flex items-center">
@@ -458,7 +472,7 @@ function ProductCreation() {
                 <td className="py-2 px-4">{product.product_quantity}</td>
                 <td className="py-2 px-4">{product.stock_status}</td>
                 <td className="py-2 px-4">
-                  {product.expiry_date ? product.expiry_date.split("T")[0] : "N/A"}
+                  {product.expiry_date ? new Date(product.expiry_date).toLocaleDateString('en-GB') : "N/A"}
                 </td>
                 <td className="py-1 px-4">
                   <button
@@ -529,7 +543,9 @@ function ProductCreation() {
                     onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
-                    maxLength={25} // Limit to 20 characters
+                    maxLength={50} 
+                    minLength={3}
+                    placeholder="Enter Product Name(3-50 characters)"
                   />
                 </div>
                 <div>
@@ -541,6 +557,9 @@ function ProductCreation() {
                     onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
+                    maxLength={50} 
+                    minLength={3}
+                    placeholder="Enter Generic Name(3-50 characters)"
                   />
                 </div>
                 <div>
@@ -552,6 +571,9 @@ function ProductCreation() {
                     onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
+                    maxLength={50} 
+                    minLength={3}
+                    placeholder="Enter Brand Name(3-50 characters)"
                   />
                 </div>
 
@@ -560,16 +582,22 @@ function ProductCreation() {
                   <input
                     type="number"
                     name="product_quantity"
-                    value={formData.product_quantity === 0 ? "" : formData.product_quantity} // Convert 0 to empty string
+                    value={formData.product_quantity === 0 ? "" : formData.product_quantity}
                     onChange={handleFormChange}
                     onInput={(e) => {
                       if (e.target.value.length > 4) {
                         e.target.value = e.target.value.slice(0, 4); // Limit to 4 characters
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (["+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
                     max={9999} // Maximum quantity
                     className="w-full border rounded p-2"
+                    placeholder="Enter Quantity(4 digits)"
                   />
                 </div>
 
@@ -580,8 +608,15 @@ function ProductCreation() {
                     name="product_price"
                     value={formData.product_price}
                     onChange={handleFormChange}
+                    onKeyDown={(e) => {
+                      if (["+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     required
+                    maxLength={5}
                     className="w-full border rounded p-2"
+                    placeholder="Enter MRP Price(5 digits)"
                   />
                 </div>
                 <div>
@@ -596,7 +631,13 @@ function ProductCreation() {
                         e.target.value = e.target.value.slice(0, 2);
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (["+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
                     className="w-full border rounded p-2"
+                    placeholder="Enter Discount Percentage(2 digits)"
                   />
                 </div>
                 <div>
@@ -609,10 +650,16 @@ function ProductCreation() {
                     required
                     className="w-full border rounded p-2"
                     onInput={(e) => {
-                      if (e.target.value.length > 4) {
-                        e.target.value = e.target.value.slice(0, 4); // Limit to 4 characters
+                      if (e.target.value.length > 5) {
+                        e.target.value = e.target.value.slice(0, 5); // Limit to 4 characters
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (["+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    placeholder="Enter Selling Price(5 digits)"
                   />
                 </div>
                 <div>
@@ -625,10 +672,17 @@ function ProductCreation() {
                     required
                     className="w-full border rounded p-2"
                     onInput={(e) => {
-                      if (e.target.value.length > 4) {
-                        e.target.value = e.target.value.slice(0, 4); // Limit to 4 characters
+                      if (e.target.value.length > 5) {
+                        e.target.value = e.target.value.slice(0, 5); // Limit to 4 characters
                       }
                     }}
+                    onKeyDown={(e) => {
+                      if (["+", "-"].includes(e.key)) {
+                        e.preventDefault();
+                      }
+                    }}
+                    maxLength={5}
+                    placeholder="Enter Supplier Price(5 digits)"
                   />
                 </div>
                 <div>
@@ -649,6 +703,8 @@ function ProductCreation() {
                     type="text"
                     name="product_batch_no"
                     value={formData.product_batch_no}
+                    maxLength={20}
+                    minLength={3}
                     onChange={handleFormnameChange}
                     required
                     className="w-full border rounded p-2"
@@ -662,6 +718,9 @@ function ProductCreation() {
                     value={formData.MFD ? formData.MFD.split("T")[0] : ""} // Convert ISO to "yyyy-MM-dd"
                     onChange={handleFormChange}
                     required
+                    min={new Date(new Date().setFullYear(new Date().getFullYear() - 2))
+                      .toISOString()
+                      .split("T")[0]} // Set max date to 5 years from today
                     max={new Date().toISOString().split("T")[0]} // Restrict future dates
                     className="w-full border rounded p-2"
                   />
@@ -674,10 +733,9 @@ function ProductCreation() {
                     value={formData.expiry_date ? formData.expiry_date.split("T")[0] : ""}
                     onChange={handleFormChange}
                     required
-                    // min={new Date().toISOString().split("T")[0]} // Restrict past dates
                     className="w-full border rounded p-2"
                     min={new Date().toISOString().split("T")[0]} // Restrict past dates (including today)
-                    max={new Date(new Date().setFullYear(new Date().getFullYear() + 6))
+                    max={new Date(new Date().setFullYear(new Date().getFullYear() + 5))
                       .toISOString()
                       .split("T")[0]} // Set max date to 5 years from today
                   />
@@ -782,10 +840,10 @@ function ProductCreation() {
                   <strong className="font-semibold">Category :</strong> {selectedProduct.product_category}
                 </p>
                 <p>
-                  <strong className="font-semibold">MFD :</strong> {selectedProduct.MFD ? selectedProduct.MFD.split("T")[0] : "N/A"}
+                  <strong className="font-semibold">MFD :</strong> {selectedProduct.MFD ? new Date(selectedProduct.MFD).toLocaleDateString('en-GB'): "N/A"}
                 </p>
                 <p>
-                  <strong className="font-semibold">Exp.Date :</strong> {selectedProduct.expiry_date ? selectedProduct.expiry_date.split("T")[0] : "N/A"}
+                  <strong className="font-semibold">Exp.Date :</strong> {selectedProduct.expiry_date ?  new Date(selectedProduct.expiry_date).toLocaleDateString('en-GB'): "N/A"}
                 </p>
                 <p>
                   <strong className="font-semibold">Quantity :</strong> {selectedProduct.product_quantity}
